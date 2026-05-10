@@ -1,0 +1,25 @@
+mixin commentTree(comments)
+  if comments && comments.length > 0
+    each comment in comments
+      article.comment-item(data-comment-id=comment._id data-depth=comment.depth)
+        .comment-card
+          .comment-avatar
+            if comment.user && comment.user.avatar
+              img(src=comment.user.avatar alt=comment.user.fullName)
+            else
+              span.comment-avatar-fallback= (comment.user && comment.user.fullName ? comment.user.fullName.charAt(0).toUpperCase() : "K")
+          .comment-body
+            .comment-head
+              strong.comment-author= comment.user && comment.user.fullName ? comment.user.fullName : "Khach"
+              time.comment-time(datetime=comment.createdAt)= new Date(comment.createdAt).toLocaleString("vi-VN")
+            p.comment-content= comment.content
+            .comment-actions
+              button.comment-reply-btn(
+                type="button"
+                data-parent-id=comment._id
+                data-parent-author=(comment.user && comment.user.fullName ? comment.user.fullName : "Khach")
+                data-depth=comment.depth
+              ) Tra loi
+        if comment.replies && comment.replies.length > 0
+          .comment-children
+            +commentTree(comment.replies)

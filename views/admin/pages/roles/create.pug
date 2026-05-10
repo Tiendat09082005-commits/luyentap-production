@@ -1,0 +1,39 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+    if(roles.permissions.includes("roles_create"))
+        h1 Thêm mới nhóm quyền
+        +alert-success(3000)
+        form(
+            action=`${prefixAdmin}/roles/create`,
+            method="POST"
+        )
+            input(type="hidden" name="_csrf" value=csrfToken)
+            //- Tiêu đề 
+            div(class="form-group")
+                label(for="title") Tiêu đề
+                input(
+                    type="text",
+                    class="form-control",
+                    id="title",
+                    name="title",
+                    required
+                )
+            //- Mô tả 
+            div(class="form-group")
+                label(for="desc") Mô tả
+                textarea(
+                    class="form-control textarea-mce",
+                    id="desc",
+                    name="description",
+                    rows="5"
+                )
+            div(class="form-group")
+                button(
+                    type="submit",
+                    class="btn btn-primary"
+                ) Tạo mới
+    else
+        h1 Bạn không được cấp quyền Tạo mới nhóm quyền
+        

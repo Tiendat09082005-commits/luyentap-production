@@ -1,0 +1,196 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+block css
+  link(rel="stylesheet", href="/admin/css/attribute.css")
+
+block main
+  +alert-success(3000)
+  +alertAddSuccess(3000)
+  .attr-page
+
+    //- ── PAGE HEADER ──────────────────────────────────────────
+    .attr-header
+      .attr-header__info
+        h1.attr-header__title Quản lý thuộc tính
+        p.attr-header__desc Thêm, sửa và quản lý các thuộc tính dùng cho sản phẩm
+      if(roles.permissions.includes("attributes_create"))
+        a.btn.btn--primary(href="/admin/attribute/create")
+          svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round")
+            line(x1="12" y1="5" x2="12" y2="19")
+            line(x1="5" y1="12" x2="19" y2="12")
+          span Thêm thuộc tính
+
+    //- ── FILTER BAR ───────────────────────────────────────────
+    .attr-filter
+      .attr-filter__inputs
+        .attr-filter__field
+          svg.attr-filter__icon(xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+            circle(cx="11" cy="11" r="8")
+            line(x1="21" y1="21" x2="16.65" y2="16.65")
+          input.attr-filter__input(
+            type="text"
+            name="keyword"
+            placeholder="Tìm theo tên hoặc mã thuộc tính…"
+          )
+        select.attr-filter__select(name="status")
+          option(value="") Tất cả trạng thái
+          option(value="active") Hoạt động
+          option(value="inactive") Dừng hoạt động
+      .attr-filter__actions
+        button.btn.btn--search(type="button")
+          svg(xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round")
+            circle(cx="11" cy="11" r="8")
+            line(x1="21" y1="21" x2="16.65" y2="16.65")
+          span Tìm kiếm
+        a.btn.btn--ghost(href="/admin/attribute")
+          svg(xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+            polyline(points="1 4 1 10 7 10")
+            path(d="M3.51 15a9 9 0 1 0 .49-3.14")
+          span Làm mới
+
+    //- ── DATA TABLE ───────────────────────────────────────────
+    .attr-table-wrap
+      if attributes
+        table.attr-table
+          thead
+            tr
+              th.col-stt STT
+              th.col-title Tên thuộc tính
+              th.col-slug Slug
+              th.col-code Mã thuộc tính
+              th.col-values Giá trị
+              th.col-status Trạng thái
+              th.col-date Ngày tạo
+              th.col-action Hành động
+          tbody
+            each attr, index in attributes
+              - const maxShow = 3
+              - const shown   = attr.values.slice(0, maxShow)
+              - const extra   = attr.values.length - maxShow
+              tr
+                td.col-stt
+                  span.stt-badge= index + 1
+                td.col-title
+                  span.attr-title= attr.title
+                td.col-slug
+                  code.attr-slug= attr.slug
+                td.col-code
+                  code.attr-code= attr.code
+                td.col-values
+                  .values-wrap
+                    each val in shown
+                      span.value-tag= val
+                    if extra > 0
+                      span.value-more +#{extra}
+                td.col-status
+                  if attr.status === "active"
+                    span.status-badge.status-badge--active Hoạt động
+                  else
+                    span.status-badge.status-badge--inactive Dừng hoạt động
+                td.col-date= attr.createdAt ? new Date(attr.createdAt).toLocaleDateString("vi-VN") : ""
+                td.col-action
+                  .action-group
+                    if(roles.permissions.includes("attributes_edit"))
+                      a.action-btn.action-btn--edit(
+                        href="#"
+                        title="Sửa"
+                        data-slug=attr.slug
+                        data-title=attr.title
+                        data-code=attr.code
+                        data-status=attr.status
+                        data-values=attr.values.join(',')
+                      )
+                        svg(xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                          path(d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7")
+                          path(d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z")
+                        span Sửa
+                    if(roles.permissions.includes("attributes_delete"))
+                      button.action-btn.action-btn--delete(title="Xóa")
+                        svg(xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+                          polyline(points="3 6 5 6 21 6")
+                          path(d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6")
+                          path(d="M10 11v6")
+                          path(d="M14 11v6")
+                          path(d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2")
+                        span Xóa
+      else
+        //- ── EMPTY STATE ──────────────────────────────────────
+        .attr-empty
+          .attr-empty__icon
+            svg(xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round")
+              rect(x="2" y="3" width="20" height="14" rx="2" ry="2")
+              line(x1="8" y1="21" x2="16" y2="21")
+              line(x1="12" y1="17" x2="12" y2="21")
+          h3.attr-empty__title Chưa có thuộc tính nào
+          p.attr-empty__desc Hãy thêm thuộc tính đầu tiên cho hệ thống
+          if(roles.permissions.includes("attributes_create"))
+            a.btn.btn--primary(href="/admin/attribute/create")
+              svg(xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round")
+                line(x1="12" y1="5" x2="12" y2="19")
+                line(x1="5" y1="12" x2="19" y2="12")
+              span Thêm thuộc tính
+
+    //- ── PAGINATION ───────────────────────────────────────────
+    .attr-pagination
+      nav.pagination__nav(aria-label="Phân trang")
+        a.page-btn.page-btn--nav(href="#" aria-label="Trang trước")
+          svg(xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round")
+            polyline(points="15 18 9 12 15 6")
+        a.page-btn.page-btn--active(href="#") 1
+        a.page-btn(href="#") 2
+        a.page-btn(href="#") 3
+        a.page-btn.page-btn--nav(href="#" aria-label="Trang sau")
+          svg(xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round")
+            polyline(points="9 18 15 12 9 6")
+
+    //- ── CREATE ATTRIBUTE MODAL ───────────────────────────────────
+    if(roles.permissions.includes("attributes_create") || roles.permissions.includes("attributes_edit"))
+      .modal-overlay#attributeModal
+        .modal-box
+          .modal-box__header
+            div
+              h2.modal-box__title Thêm thuộc tính mới
+              p.modal-box__sub Điền thông tin và các giá trị cho thuộc tính
+            button.modal-close#modalClose
+              svg(xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round")
+                line(x1="18" y1="6" x2="6" y2="18")
+                line(x1="6" y1="6" x2="18" y2="18")
+
+          form.modal-box__body#attributeForm(action="/admin/attribute/create" method="POST")
+            input(type="hidden" name="_csrf" value=csrfToken)
+            .form-row-2
+              .form-grp
+                label.form-lbl Tên thuộc tính #[span *]
+                input.form-inp(type="text" name="title" id="attrTitle" placeholder="VD: Màu sắc" required)
+                p.slug-hint Slug: #[code#slugPreview -]
+              .form-grp
+                label.form-lbl Mã thuộc tính #[span *]
+                input.form-inp(type="text" name="code" id="attrCode" placeholder="VD: color" required)
+
+            .form-grp
+              label.form-lbl Trạng thái
+              select.form-sel(name="status")
+                option(value="active") Hoạt động
+                option(value="inactive") Dừng hoạt động
+
+            .form-grp
+              label.form-lbl Giá trị thuộc tính
+              .val-input-row
+                input.form-inp#valInput(type="text" placeholder="Nhập giá trị rồi nhấn Thêm…")
+                button.btn-add-val(type="button" id="addValBtn")
+                  svg(xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round")
+                    line(x1="12" y1="5" x2="12" y2="19")
+                    line(x1="5" y1="12" x2="19" y2="12")
+                  span Thêm
+              .tags-wrap#tagsWrap
+              input(type="hidden" name="values" id="valuesHidden")
+              p.tags-hint Nhấn Enter hoặc nút Thêm để thêm giá trị. Nhấn × để xóa.
+
+          .modal-box__footer
+            button.btn.btn--ghost(type="button" id="modalCancel") Hủy
+            button.btn.btn--primary(type="submit" form="attributeForm")
+              svg(xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round")
+                polyline(points="20 6 9 17 4 12")
+              span Lưu thuộc tính
+block script
+  script(src="/admin/js/attribute.js")

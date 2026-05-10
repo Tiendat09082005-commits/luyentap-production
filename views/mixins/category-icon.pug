@@ -1,0 +1,5 @@
+mixin categoryIcon(iconKey, extraClass)
+  - const fallbackKey = typeof defaultCategoryIcon === "string" ? defaultCategoryIcon : "smartphone"
+  - const resolvedIcon = typeof normalizeCategoryIcon === "function" ? normalizeCategoryIcon(iconKey) : (iconKey || fallbackKey)
+  span(class=`category-icon-render ${extraClass || ""}`.trim())
+    i(data-lucide=resolvedIcon aria-hidden="true")

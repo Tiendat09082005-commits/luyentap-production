@@ -1,0 +1,279 @@
+extends ../../layouts/default.pug
+include ../../mixins/pagination.pug
+include ../../mixins/alert.pug
+
+block css
+    link(rel="stylesheet", href="/admin/css/pages/products/product-view.css")
+    //- link(rel="stylesheet", href="/css/pagination.css")
+    script(src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js")
+
+block main
+    +alert-success(3000)
+    +alertAddSuccess(3000)
+
+    .products-page
+        //- ===================== HEADER =====================
+        .products-page__header
+            h1.products-page__title Quản lý sản phẩm
+            if(roles.permissions.includes("products_edit"))
+                a(
+                    href=`${prefixAdmin}/products/create`
+                    class="btn-add-product"
+                )
+                    span.icon-plus ＋
+                    | Thêm sản phẩm
+
+        //- ===================== STAT CARDS =====================
+        .stat-cards
+            .stat-card
+                .stat-card__label Tổng sản phẩm
+                .stat-card__value= stats.totalProduct
+            .stat-card
+                .stat-card__label Đang hoạt động
+                .stat-card__value.stat-card__value--green= stats.activeProduct
+            .stat-card
+                .stat-card__label Dừng hoạt động
+                .stat-card__value.stat-card__value--red= stats.inactiveProduct
+            .stat-card
+                .stat-card__label Tổng tồn kho
+                .stat-card__value= stats.totalStock
+            .stat-card
+                .stat-card__label Sắp hết hàng
+                .stat-card__value.stat-card__value--red= stats.lowStock
+
+        //- ===================== TOOLBAR =====================
+        if(roles.permissions.includes("products_view"))
+            .products-toolbar
+                //- Search
+                form(id="form-search")
+                    .toolbar-search
+                        svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor")
+                            path(stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.65 16.65 7.5 7.5 0 0016.65 16.65z")
+                        input(
+                            type="text"
+                            placeholder="Tìm kiếm sản phẩm..."
+                            name="keyword"
+                            value=keyword
+                            autocomplete="off"
+                        )
+
+                //- Filter buttons
+                each item in filterStatus
+                    button(
+                        class=`btn-filter ${item.class === 'active' ? 'active' : ''} ${item.status === 'inactive' ? 'btn-filter--danger' : ''}`
+                        type="button"
+                        button-status=item.status
+                    )= item.name
+
+                //- Action group
+                .toolbar-action-group
+                    form(
+                        action=`${prefixAdmin}/products/change-multi?_method=PATCH`
+                        method="POST"
+                        form-change-multi
+                        style="display:flex;align-items:center;gap:8px;"
+                    )
+                        input(type="hidden" name="_csrf" value=csrfToken)
+                        input(
+                            type="hidden"
+                            name="ids"
+                            value=""
+                            class="d-none"
+                        )
+                        select(name="type" class="select-action")
+                            option(disabled selected) -- Chọn hành động --
+                            if(roles.permissions.includes("products_edit"))
+                                option(value="active") Hoạt động
+                                option(value="inactive") Dừng hoạt động
+                                option(value="change-position") Thay đổi vị trí
+                            if(roles.permissions.includes("products_delete"))
+                                option(value="delete-all") Xóa tất cả
+                        button(type="submit" class="btn-apply") Áp dụng
+
+                    if(roles.permissions.includes("products_view_trash"))
+                        a(
+                            href=`${prefixAdmin}/products/trash`
+                            class="btn-trash"
+                        )
+                            i(data-lucide="trash-2")
+                            | Thùng rác
+
+            //- ===================== TABLE =====================
+            .table-wrapper
+                table.products-table(checkbox-multi)
+                    thead
+                        tr
+                            th
+                                input(type="checkbox" name="checkall" id="checkall")
+                            th Ảnh
+                            th Tên sản phẩm
+                            th Brand 
+                            th Giá (Min – Max)
+                            th Tồn kho
+                            th Trạng thái
+                            th Đánh giá
+                            th Ngày tạo
+                            th Hành động
+
+                    tbody
+                        each item, index in products
+                            tr
+                                //- Checkbox
+                                td
+                                    input(
+                                        type="checkbox"
+                                        name="checkbox"
+                                        value=item._id
+                                    )
+
+                                //- Thumbnail
+                                td
+                                    if item.thumbnail
+                                        img.product-thumb(
+                                            src=item.thumbnail
+                                            alt=item.title
+                                        )
+                                    else
+                                        .product-thumb-placeholder 📦
+
+                                //- Title + SKU
+                                td
+                                    .product-info__name= item.title
+                                    .product-info__sku= item.sku ? `SKU-${String(index + 1).padStart(3, '0')}` : `SKU-${String(index + 1).padStart(3, '0')}`
+
+                                //- Category
+                                td
+                                    span.badge-category= item.nameBrand || '—'
+
+                                //- Price
+                                td
+                                    if item.minPrice && item.maxPrice
+                                        if item.minPrice === item.maxPrice
+                                            .price-main= `${item.minPrice.toLocaleString('vi-VN')}đ`
+                                        else
+                                            .price-main= `${item.minPrice.toLocaleString('vi-VN')}đ`
+                                            .price-range= `${item.minPrice.toLocaleString('vi-VN')}đ – ${item.maxPrice.toLocaleString('vi-VN')}đ`
+                                    else
+                                        .price-main 0đ
+
+                                //- Stock with bar
+                                - var stock = item.totalStock || 0
+                                - var stockPct = Math.min((stock / 300) * 100, 100)
+                                - var barClass = stock <= 10 ? 'low' : stock <= 50 ? 'mid' : 'high'
+                                - var valClass = stock <= 10 ? 'stock-value--low' : 'stock-value--ok'
+                                td
+                                    .stock-cell
+                                        span(class=`stock-value ${valClass}`)= stock.toLocaleString('vi-VN')
+                                        .stock-bar
+                                            .stock-bar__fill(
+                                                class=`stock-bar__fill--${barClass}`
+                                                style=`width:${stockPct}%`
+                                            )
+
+                                //- Status
+                                td
+                                    if(roles.permissions.includes("products_edit"))
+                                        if item.status === 'active'
+                                            a(
+                                                href="javascript:;"
+                                                class="status-badge status-badge--active"
+                                                button-change-status
+                                                data-status="active"
+                                                data-id=item._id
+                                            )
+                                                span.status-dot.status-dot--active
+                                                | Hoạt động
+                                        else
+                                            a(
+                                                href="javascript:;"
+                                                class="status-badge status-badge--inactive"
+                                                button-change-status
+                                                data-status="inactive"
+                                                data-id=item._id
+                                            )
+                                                span.status-dot.status-dot--inactive
+                                                | Dừng hoạt động
+
+                                //- Rating
+                                td
+                                    .rating-cell
+                                        span.stars
+                                            - var r = item.rating || 0
+                                            - for (var s = 1; s <= 5; s++)
+                                                if s <= Math.floor(r)
+                                                    | ★
+                                                else if s - r < 1 && s - r > 0
+                                                    | ½
+                                                else
+                                                    | ☆
+                                        span.rating-value= r.toFixed(1)
+
+                                //- Created date
+                                td
+                                    .date-text= item.createdAt ? new Date(item.createdAt).toLocaleDateString('vi-VN') : '—'
+
+                                //- Actions
+                                td
+                                    .action-btns
+                                        if(roles.permissions.includes("products_edit"))
+                                            a(
+                                                href=`${prefixAdmin}/products/edit/${item._id}`
+                                                class="btn-icon btn-icon--edit"
+                                                title="Sửa"
+                                            )
+                                                i(data-lucide="pencil")
+                                        if(roles.permissions.includes("products_delete"))
+                                            button(
+                                                class="btn-icon btn-icon--delete"
+                                                button-delete
+                                                data-id=item._id
+                                                title="Xóa"
+                                            )
+                                                i(data-lucide="trash-2")
+                                        if(roles.permissions.includes("products_view"))
+                                            a(
+                                                href=`${prefixAdmin}/products/detail/${item._id}`
+                                                class="btn-icon btn-icon--view"
+                                                title="Xem chi tiết"
+                                            )
+                                                i(data-lucide="eye")
+
+            //- ===================== PAGINATION =====================
+            .pagination-wrapper
+                .pagination-info
+                +pagination(pagination)
+
+        //- ===================== HIDDEN FORMS =====================
+        form(
+            action=""
+            method="POST"
+            id="form-change-status"
+            data-path=`${prefixAdmin}/products/change-status`
+        )
+            input(type="hidden" name="_csrf" value=csrfToken)
+        form(
+            action=""
+            method="POST"
+            id="form-delete-item"
+            data-path=`${prefixAdmin}/products/delete`
+        )
+            input(type="hidden" name="_csrf" value=csrfToken)
+
+        //- ===================== CONFIRM MODAL (CHANGE STATUS) =====================
+        #modal-product-status.pd-modal-backdrop(style="display:none")
+            .pd-modal
+                .pd-modal__header
+                    .pd-modal__icon.warning
+                        svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor")
+                            path(stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99")
+                    div
+                        p.pd-modal__title Xác nhận đổi trạng thái
+                        p#modal-product-status-desc.pd-modal__desc
+                .pd-modal__body
+                    p Bạn có chắc muốn thay đổi trạng thái sản phẩm này?
+                .pd-modal__footer
+                    button.btn.btn-secondary(type="button" onclick="closeProductStatusModal()") Hủy bỏ
+                    button#modal-product-status-confirm.btn.btn-primary(type="button" onclick="confirmProductStatusChange()") Xác nhận
+
+    script(src="/admin/js/product.js")
+    script lucide.createIcons();

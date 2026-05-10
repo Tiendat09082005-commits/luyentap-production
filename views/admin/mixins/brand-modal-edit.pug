@@ -1,0 +1,85 @@
+mixin modalEditBrand(csrf)
+  #modal-edit-brand.bm-backdrop(
+    role="dialog" aria-modal="true"
+    aria-labelledby="modal-edit-title" aria-hidden="true"
+  )
+    .bm-dialog
+      .bm-header
+        .bm-header__icon
+          //- (icon tương tự)
+        .bm-header__text
+          h2#modal-edit-title.bm-title Chỉnh sửa thương hiệu
+          p.bm-subtitle Cập nhật thông tin thương hiệu.
+        button.bm-close(type="button" aria-label="Đóng" data-bem-close)
+
+      form#form-edit-brand.bm-form(
+        method="POST"
+        action=""              
+        enctype="multipart/form-data"
+        novalidate
+      )
+        input(type="hidden" name="_csrf" value=csrfToken)
+
+        .bm-body
+          p.bm-section-label Thông tin cơ bản
+
+          .bm-field
+            label.bm-label(for="bem-title-input")
+              | Tên thương hiệu
+              span.bm-required *
+            input#bem-title-input.bm-input(
+              type="text" name="title"
+              placeholder="Ví dụ: Apple, Samsung..."
+              autocomplete="off" required
+            )
+            span.bm-error(data-error="title") Vui lòng nhập tên thương hiệu.
+
+          .bm-field
+            label.bm-label(for="bem-desc-input") Mô tả
+            textarea#bem-desc-input.bm-textarea(
+              name="description" rows="3"
+              placeholder="Nhập mô tả ngắn (tuỳ chọn)..."
+            )
+
+          p.bm-section-label Logo & Trạng thái
+
+          .bm-field
+            label.bm-label Logo thương hiệu
+            .bm-upload-wrap
+              .bm-upload-preview#bem-logo-preview
+                .bm-upload-empty#bem-empty-state
+                  //- icon + "Chưa có logo"
+                img#bem-logo-img(src="" alt="Preview logo" style="display:none")
+                button.bm-remove-logo(
+                  type="button" id="bem-remove-logo"
+                  aria-label="Xóa ảnh" style="display:none"
+                )
+              .bm-upload-controls
+                p.bm-upload-controls-title Tải lên logo mới
+                label.bm-upload-btn(for="bem-logo-input")
+                  | Chọn ảnh
+                input#bem-logo-input(
+                  type="file" name="logo"
+                  accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                  style="display:none"
+                )
+                p.bm-hint PNG, JPG, WEBP hoặc SVG · Tối đa 2 MB
+
+          .bm-field
+            label.bm-label Trạng thái
+            .bm-radio-group
+              label.bm-radio-card(for="edit-status-active")
+                input#edit-status-active(type="radio" name="status" value="active")
+                span.bm-radio-indicator
+                .bm-radio-body
+                  span.bm-radio-title Hoạt động
+              label.bm-radio-card(for="edit-status-inactive")
+                input#edit-status-inactive(type="radio" name="status" value="inactive")
+                span.bm-radio-indicator
+                .bm-radio-body
+                  span.bm-radio-title Tạm ẩn
+
+        .bm-footer
+          button.bm-btn.bm-btn--ghost(type="button" data-bem-close) Hủy
+          button.bm-btn.bm-btn--primary(type="submit")
+            | Lưu thay đổi

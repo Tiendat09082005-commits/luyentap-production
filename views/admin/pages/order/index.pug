@@ -1,0 +1,191 @@
+extends ../../layouts/default.pug
+include ../../mixins/pagination.pug
+block css
+    link(rel="stylesheet", href="/admin/css/order.css")
+
+block main
+  .order-management
+    h1.page-title
+      i.fas.fa-shopping-cart
+      | Quản Lý Đơn Hàng
+
+    //- Bộ lọc và tìm kiếm
+    .filter-section
+      .filter-container
+        .filter-item
+          input.search-input(
+            type="text"
+            id="searchInputOrderAdmin"
+            name="keyword"
+            autocomplete="off"
+            placeholder="Tìm mã đơn hàng, tên khách hàng, SĐT..."
+          )
+          .suggest-box#suggestBox
+        
+        .filter-item
+          select.filter-select(id="filterStatus")
+            option(value="") Tất cả trạng thái
+            option(value="chờ xác nhận") Chờ xác nhận
+            option(value="đã xác nhận") Đã xác nhận
+            option(value="đang giao") Đang giao
+            option(value="đã giao") Đã giao
+            option(value="đã hủy") Đã hủy
+        
+        .filter-item
+          input.filter-date(type="date" id="filterDate")
+        
+        .filter-item
+          button.btn-search(type="button" id="btnSearchOrder")
+            i.fas.fa-search
+            | Tìm kiếm
+
+    //- Bảng danh sách đơn hàng
+    .order-table-wrapper
+      table.order-table
+        thead
+          tr
+            th STT
+            th Mã đơn hàng
+            th Khách hàng
+            th Sản phẩm
+            th Tổng tiền
+            th Trạng thái
+            th Ngày tạo
+            th Thao tác
+
+        tbody
+          if orders && orders.length > 0
+            each order, index in orders
+              tr(data-order-id=order._id)
+                td.text-center= index + 1
+                
+                td
+                  .order-code
+                    .code-main= order.orderCode
+
+                    if order.note
+                      i.fas.fa-sticky-note.note-icon(
+                        title=order.note
+                      )
+                
+                td
+                  .customer-info
+                    .customer-name= order.userInfo.fullName
+                    .customer-phone
+                      i.fas.fa-phone
+                      = order.userInfo.phone
+                
+                td
+                  .product-list
+                    if order.products && order.products.length > 0
+                      each product in order.products
+                        .product-item
+                          span.product-qty= `${product.quantity}x `
+                          span.product-badge= product.title
+                          if product.discountPercentage > 0
+                            span.discount-badge= `-${product.discountPercentage}%`
+                    else
+                      span.no-product Không có sản phẩm
+                
+                td.total-price= order.totalPrice.toLocaleString('vi-VN') + ' đ'
+                
+                td
+                  if(roles.permissions.includes("orders_edit"))
+                    .status-dropdown-wrapper
+                      - const statusClass = { 'chờ xác nhận': 'pending', 'đã xác nhận': 'confirmed', 'đang giao': 'shipping', 'đã giao': 'delivered', 'đã hủy': 'cancelled' }
+                      - const isFinalStatus = ['đã giao', 'đã hủy'].includes(order.status)
+                      button.status-badge.status-dropdown-btn(
+                        class=statusClass[order.status]
+                        class=isFinalStatus ? 'is-final' : ''
+                        type="button"
+                        data-order-id=order._id
+                      )
+                        span.status-text= order.status
+                        if !isFinalStatus
+                          i.fas.fa-chevron-down.dropdown-icon
+                      
+                      if !isFinalStatus
+                        ul.status-dropdown-menu
+                          if order.status === 'chờ xác nhận'
+                            li
+                              a.status-dropdown-item(href="#" data-status="đã xác nhận")
+                                span.status-dot.confirmed
+                                | Đã xác nhận
+                            li
+                              a.status-dropdown-item.danger(href="#" data-status="đã hủy")
+                                span.status-dot.cancelled
+                                | Đã hủy
+                          
+                          if order.status === 'đã xác nhận'
+                            li
+                              a.status-dropdown-item(href="#" data-status="đang giao")
+                                span.status-dot.shipping
+                                | Đang giao
+                            li
+                              a.status-dropdown-item.danger(href="#" data-status="đã hủy")
+                                span.status-dot.cancelled
+                                | Đã hủy
+
+                          if order.status === 'đang giao'
+                            li
+                              a.status-dropdown-item(href="#" data-status="đã giao")
+                                span.status-dot.delivered
+                                | Đã giao
+                            li
+                              a.status-dropdown-item.danger(href="#" data-status="đã hủy")
+                                span.status-dot.cancelled
+                                | Đã hủy
+                  else
+                    - const statusClass = { 'chờ xác nhận': 'pending', 'đã xác nhận': 'confirmed', 'đang giao': 'shipping', 'đã giao': 'delivered', 'đã hủy': 'cancelled' }
+                    span.status-badge(class=statusClass[order.status])= order.status
+                
+                td
+                  .order-date
+                    .date-text= new Date(order.createdAt).toLocaleDateString('vi-VN')
+                    .time-text= new Date(order.createdAt).toLocaleTimeString('vi-VN')
+                
+                td
+                  .action-buttons
+                    if(roles.permissions.includes("orders_view"))
+                      button.btn-action.btn-view(
+                        type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#detailModal"
+                        id="detailOrderAdmin"
+                        data-id = order._id
+                        title="Xem chi tiết"
+                      )
+                        i.fas.fa-eye
+                    
+                    if(roles.permissions.includes("orders_delete"))
+                      button.btn-action.btn-delete(
+                        type="button"
+                        data-id = order._id
+                        title="Xóa"
+                        class="buttonDeleteOrder"
+                      )
+                        i.fas.fa-trash
+          else
+            tr
+              td.no-data(colspan="8")
+                i.fas.fa-inbox
+                p Không có đơn hàng nào
+
+    //- Phân trang
+    +pagination(pagination)
+
+    //- Modal chi tiết đơn hàng
+    #detailModal.modal.fade(tabindex="-1")
+      .modal-dialog.modal-lg
+        .modal-content
+          .modal-header
+            h5.modal-title Chi Tiết Đơn Hàng
+            button.btn-close(type="button" data-bs-dismiss="modal")
+          .modal-body
+            #orderDetailContent
+              .text-center.py-5
+                .spinner-border(role="status")
+                span.ms-2 Đang tải...
+          .modal-footer
+            button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Đóng
+

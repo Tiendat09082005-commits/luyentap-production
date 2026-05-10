@@ -1,0 +1,109 @@
+mixin modalThemDanhMuc()
+  .modal-overlay(id='modal-them-danh-muc' aria-hidden='true')
+    .dm-modal
+      .dm-modal__header
+        h2.dm-modal__title Thêm mới danh mục
+        button.dm-modal__close(type='button' id='btn-close-modal' aria-label='Đóng')
+          svg(xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+            line(x1='18' y1='6' x2='6' y2='18')
+            line(x1='6' y1='6' x2='18' y2='18')
+
+      .dm-modal__body
+        input(type='hidden' id='input-category-id' name='id' value='')
+        input(type='hidden' id='input-icon' name='icon' value=(defaultCategoryIcon || "smartphone"))
+        input(type='hidden' id='input-thumbnail-existing' name='thumbnailExisting' value='')
+
+        .form-group
+          label.form-label Tên danh mục
+          input.form-input.form-input--active(
+            type='text'
+            placeholder='Nhập tên danh mục'
+            id='input-ten-danh-muc'
+            name='title'
+            autocomplete='off'
+          )
+
+        .form-group
+          label.form-label Slug
+          input.form-input(
+            type='text'
+            placeholder='slug-danh-muc'
+            id='input-slug'
+            name='slug'
+          )
+
+        .form-group
+          label.form-label#category-media-label Icon
+          p.form-help#category-media-help Danh mục cấp 1 dùng icon. Danh mục cấp 2-3 sẽ dùng ảnh.
+          .form-media-mode#category-media-mode
+            .form-media-mode__item#icon-picker-section
+              .icon-dropdown
+                button.icon-dropdown__trigger(
+                  type='button'
+                  id='btn-toggle-icon-dropdown'
+                  aria-expanded='false'
+                )
+                  span.icon-dropdown__trigger-preview#selected-icon-preview
+                    i(data-lucide=(defaultCategoryIcon || "smartphone") aria-hidden="true")
+                  span.icon-dropdown__trigger-label#selected-icon-label Chọn icon
+                  span.icon-dropdown__trigger-chevron
+                    i(data-lucide='chevrons-up-down' aria-hidden="true")
+                .icon-dropdown__panel#icon-dropdown-panel(hidden)
+                  input.form-input(
+                    type='text'
+                    id='input-icon-search'
+                    placeholder='Tìm icon theo tên...'
+                    autocomplete='off'
+                  )
+                  .icon-picker-toolbar
+                    span.icon-picker__meta#icon-picker-meta Đang tải icon...
+                  .icon-picker-list#icon-picker-list
+                    .icon-picker#icon-picker-grid
+            .form-media-mode__item#thumbnail-upload-section(hidden)
+              .category-thumb-upload(upload-image)
+                input(
+                  type='file'
+                  id='input-thumbnail'
+                  name='thumbnail'
+                  accept='image/*'
+                  hidden
+                  upload-image-input
+                )
+                .category-thumb-upload__body
+                  .category-thumb-upload__preview
+                    img(
+                      id='thumbnail-preview'
+                      src=''
+                      alt='Preview'
+                      style='display: none;'
+                      upload-image-preview
+                    )
+                    span.category-thumb-upload__placeholder#thumbnail-placeholder Chưa chọn ảnh
+                  .category-thumb-upload__actions
+                    button.btn.btn--ghost(type='button' id='btn-choose-thumbnail') Chọn ảnh
+                    button.btn.btn--ghost(type='button' id='btn-remove-thumbnail' style='display: none;' upload-image-remove) Xóa ảnh
+
+        .form-group
+          label.form-label Danh mục cha
+          .form-select-wrap
+            select.form-select(id='select-parent' name='parent_id')
+              option(value='') Không có (Danh mục gốc)
+              if records && records.length
+                +selectTree(records, 1)
+
+        .form-group.form-group--inline
+          label.form-label Trạng thái hoạt động
+          label.toggle
+            input.toggle__input(
+              type='checkbox'
+              id='toggle-hoat-dong'
+              name='status'
+              value='active'
+              checked
+            )
+            span.toggle__track.toggle__track--on
+              span.toggle__thumb
+
+      .dm-modal__footer
+        button.btn.btn--ghost(type='button' id='btn-huy-modal') Hủy
+        button.btn.btn--primary(type='button' id='btn-submit-modal') Thêm danh mục

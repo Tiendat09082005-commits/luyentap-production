@@ -1,0 +1,85 @@
+include ../../mixins/category-icon.pug
+
+mixin nav-categories(categories)
+  -
+    var priceSegments = [
+      { label: 'Dưới 5 triệu', minPrice: '', maxPrice: 5000000 },
+      { label: '5 - 10 triệu', minPrice: 5000000, maxPrice: 10000000 },
+      { label: '10 - 20 triệu', minPrice: 10000000, maxPrice: 20000000 },
+      { label: 'Trên 20 triệu', minPrice: 20000000, maxPrice: '' }
+    ]
+    var defaultCategories = [
+      {
+        title: 'Dien thoai',
+        href: '/products?category=dien-thoai',
+        icon: 'smartphone',
+        brandGroups: [
+          {
+            title: 'Smartphone',
+            href: '/products?category=smartphone',
+            items: [
+              { title: 'iPhone', href: '/products?category=iphone' },
+              { title: 'Samsung', href: '/products?category=samsung' },
+              { title: 'Xiaomi', href: '/products?category=xiaomi' },
+              { title: 'OPPO', href: '/products?category=oppo' }
+            ]
+          }
+        ],
+        hotProducts: [
+          { title: 'iPhone 15 Pro Max', href: '/products', thumbnail: '/images/no-image.jpg', priceNew: 27990000, price: 29990000 }
+        ]
+      }
+    ]
+    var menuCategories = ((categories && categories.length) ? categories : defaultCategories)
+
+  nav.header-nav
+    .container
+      ul.nav-list
+        each cat in menuCategories
+          -
+            var categoryHref = cat.href || `/products?category=${cat.slug}`
+          li.nav-item
+            a.nav-link(href=categoryHref)
+              +categoryIcon(cat.icon, "nav-category__icon")
+              span.nav-category__label #{cat.title || cat.name}
+              span.nav-category__caret
+                i.fa-solid.fa-angle-down
+
+            .mega-menu
+              .mega-menu__inner
+                .mega-menu__brands
+                  .mega-menu__heading Brand nổi bật
+                  if cat.brandGroups && cat.brandGroups.length
+                    each group in cat.brandGroups
+                      .mega-menu__group
+                        .mega-menu__group-title
+                          a(href=(group.href || `/products?category=${group.slug}`))= group.title
+                        .mega-menu__brand-grid
+                          each brand in group.items
+                            a.mega-menu__brand-card(href=(brand.href || `/products?category=${brand.slug}`))
+                              if brand.logo
+                                img.mega-menu__brand-logo(src=brand.logo alt=brand.title loading="lazy")
+                              else
+                                span.mega-menu__brand-name= brand.title
+                  else
+                    .mega-menu__empty Thương hiệu trong danh mục này đang được cập nhật.
+
+                  .mega-menu__price-segment
+                    .mega-menu__heading Phân Khúc Giá
+                    .mega-menu__price-grid
+                      each segment in priceSegments
+                        -
+                          var priceHref = `${categoryHref}${categoryHref.indexOf('?') !== -1 ? '&' : '?'}${segment.minPrice ? `minPrice=${segment.minPrice}&` : ''}${segment.maxPrice ? `maxPrice=${segment.maxPrice}` : ''}`
+                          priceHref = priceHref.replace(/[?&]$/, '')
+                        a.mega-menu__price-chip(href=priceHref)= segment.label
+
+                .mega-menu__hot
+                  .mega-menu__heading Sản Phẩm Hot
+                  if cat.hotProducts && cat.hotProducts.length
+                    .mega-menu__hot-list
+                      each product, index in cat.hotProducts
+                        a.mega-menu__product-title-link(href=(product.href || `/products/detail/${product._id}`))
+                          span.mega-menu__product-index #{index + 1}.
+                          span.mega-menu__product-title-text= product.title
+                  else
+                    .mega-menu__empty Chưa có sản phẩm mới trong danh mục này.

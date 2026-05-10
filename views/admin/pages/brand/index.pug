@@ -1,0 +1,260 @@
+extends ../../layouts/default.pug
+include ../../mixins/pagination.pug
+include ../../mixins/alert.pug
+include ../../mixins/brand-modal-add.pug
+include ../../mixins/brand-modal-edit.pug
+
+block css
+  link(rel="stylesheet", href="/admin/css/brand.css")
+  link(rel="stylesheet", href="/admin/css/brand-modal-add.css")
+
+block main
+  .brand-page
+    .page-header
+      .page-header__left
+        h1 Quản lý thương hiệu
+        p Danh sách tất cả thương hiệu trong hệ thống
+
+      .page-header__right
+        if(roles.permissions.includes("brands_create"))
+          button.btn.btn-primary(
+            type="button"
+            data-open-add-brand
+            aria-haspopup="dialog"
+            aria-controls="modal-add-brand"
+          )
+            svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor")
+              path(stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15")
+            | Thêm thương hiệu
+
+    form.filter-bar(method="GET" action=`${prefixAdmin}/brands`)
+      .search-box
+        svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor")
+          path(stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.65 16.65 7.5 7.5 0 0016.65 16.65z")
+        input(
+          type="text"
+          name="keyword"
+          placeholder="Tìm kiếm tên thương hiệu, slug..."
+          value=keyword || ''
+        )
+
+      select.filter-select(name="status" onchange="this.form.submit()")
+        option(value="" selected=(status === '' || !status)) Tất cả trạng thái
+        option(value="active" selected=(status === 'active')) Đang hoạt động
+        option(value="inactive" selected=(status === 'inactive')) Ngừng hoạt động
+
+      button.btn.btn-secondary(type="submit") Lọc
+
+    .card
+      .table-wrapper
+        if brands && brands.length > 0
+          table.brand-table
+            thead
+              tr
+                th STT
+                th Logo
+                th Tên thương hiệu
+                th Slug
+                th Mô tả
+                th Trạng thái
+                th Ngày tạo
+                th Hành động
+
+            tbody
+              each brand, index in brands
+                tr(data-id=brand._id)
+                  td= ((+currentPage || 1) - 1) * (+pageSize || 10) + index + 1
+
+                  td
+                    if brand.logo
+                      img.brand-logo-thumb(src=brand.logo alt=brand.title)
+                    else
+                      .brand-logo-placeholder
+                        svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
+                          path(stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 21h18M3.75 3h16.5M21 21V7.5a.75.75 0 00-.75-.75H3.75a.75.75 0 00-.75.75V21")
+
+                  td
+                    span.brand-name= brand.title
+
+                  td
+                    code.brand-slug= brand.slug
+
+                  td
+                    span.brand-desc(title=brand.description)= brand.description || '—'
+
+                  td
+                    if(roles.permissions.includes("brands_edit"))
+                      button(
+                        class=`badge ${brand.status === 'active' ? 'badge-active' : 'badge-inactive'}`
+                        title="Click để đổi nhanh trạng thái"
+                        button-change-status
+                        data-id=brand._id
+                        data-status=brand.status
+                      ) #{brand.status === 'active' ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+                    else
+                      span(class=`badge ${brand.status === 'active' ? 'badge-active' : 'badge-inactive'}`) #{brand.status === 'active' ? 'Đang hoạt động' : 'Ngừng hoạt động'}
+
+                  td
+                    span.brand-date= brand.createdAt ? new Date(brand.createdAt).toLocaleDateString('vi-VN') : '—'
+
+                  td
+                    .action-group
+                      if(roles.permissions.includes("brands_view"))
+                        a.action-btn.view(href=`/admin/brands/detail/${brand._id}` title="Xem chi tiết")
+                          svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor")
+                            path(stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z")
+                            path(stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z")
+
+                      if(roles.permissions.includes("brands_edit"))
+                        button.action-btn.edit(
+                          type="button"
+                          title="Chỉnh sửa"
+                          data-id=brand._id
+                          data-title=brand.title
+                          data-description=brand.description || ''
+                          data-logo=brand.logo || ''
+                          data-status=brand.status
+                          onclick="openEditModal(this)"
+                        )
+                          svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor")
+                            path(stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125")
+
+                        button.action-btn.toggle(
+                          type="button"
+                          title="Đổi trạng thái"
+                          button-change-status
+                          data-id=brand._id
+                          data-status=brand.status
+                        )
+                          svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor")
+                            path(stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99")
+
+                      if(roles.permissions.includes("brands_delete"))
+                        button.action-btn.delete(
+                          type="button"
+                          title="Xóa"
+                          data-id=brand._id
+                          data-name=brand.title
+                          data-logo=brand.logo
+                          onclick="openDeleteModal(this)"
+                        )
+                          svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor")
+                            path(stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0")
+        else
+          .empty-state
+            .empty-state__icon
+              svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
+                path(stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z")
+            h3 Chưa có thương hiệu nào
+            p Bắt đầu bằng cách thêm thương hiệu đầu tiên của bạn.
+            button.btn.btn-primary(type="button" data-open-add-brand)
+              svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor")
+                path(stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15")
+              | Thêm thương hiệu
+
+      if totalPages > 1
+        .pagination-bar
+          span.pagination-info Trang #{currentPage} / #{totalPages}
+          nav.pagination-nav
+            a.page-btn(href=`?page=${currentPage - 1}` class=(currentPage <= 1 ? 'disabled' : ''))
+              svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor")
+                path(stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5")
+            - for (let p = 1; p <= totalPages; p++)
+              if p === 1 || p === totalPages || (p >= currentPage - 1 && p <= currentPage + 1)
+                a.page-btn(href=`?page=${p}` class=(p === currentPage ? 'active' : ''))= p
+              else if p === currentPage - 2 || p === currentPage + 2
+                span.page-btn …
+            a.page-btn(href=`?page=${currentPage + 1}` class=(currentPage >= totalPages ? 'disabled' : ''))
+              svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor")
+                path(stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5")
+
+  +modalAddBrand(csrfToken)
+  +modalEditBrand(csrfToken)
+
+  form(
+    id="form-change-status"
+    method="POST"
+    action=""
+    data-path=`${prefixAdmin}/brands/change-status`
+  )
+    input(type="hidden" name="_csrf" value=csrfToken)
+
+  form(
+    id="form-delete-item"
+    method="POST"
+    action=""
+    data-path=`${prefixAdmin}/brands/delete`
+  )
+    input(type="hidden" name="_csrf" value=csrfToken)
+
+  #modal-delete.custom-modal-backdrop(style="display:none")
+    .custom-modal
+      .custom-modal__header
+        .custom-modal__icon.danger
+          svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.11 0 00-7.5 0")
+        div
+          p.custom-modal__title Xác nhận xóa thương hiệu
+          p.custom-modal__desc Hành động này sẽ ẩn thương hiệu khỏi hệ thống. Bạn có thể khôi phục sau.
+      .custom-modal__body
+        .custom-modal__brand-preview
+          img#modal-delete-logo(src="" alt="" style="display:none")
+          span#modal-delete-name.custom-modal__brand-name
+      .custom-modal__footer
+        button.btn.btn-secondary(type="button" onclick="closeDeleteModal()") Hủy bỏ
+        button#modal-delete-confirm.btn.btn-danger(type="button" onclick="confirmDelete()") Xóa thương hiệu
+
+block script
+  script(src="/admin/js/brand.js" defer)
+  script(src="/admin/js/brand-modal-add.js" defer)
+  script(src="/admin/js/brand-modal-edit.js" defer)
+  script.
+    let deleteId = null;
+    const deleteModal = document.getElementById('modal-delete');
+    const deleteForm = document.getElementById('form-delete-item');
+
+    function openDeleteModal(btn) {
+      deleteId = btn.dataset.id;
+
+      const nameElem = document.getElementById('modal-delete-name');
+      const logoElem = document.getElementById('modal-delete-logo');
+
+      if (nameElem) nameElem.textContent = btn.dataset.name || 'Thương hiệu';
+
+      if (logoElem) {
+        if (btn.dataset.logo) {
+          logoElem.src = btn.dataset.logo;
+          logoElem.style.display = 'block';
+        } else {
+          logoElem.style.display = 'none';
+        }
+      }
+
+      if (deleteModal) {
+        deleteModal.style.display = 'flex';
+      }
+    }
+
+    function closeDeleteModal() {
+      if (deleteModal) deleteModal.style.display = 'none';
+      deleteId = null;
+    }
+
+    function confirmDelete() {
+      if (!deleteId || !deleteForm) {
+        return;
+      }
+      const path = deleteForm.dataset.path;
+      deleteForm.action = `${path}/${deleteId}?_method=DELETE`;
+      deleteForm.submit();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDeleteModal();
+    });
+
+    if (deleteModal) {
+      deleteModal.addEventListener('click', (e) => {
+        if (e.target === deleteModal) closeDeleteModal();
+      });
+    }

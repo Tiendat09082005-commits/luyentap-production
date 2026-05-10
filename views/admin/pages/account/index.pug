@@ -1,0 +1,114 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/button-delete.pug
+include ../../mixins/pagination.pug
+
+block css
+  link(rel="stylesheet", href="/admin/css/accountAdmin.css")
+
+block main
+  if roles.permissions.includes("account_view")
+    .account-management
+      h1.page-title
+        i.fas.fa-user-shield
+        | Quản Lý Tài Khoản
+
+      +alert-success(3000)
+      +alert-unsuccess(3000)
+
+      //- Toolbar thêm mới
+      if roles.permissions.includes("account_create")
+        .toolbar
+          a.btn-add(href=`${prefixAdmin}/accounts/create`)
+            i.fas.fa-plus
+            | Thêm mới
+
+      //- Bảng danh sách
+      .account-table-wrapper
+        table.account-table(checkbox-multi)
+          thead
+            tr
+              th STT
+              th Avatar
+              th Họ tên
+              th Phân quyền
+              th Email
+              th Trạng thái
+              th Hành động
+
+          tbody
+            if records && records.length > 0
+              each item, index in records
+                tr
+                  td= index + 1
+
+                  td
+                    img.account-avatar(
+                      src=item.avatar
+                      alt=item.fullName
+                    )
+
+                  td
+                    .account-name= item.fullName
+
+                  td
+                    span.role-badge= item.role_id && item.role_id.title ? item.role_id.title.toUpperCase() : "NO ROLE"
+
+                  td
+                    .account-email
+                      i.fas.fa-envelope
+                      = item.email
+
+                  td
+                    if roles.permissions.includes("account_edit")
+                      if item.status == "active"
+                        a.status-badge.active(
+                          href="javascript:;"
+                          button-change-status
+                          data-status="active"
+                          data-id=item._id
+                        )
+                          i.fas.fa-check-circle
+                          | Hoạt động
+                      else
+                        a.status-badge.inactive(
+                          href="javascript:;"
+                          button-change-status
+                          data-status="inactive"
+                          data-id=item._id
+                        )
+                          i.fas.fa-ban
+                          | Dừng hoạt động
+
+                  td
+                    .action-buttons
+                      if roles.permissions.includes("account_view")
+                        a.btn-action.btn-detail(
+                          href=`${prefixAdmin}/accounts/detail/${item._id}`
+                          title="Chi tiết"
+                        )
+                          i.fas.fa-eye
+                          | Chi tiết
+
+                      if roles.permissions.includes("account_edit")
+                        a.btn-action.btn-edit(
+                          href=`${prefixAdmin}/accounts/edit/${item._id}`
+                          title="Sửa"
+                        )
+                          i.fas.fa-pen
+                          | Sửa
+
+                      if roles.permissions.includes("account_delete")
+                        +button-delete(item, "accounts")
+
+            else
+              tr
+                td.no-data(colspan="7")
+                  i.fas.fa-user-slash
+                  p Không có tài khoản nào
+
+      if records && records.length > 0
+        .pagination-wrapper
+          +pagination(pagination)
+
+  script(src="/admin/js/product.js")

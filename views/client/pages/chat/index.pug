@@ -1,0 +1,40 @@
+extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+
+block css
+  link(rel="stylesheet", href="/client/css/chat.css")
+
+block main
+  .container.my-5
+    .row.justify-content-center
+      .col-md-8.col-lg-6
+        .chat-app-container.support-chat
+          //- Khu vực Chat (Main Panel)
+          .chat-main#chatMain(style="display: none;")
+            .chat-header.bg-primary.text-white.p-3.rounded-top
+              .chat-header-info.d-flex.align-items-center
+                .chat-avatar-wrapper.me-3
+                  .chat-avatar.bg-light.text-primary.rounded-circle.d-flex.align-items-center.justify-content-center(style="width:40px;height:40px;font-weight:bold") S
+                .chat-title
+                  h5.mb-0 Hỗ trợ Khách hàng
+                  small.status-text Thường trả lời trong vài phút
+                  
+            .chat-body.p-3.bg-light(style="height: 400px; overflow-y: auto;")
+              .inner-body#chatHistory
+                //- Tin nhắn sẽ được load qua JS
+
+            .chat-footer.bg-white.p-3.border-top.rounded-bottom
+              form.inner-form#chatForm.d-flex.align-items-center
+                input#chatInput.form-control.rounded-pill.me-2(type="text", placeholder="Nhập tin nhắn...", autocomplete="off")
+                button.btn.btn-primary.rounded-circle.btn-send(type="submit", style="width:40px;height:40px")
+                  i.fas.fa-paper-plane
+                  
+          //- Quick Replies outside if needed
+          .mt-3.text-center#quickReplies
+            h6 Câu hỏi thường gặp:
+            button.btn.btn-outline-secondary.btn-sm.rounded-pill.m-1.btn-quick-reply(data-text="Bao lâu thì tôi nhận được hàng?") Giao hàng bao lâu?
+            button.btn.btn-outline-secondary.btn-sm.rounded-pill.m-1.btn-quick-reply(data-text="Chính sách đổi trả như thế nào?") Đổi trả thế nào?
+            button.btn.btn-outline-secondary.btn-sm.rounded-pill.m-1.btn-quick-reply(data-text="Tôi muốn kiểm tra tình trạng đơn hàng") Kiểm tra đơn hàng
+
+block script
+  script(src="/client/js/chat.js")

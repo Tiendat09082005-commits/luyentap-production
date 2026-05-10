@@ -1,0 +1,117 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+    h1(class="mb-4") Thêm mới tài khoản
+  
+    form(
+        action=`${prefixAdmin}/accounts/create`,
+        id="form-create-accounts",
+        method="POST",
+        enctype="multipart/form-data",
+        autocomplete="off"
+    )
+        input(type="hidden" name="_csrf" value=csrfToken)
+        // fullName
+        div(class="form-group")
+            label(for="fullName") Họ và tên *
+            input(
+                type="text",
+                class="form-control",
+                id="fullName",
+                name="fullName",
+                required,
+                autocomplete="off"
+            )
+        // email
+        div(class="form-group")
+            label(for="email") Email *
+            input(
+                type="email",
+                class="form-control",
+                id="email",
+                name="email",
+                required,
+                autocomplete="off"
+            )
+        // password
+        div(class="form-group")
+            label(for="password") Mật Khẩu *
+            input(
+                type="password",
+                class="form-control",
+                id="password",
+                name="password",
+                required
+            )
+        // số điện thoại
+        div(class="form-group")
+            label(for="phone") Số điện thoại
+            input(
+                type="number",
+                class="form-control",
+                id="phone",
+                name="phone",
+            )
+        // Avatar (Thumbnail)
+        div(
+            class="form-group"
+            upload-image
+        )
+            label(for="avatar") Avatar
+            input(
+                type="file",
+                class="form-control-file",
+                id="avatar",
+                name="avatar"
+                accept="image/*"
+                upload-image-input
+            )
+            .preview-wrapper(style="position: relative; display: inline-block; margin-top: 10px;")
+                img.image-preview(
+                    src=""
+                    upload-image-preview
+                    style="max-width: 200px; display: none; border-radius: 8px;"
+                )
+                button.remove-preview-btn(
+                    type="button"
+                    upload-image-remove
+                    style="display:none; position:absolute; top:4px; right:4px; border:none; background:rgba(0,0,0,0.6); color:white; border-radius:50%; width:22px; height:22px; cursor:pointer;"
+                ) ✖
+        //- Phân quyền 
+        div(class="form-group")
+            label(for="role_id") Phân quyền
+            select(name="role_id" id="role_id" class="form-control")
+                option(disabled) -- Chọn --
+                each item  in roles
+                    option(value=item._id) #{item.title}  
+        div(class="form-group form-check form-check-inline")
+            input(
+                type="radio"
+                class="form-check-input"
+                id="statusActive"
+                name="status"
+                value="active"
+                checked
+            )
+            label(for="statusActive" class="form-check-label") Hoạt động
+            .form-group.form-check.form-check-inline
+            input(
+                type="radio",
+                class="form-check-input",
+                id="statusInActive",
+                name="status",
+                value="inactive"
+            )
+            label(for="statusInActive" class="form-check-label") Dừng hoạt động
+
+        // Nút gửi (Submit button)
+        div(class="form-group")
+            button(
+                type="submit",
+                class="btn btn-primary"
+            ) Tạo mới
+
+    script(src="/admin/js/product.js")
+    //- link(rel="stylesheet", href="/admin/css/create.css")
+    

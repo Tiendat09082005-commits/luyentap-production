@@ -1,0 +1,356 @@
+extends ../../layouts/default.pug
+
+block css
+    link(rel="stylesheet", href="/admin/css/pages/products/product-detail.css")
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700&display=swap")
+
+block main
+    //- Guard: nếu không có product thì báo lỗi sớm
+    if !product
+        .pd-wrapper
+            .pd-error Không tìm thấy sản phẩm.
+    else
+        .pd-wrapper
+            //- ── HEADER ──────────────────────────────────────────────
+            .pd-header
+                .pd-header__left
+                    a.pd-back(href="/admin/products")
+                        svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7")
+                        span Quay lại
+                    .pd-breadcrumb
+                        span Sản phẩm
+                        svg(xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7")
+                        span Chi tiết
+                .pd-header__right
+                    //- status có thể không phải 'active'/'inactive' → fallback về 'inactive'
+                    - const safeStatus = (product.status === 'active' || product.status === 'inactive') ? product.status : 'inactive'
+                    .pd-status-badge(class=`status-${safeStatus}`)
+                        .pd-status-dot
+                        span= safeStatus === 'active' ? 'Đang bán' : 'Ngừng bán'
+                    //- Chỉ hiện nút Edit nếu có _id
+                    if product._id
+                        a.pd-btn.pd-btn--secondary(href=`/admin/products/edit/${product._id}`)
+                            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                                path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z")
+                            span Chỉnh sửa
+
+            //- ── TITLE ROW ───────────────────────────────────────────
+            .pd-title-row
+                h1.pd-title= product.title || '(Chưa có tên)'
+                .pd-meta
+                    if product.slug
+                        .pd-meta-item
+                            svg(xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                                path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z")
+                            span Slug:&nbsp;
+                            code= product.slug
+                    if product.createdAt
+                        .pd-meta-item
+                            svg(xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                                path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z")
+                            span Tạo lúc:&nbsp;
+                            strong= new Date(product.createdAt).toLocaleString('vi-VN')
+
+            //- ── MAIN GRID ───────────────────────────────────────────
+            .pd-grid
+                //- ── LEFT COLUMN ─────────────────────────────────────
+                .pd-col-left
+
+                    //- Gallery
+                    .pd-card.pd-gallery-card
+                        .pd-card__label Hình ảnh sản phẩm
+                        .pd-gallery
+                            .pd-gallery__main
+                                //- Lấy danh sách ảnh biến thể độc nhất (không trùng nhau)
+                                - const vThumbs = variants ? variants.map(v => v.thumbnail).filter((t, index, self) => t && self.indexOf(t) === index) : []
+                                - const hasImages = Array.isArray(product.images) && product.images.length > 0
+                                - const hasVThumbs = vThumbs.length > 0
+                                //- Nếu không có thumbnail chính, fallback sang ảnh đầu tiên của thư viện / biến thể
+                                - const mainSrc = product.thumbnail || (hasImages ? product.images[0] : (hasVThumbs ? vThumbs[0] : null))
+
+                                if mainSrc
+                                    img#mainImg.pd-gallery__main-img(src=mainSrc alt=product.title || 'Ảnh sản phẩm')
+                                else
+                                    .pd-gallery__placeholder
+                                        svg(xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z")
+                                        span Chưa có ảnh
+
+                            if hasImages || product.thumbnail || hasVThumbs
+                                .pd-gallery__thumbs
+                                    //- Thumbnail chính luôn đứng đầu
+                                    if product.thumbnail
+                                        img.pd-gallery__thumb(class=(product.thumbnail === mainSrc ? 'active' : ''))(
+                                            src=product.thumbnail
+                                            alt="Ảnh chính"
+                                            onclick="switchImg(this)"
+                                        )
+                                    //- Render ảnh chung của sản phẩm
+                                    if hasImages
+                                        each imgSrc, imgIdx in product.images
+                                            if imgSrc && imgSrc !== product.thumbnail
+                                                img.pd-gallery__thumb(class=(imgSrc === mainSrc ? 'active' : ''))(
+                                                    src=imgSrc
+                                                    alt=`Ảnh chung ${imgIdx + 1}`
+                                                    onclick="switchImg(this)"
+                                                )
+                                    //- Render ảnh của các biến thể
+                                    if hasVThumbs
+                                        each vSrc, vIdx in vThumbs
+                                            if vSrc && vSrc !== product.thumbnail && (!hasImages || !product.images.includes(vSrc))
+                                                img.pd-gallery__thumb(class=(vSrc === mainSrc ? 'active' : ''))(
+                                                    src=vSrc
+                                                    alt=`Ảnh biến thể ${vIdx + 1}`
+                                                    onclick="switchImg(this)"
+                                                )
+
+
+
+                //- ── RIGHT COLUMN ────────────────────────────────────
+                .pd-col-right
+
+                    //- Thông tin cơ bản
+                    .pd-card
+                        .pd-card__label Thông tin cơ bản
+                        .pd-info-grid
+
+                            //- Danh mục
+                            .pd-info-item
+                                span.pd-info-item__key Danh mục
+                                span.pd-info-item__val
+                                    if product.category_id && product.category_id.title
+                                        = product.category_id.title
+                                    else if product.category_id
+                                        = product.category_id.toString()
+                                    else
+                                        span.pd-muted —
+
+                            //- Thương hiệu
+                            .pd-info-item
+                                span.pd-info-item__key Thương hiệu
+                                span.pd-info-item__val
+                                    if product.brand_id && product.brand_id.title
+                                        = product.brand_id.title
+                                    else if product.brand_id
+                                        = product.brand_id.toString()
+                                    else
+                                        span.pd-muted —
+
+                            //- Rating: đảm bảo là số hợp lệ trước khi gọi toFixed / Math.round
+                            .pd-info-item
+                                span.pd-info-item__key Đánh giá
+                                span.pd-info-item__val
+                                    - const rating = (typeof product.rating === 'number' && !isNaN(product.rating)) ? product.rating : 0
+                                    .pd-rating
+                                        each i in [1,2,3,4,5]
+                                            svg.pd-star(
+                                                class=i <= Math.round(rating) ? 'filled' : ''
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="14" height="14"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                            )
+                                                path(d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z")
+                                        span.pd-rating-num= rating.toFixed(1)
+
+                            //- Vị trí
+                            .pd-info-item
+                                span.pd-info-item__key Vị trí
+                                span.pd-info-item__val
+                                    if product.position != null
+                                        = product.position
+                                    else
+                                        span.pd-muted —
+
+                            //- Ngày tạo
+                            .pd-info-item
+                                span.pd-info-item__key Ngày tạo
+                                span.pd-info-item__val
+                                    if product.createdAt
+                                        = new Date(product.createdAt).toLocaleDateString('vi-VN')
+                                    else
+                                        span.pd-muted —
+
+                            //- Ngày cập nhật
+                            .pd-info-item
+                                span.pd-info-item__key Cập nhật
+                                span.pd-info-item__val
+                                    if product.updatedAt
+                                        = new Date(product.updatedAt).toLocaleDateString('vi-VN')
+                                    else
+                                        span.pd-muted —
+
+                    //- Thuộc tính sản phẩm
+                    - const hasAttributes = Array.isArray(product.attributes) && product.attributes.length > 0
+                    if hasAttributes
+                        .pd-card
+                            .pd-card__label Thuộc tính sản phẩm
+                            .pd-attrs
+                                each attr in product.attributes
+                                    //- Bỏ qua attr bị null/undefined
+                                    if attr
+                                        .pd-attr-row
+                                            .pd-attr-row__header
+                                                span.pd-attr-name= attr.name || '(Chưa đặt tên)'
+                                                .pd-attr-badges
+                                                    if attr.useForVariant
+                                                        .pd-badge.pd-badge--blue Biến thể
+                                                    if attr.affectsImage
+                                                        .pd-badge.pd-badge--purple Ảnh
+                                            .pd-attr-values
+                                                - const attrVals = Array.isArray(attr.selectedValues) ? attr.selectedValues : []
+                                                if attrVals.length > 0
+                                                    each val in attrVals
+                                                        if val
+                                                            span.pd-tag= val
+                                                else
+                                                    span.pd-muted (Chưa có giá trị)
+
+                    //- Cấu hình giá (priceConfig là Map hoặc plain object)
+                    - const hasPriceConfig = product.priceConfig && (typeof product.priceConfig.size === 'number' ? product.priceConfig.size > 0 : Object.keys(product.priceConfig).length > 0)
+                    if hasPriceConfig
+                        .pd-card
+                            .pd-card__label Cấu hình giá
+                            .pd-price-table
+                                table
+                                    thead
+                                        tr
+                                            th Biến thể
+                                            th Giá gốc
+                                            th Giảm giá
+                                            th Giá cuối
+                                    tbody
+                                        each val, key in product.priceConfig
+                                            if val
+                                                - const pcPrice    = (val.price != null && !isNaN(val.price)) ? Number(val.price) : null
+                                                - const pcDiscount = (val.discount != null && !isNaN(val.discount)) ? Number(val.discount) : null
+                                                tr
+                                                    td.pd-variant-key= key || '—'
+                                                    td= pcPrice != null ? pcPrice.toLocaleString('vi-VN') + ' ₫' : '—'
+                                                    td
+                                                        if pcDiscount != null && pcDiscount > 0
+                                                            span.pd-discount= pcDiscount + '%'
+                                                        else
+                                                            | —
+                                                    td.pd-final-price
+                                                        if pcPrice != null && pcDiscount != null && pcDiscount > 0
+                                                            = Math.round(pcPrice * (1 - pcDiscount / 100)).toLocaleString('vi-VN') + ' ₫'
+                                                        else if pcPrice != null
+                                                            = pcPrice.toLocaleString('vi-VN') + ' ₫'
+                                                        else
+                                                            | —
+
+            //- ── VARIANTS TABLE ──────────────────────────────────────
+            - const hasVariants = Array.isArray(variants) && variants.length > 0
+            if hasVariants
+                .pd-card.pd-card--fullwidth
+                    .pd-card__header
+                        .pd-card__label Danh sách biến thể
+                        span.pd-count= variants.length + ' biến thể'
+                    .pd-variants-table
+                        table
+                            thead
+                                tr
+                                    th STT
+                                    th Ảnh
+                                    th SKU
+                                    th Thuộc tính
+                                    th Giá
+                                    th Giảm (%)
+                                    th Tồn kho
+                                    th Trạng thái
+                            tbody
+                                each variant, idx in variants
+                                    //- Bỏ qua variant null
+                                    if variant
+                                        - const vPrice    = (variant.price != null && !isNaN(variant.price))       ? Number(variant.price)    : 0
+                                        - const vDiscount = (variant.discount != null && !isNaN(variant.discount)) ? Number(variant.discount) : 0
+                                        - const vStock    = (variant.stock != null && !isNaN(variant.stock))       ? Number(variant.stock)    : 0
+                                        - const vStatus   = (variant.status === 'active' || variant.status === 'inactive') ? variant.status : 'inactive'
+                                        - const stockClass = vStock === 0 ? 'out' : vStock <= 5 ? 'low' : ''
+                                        tr
+                                            td.pd-idx= idx + 1
+                                            td
+                                                if variant.thumbnail
+                                                    img.pd-variant-thumb(src=variant.thumbnail alt=`Biến thể ${idx + 1}`)
+                                                else
+                                                    .pd-variant-no-img
+                                                        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                                                            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z")
+                                            td
+                                                code.pd-sku= (variant.sku && variant.sku.trim()) ? variant.sku : '—'
+                                            td
+                                                .pd-variant-attrs
+                                                    if variant.attributes
+                                                        each val, key in variant.attributes
+                                                            if key && val
+                                                                span.pd-variant-attr
+                                                                    span.pd-variant-attr__key= key + ':'
+                                                                    span.pd-variant-attr__val= val
+                                                    else
+                                                        span.pd-muted —
+                                            td.pd-price= vPrice.toLocaleString('vi-VN') + ' ₫'
+                                            td
+                                                if vDiscount > 0
+                                                    span.pd-discount-badge= vDiscount + '%'
+                                                else
+                                                    | —
+                                            td
+                                                span(class=`pd-stock ${stockClass}`)= vStock
+                                            td
+                                                span.pd-status-pill(class=vStatus)
+                                                    = vStatus === 'active' ? 'Hoạt động' : 'Tạm ẩn'
+
+            //- ── DESCRIPTIONS ────────────────────────────────────────
+            .pd-desc-row
+                //- Mô tả ngắn
+                .pd-card
+                    .pd-card__label Mô tả ngắn
+                    .pd-desc-box
+                        if product.shortDescription && product.shortDescription.trim()
+                            = product.shortDescription
+                        else
+                            span.pd-muted —
+                
+                //- Mô tả chi tiết
+                .pd-card
+                    .pd-card__label Mô tả chi tiết
+                    .pd-desc-box.pd-desc-box--full
+                        if product.description && product.description.trim()
+                            != product.description
+                        else
+                            span.pd-muted —
+
+            //- ── SPECIFICATIONS ──────────────────────────────────────
+            - const hasSpecs = Array.isArray(product.specifications) && product.specifications.length > 0
+            if hasSpecs
+                .pd-card.pd-card--fullwidth
+                    .pd-card__label Thông số kỹ thuật
+                    .pd-specs
+                        each group in product.specifications
+                            //- Bỏ qua group null / thiếu groupName
+                            if group && group.groupName
+                                - const groupItems = Array.isArray(group.items) ? group.items : []
+                                if groupItems.length > 0
+                                    .pd-spec-group
+                                        h4.pd-spec-group__name= group.groupName
+                                        table.pd-spec-table
+                                            tbody
+                                                each item in groupItems
+                                                    //- Chỉ render nếu item có đủ key & value
+                                                    if item && item.key && item.value
+                                                        tr
+                                                            th= item.key
+                                                            td= item.value
+
+        script.
+            function switchImg(el) {
+                var main = document.getElementById('mainImg');
+                if (main) main.src = el.src;
+                document.querySelectorAll('.pd-gallery__thumb').forEach(function(t) {
+                    t.classList.remove('active');
+                });
+                el.classList.add('active');
+            }

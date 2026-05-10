@@ -1,0 +1,763 @@
+/* =====================================================
+   order.css — scoped trong .order-management
+   Dark theme khớp với dashboard & products
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* =====================================================
+   DARK THEME VARIABLES
+   ===================================================== */
+.order-management {
+  --or-surface:   #151820;
+  --or-surface2:  #12172b;
+  --or-surface3:  #1a2240;
+  --or-border:    rgba(79, 124, 255, 0.25);
+  --or-border2:   rgba(79, 124, 255, 0.15);
+  --or-text:      #e8eaf2;
+  --or-muted:     #6b7394;
+  --or-accent:    #4f7cff;
+  --or-green:     #22c55e;
+  --or-red:       #ef4444;
+  --or-yellow:    #f59e0b;
+  --or-purple:    #a78bfa;
+  --or-cyan:      #00d4aa;
+  --or-radius:    12px;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 24px 28px 28px;
+  min-height: 100%;
+  color: var(--or-text);
+}
+
+/* =====================================================
+   PAGE TITLE
+   ===================================================== */
+.order-management .page-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--or-text);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.order-management .page-title i {
+  color: var(--or-accent);
+  font-size: 20px;
+}
+
+/* =====================================================
+   FILTER SECTION
+   ===================================================== */
+.order-management .filter-section {
+  background: var(--or-surface);
+  border: 1px solid var(--or-border);
+  padding: 16px 20px;
+  border-radius: var(--or-radius);
+  margin-bottom: 20px;
+}
+
+.order-management .filter-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.order-management .filter-item {
+  width: 100%;
+  position: relative;
+}
+
+.order-management .search-input,
+.order-management .filter-select,
+.order-management .filter-date {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--or-border);
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s ease;
+  background: var(--or-surface2);
+  color: var(--or-text);
+  font-family: 'Inter', sans-serif;
+}
+
+.order-management .search-input:focus,
+.order-management .filter-select:focus,
+.order-management .filter-date:focus {
+  border-color: var(--or-accent);
+  box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.15);
+}
+
+.order-management .search-input::placeholder {
+  color: var(--or-muted);
+}
+
+.order-management .filter-select option {
+  background: var(--or-surface2);
+  color: var(--or-text);
+}
+
+/* Date input dark */
+.order-management .filter-date::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
+.order-management .btn-search {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--or-accent) 0%, #3a5fd9 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+}
+
+.order-management .btn-search:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 124, 255, 0.35);
+}
+
+/* ---- Suggest box ---- */
+.order-management .suggest-box {
+  position: absolute;
+  width: 100%;
+  background: var(--or-surface);
+  border: 1px solid var(--or-border);
+  border-radius: 0 0 8px 8px;
+  max-height: 250px;
+  overflow-y: auto;
+  display: none;
+  z-index: 999;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.order-management .suggest-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--or-text);
+  transition: background 0.15s;
+}
+
+.order-management .suggest-item:hover {
+  background: var(--or-surface3);
+}
+
+/* =====================================================
+   TABLE WRAPPER
+   ===================================================== */
+.order-management .order-table-wrapper {
+  background: var(--or-surface2);
+  border: 1px solid var(--or-border);
+  border-radius: var(--or-radius);
+  overflow: visible !important;
+  box-shadow: 0 0 24px rgba(79, 124, 255, 0.08);
+  margin-bottom: 20px;
+}
+
+/* =====================================================
+   TABLE
+   ===================================================== */
+.order-management .order-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* ---- Header ---- */
+.order-management .order-table thead {
+  background: #0e1224;
+}
+
+.order-management .order-table th {
+  padding: 14px 16px;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--or-muted);
+  text-align: center;
+  border-right: 1px solid var(--or-border2);
+  border-bottom: 1px solid var(--or-border);
+  white-space: nowrap;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.order-management .order-table thead th:last-child {
+  border-right: none;
+}
+
+/* ---- Rows ---- */
+.order-management .order-table tbody tr {
+  background: var(--or-surface2);
+  border-bottom: 1px solid var(--or-border2);
+  transition: background 0.15s ease;
+  position: relative;
+}
+
+.order-management .order-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.order-management .order-table tbody tr:hover {
+  background: var(--or-surface3);
+  z-index: 100;
+}
+
+/* ---- Cells ---- */
+.order-management .order-table td {
+  padding: 14px 16px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: center;
+  border-right: 1px solid var(--or-border2);
+  color: var(--or-text);
+}
+
+.order-management .order-table td:last-child {
+  border-right: none;
+}
+
+.order-management .text-center { text-align: center !important; }
+.order-management .text-right  { text-align: right !important; }
+.order-management .text-left   { text-align: left !important; }
+
+/* =====================================================
+   ORDER CODE
+   ===================================================== */
+.order-management .order-code {
+  max-width: 160px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.order-management .code-main {
+  font-weight: 700;
+  color: var(--or-accent);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.order-management .note-icon {
+  color: var(--or-yellow);
+  margin-left: 6px;
+  cursor: pointer;
+}
+
+/* =====================================================
+   CUSTOMER INFO
+   ===================================================== */
+.order-management .customer-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.order-management .customer-name {
+  font-weight: 600;
+  color: var(--or-text);
+  font-size: 13px;
+}
+
+.order-management .customer-phone {
+  font-size: 12px;
+  color: var(--or-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  justify-content: center;
+}
+
+.order-management .customer-phone i {
+  color: var(--or-cyan);
+  font-size: 11px;
+}
+
+/* =====================================================
+   PRODUCT LIST
+   ===================================================== */
+.order-management .product-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.order-management .product-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  flex-wrap: nowrap;
+}
+
+.order-management .product-qty {
+  color: var(--or-muted);
+  font-weight: 600;
+}
+
+.order-management .product-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  background: rgba(79, 124, 255, 0.12);
+  color: var(--or-accent);
+  border: 1px solid rgba(79, 124, 255, 0.25);
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.order-management .discount-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--or-red);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.order-management .no-product {
+  color: var(--or-muted);
+  font-style: italic;
+  font-size: 12px;
+}
+
+/* =====================================================
+   TOTAL PRICE
+   ===================================================== */
+.order-management .total-price {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--or-cyan) !important;
+  letter-spacing: 0.3px;
+}
+
+/* =====================================================
+   STATUS BADGE + DROPDOWN
+   ===================================================== */
+.order-management .status-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.order-management .status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  text-transform: lowercase;
+}
+
+.order-management .status-badge:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.15);
+}
+
+.order-management .status-badge .dropdown-icon {
+  font-size: 9px;
+  transition: transform 0.2s ease;
+}
+
+.order-management .status-dropdown-wrapper:hover .dropdown-icon {
+  transform: rotate(180deg);
+}
+
+/* Status colors */
+.order-management .status-badge.pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--or-yellow);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.order-management .status-badge.confirmed {
+  background: rgba(79, 124, 255, 0.15);
+  color: var(--or-accent);
+  border: 1px solid rgba(79, 124, 255, 0.35);
+}
+
+.order-management .status-badge.shipping {
+  background: rgba(167, 139, 250, 0.15);
+  color: var(--or-purple);
+  border: 1px solid rgba(167, 139, 250, 0.35);
+}
+
+.order-management .status-badge.delivered {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--or-green);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.order-management .status-badge.cancelled {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--or-red);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+/* ---- Dropdown menu ---- */
+.order-management .status-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: none;
+  min-width: 200px;
+  padding: 6px 0;
+  margin: 0;
+  background: var(--or-surface);
+  border: 1px solid var(--or-border);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  list-style: none;
+}
+
+.order-management .status-dropdown-menu::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -15px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: transparent;
+}
+
+.order-management .status-dropdown-wrapper:hover .status-dropdown-menu {
+  display: block;
+  animation: orSlideDown 0.2s ease;
+}
+
+@keyframes orSlideDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.order-management .status-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  color: var(--or-text);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.order-management .status-dropdown-item:hover {
+  background: var(--or-surface3);
+  padding-left: 20px;
+}
+
+.order-management .status-dropdown-item.danger {
+  color: var(--or-red);
+}
+
+.order-management .status-dropdown-item.danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.order-management .status-divider {
+  height: 0;
+  margin: 6px 0;
+  border-top: 1px solid var(--or-border2);
+}
+
+/* ---- Status dots ---- */
+.order-management .status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.order-management .status-dot.pending   { background: var(--or-yellow); }
+.order-management .status-dot.confirmed { background: var(--or-accent); }
+.order-management .status-dot.shipping  { background: var(--or-purple); }
+.order-management .status-dot.delivered { background: var(--or-green); }
+.order-management .status-dot.cancelled { background: var(--or-red); }
+
+/* =====================================================
+   ORDER DATE
+   ===================================================== */
+.order-management .order-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.order-management .date-text {
+  font-size: 13px;
+  color: var(--or-text);
+  font-weight: 600;
+}
+
+.order-management .time-text {
+  font-size: 11px;
+  color: var(--or-muted);
+}
+
+/* =====================================================
+   ACTION BUTTONS
+   ===================================================== */
+.order-management .action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.order-management .btn-action {
+  width: 36px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.order-management .btn-view {
+  background: rgba(79, 124, 255, 0.12);
+  color: var(--or-accent);
+  border-color: rgba(79, 124, 255, 0.3);
+}
+
+.order-management .btn-view:hover {
+  background: rgba(79, 124, 255, 0.22);
+  color: var(--or-accent);
+  transform: translateY(-1px);
+}
+
+.order-management .btn-delete {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--or-red);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.order-management .btn-delete:hover {
+  background: rgba(239, 68, 68, 0.22);
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   NO DATA
+   ===================================================== */
+.order-management .no-data {
+  text-align: center;
+  padding: 60px 20px !important;
+  color: var(--or-muted);
+}
+
+.order-management .no-data i {
+  font-size: 52px;
+  margin-bottom: 16px;
+  display: block;
+  opacity: 0.3;
+}
+
+.order-management .no-data p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--or-muted);
+}
+
+/* =====================================================
+   PAGINATION
+   ===================================================== */
+.order-management .pagination-wrapper {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.order-management .pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  gap: 6px;
+  margin: 0;
+}
+
+.order-management .page-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 6px 10px;
+  background: var(--or-surface2);
+  color: var(--or-muted);
+  border: 1px solid var(--or-border);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.order-management .page-link:hover {
+  background: rgba(79, 124, 255, 0.15);
+  color: var(--or-accent);
+  border-color: rgba(79, 124, 255, 0.4);
+}
+
+.order-management .page-item.active .page-link {
+  background: rgba(79, 124, 255, 0.2);
+  color: var(--or-accent);
+  border-color: rgba(79, 124, 255, 0.5);
+}
+
+.order-management .page-item.disabled .page-link {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* =====================================================
+   MODAL — dark theme
+   ===================================================== */
+.order-management ~ .modal .modal-content,
+#detailModal .modal-content {
+  background: var(--or-surface);
+  border: 1px solid var(--or-border);
+  border-radius: var(--or-radius);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+  color: var(--or-text);
+}
+
+#detailModal .modal-header {
+  background: #0e1224;
+  border-bottom: 1px solid var(--or-border);
+  border-radius: var(--or-radius) var(--or-radius) 0 0;
+  padding: 18px 24px;
+}
+
+#detailModal .modal-title {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--or-text);
+}
+
+#detailModal .btn-close {
+  filter: invert(1) opacity(0.6);
+}
+
+#detailModal .btn-close:hover {
+  filter: invert(1) opacity(1);
+}
+
+#detailModal .modal-body {
+  padding: 24px;
+  color: var(--or-text);
+}
+
+#detailModal .modal-footer {
+  padding: 14px 24px;
+  border-top: 1px solid var(--or-border);
+}
+
+#detailModal .btn-secondary {
+  background: var(--or-surface2);
+  border: 1px solid var(--or-border);
+  color: var(--or-text);
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+#detailModal .btn-secondary:hover {
+  background: var(--or-surface3);
+  color: var(--or-text);
+}
+
+/* Spinner */
+#detailModal .spinner-border {
+  color: var(--or-accent);
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 1400px) {
+  .order-management .filter-container {
+    grid-template-columns: 1.5fr 1fr 1fr auto;
+  }
+}
+
+@media (max-width: 1200px) {
+  .order-management .filter-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 992px) {
+  .order-management .order-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .order-management .order-table {
+    min-width: 1100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .order-management {
+    padding: 16px;
+  }
+
+  .order-management .page-title {
+    font-size: 18px;
+  }
+
+  .order-management .filter-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .order-management .order-table th,
+  .order-management .order-table td {
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+}

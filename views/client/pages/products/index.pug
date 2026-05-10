@@ -1,0 +1,77 @@
+extends ../../layouts/default.pug
+
+block css
+  link(rel="stylesheet" href = "/client/css/products.css")
+
+block main
+  main
+    .container
+      //- Header with sorting options
+      .listing-header
+        h2 Sắp xếp theo
+        .sort-options
+          button.btn.btn-popular(sort-clear class=(!sortKey || sortKey === '' ? 'active' : ''))
+            i.icon-star
+            | Phổ biến
+          button.btn.btn-promotion(sort-key="discount" sort-value="desc" class=(sortKey === 'discount' && sortValue === 'desc' ? 'active' : ''))
+            i.icon-hot
+            | Khuyến mãi HOT
+          button.btn.btn-sort-asc(sort-key="price" sort-value="asc" class=(sortKey === 'price' && sortValue === 'asc' ? 'active' : ''))
+            i.icon-sort
+            | Giá Thấp - Cao
+          button.btn.btn-sort-desc(sort-key="price" sort-value="desc" class=(sortKey === 'price' && sortValue === 'desc' ? 'active' : ''))
+            i.icon-sort
+            | Giá Cao - Thấp
+      
+      //- Product Grid
+      .product-grid
+        each product in products
+          .product-card(data-href=`/products/detail/${product._id}`)
+            //- Discount and Installment badges
+            .product-badges
+              if product.discount && product.discount > 0
+                .badge.badge-discount Giảm #{product.discount}%
+              if product.installment !== undefined && product.installment === 0
+                .badge.badge-installment Trả góp #{product.installment}%
+            
+            //- Product Image
+            .product-image
+              a(href=`/products/detail/${product._id}`)
+                if product.thumbnail
+                  img(src=product.thumbnail alt=product.title loading="lazy")
+                else
+                  img(src="/images/no-image.jpg" alt=product.title loading="lazy")
+            
+            //- Product Info
+            .product-info
+              h3.product-name
+                a(href=`/products/detail/${product._id}`) #{product.title}
+              
+              //- Price
+              .product-price
+                span.current-price #{product.priceNew.toLocaleString('vi-VN')}đ
+                if product.discount&& product.discount > 0
+                  span.original-price #{product.price.toLocaleString('vi-VN')}đ
+              
+              //- Specifications (nếu có trong description hoặc attributes)
+              .product-specs
+                if product.brand
+                  span.spec-badge #{product.brand}
+                if product.category
+                  span.spec-badge #{product.category}
+              
+              //- Promotion Text (nếu có)
+              if product.promotion
+                .product-promotion #{product.promotion}
+              else
+                .product-promotion Trả góp 0% - 0đ phụ thu - 0đ trả trước - kỳ hạn đến 6 tháng
+              
+              //- Rating and Wishlist
+              .product-actions
+                .rating
+                  i.icon-star ⭐
+                  span.rating-value #{product.rating || 5}
+                button.btn-wishlist(data-id=product._id  class="btnFavoriteProduct")
+                  i.icon-heart ♥
+                  span Yêu thích
+  

@@ -1,0 +1,397 @@
+/* =====================================================
+   accountAdmin.css — scoped trong .account-management
+   Dark theme khớp với dashboard & products
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* =====================================================
+   DARK THEME VARIABLES
+   ===================================================== */
+.account-management {
+  --ac-bg:        #111318;
+  --ac-surface:   #151820;
+  --ac-surface2:  #12172b;
+  --ac-surface3:  #1a2240;
+  --ac-border:    rgba(79, 124, 255, 0.25);
+  --ac-border2:   rgba(79, 124, 255, 0.15);
+  --ac-text:      #e8eaf2;
+  --ac-muted:     #6b7394;
+  --ac-accent:    #4f7cff;
+  --ac-green:     #22c55e;
+  --ac-red:       #ef4444;
+  --ac-radius:    12px;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 24px 28px 28px;
+  min-height: 100%;
+  color: var(--ac-text);
+}
+
+/* =====================================================
+   PAGE TITLE
+   ===================================================== */
+.account-management .page-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--ac-text);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.account-management .page-title i {
+  color: var(--ac-accent);
+  font-size: 20px;
+}
+
+/* =====================================================
+   TOOLBAR
+   ===================================================== */
+.account-management .toolbar {
+  background: var(--ac-surface);
+  border: 1px solid var(--ac-border);
+  padding: 16px 20px;
+  border-radius: var(--ac-radius);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.account-management .btn-add {
+  padding: 9px 20px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.account-management .btn-add:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+  color: white;
+}
+
+.account-management .btn-add i {
+  font-size: 13px;
+}
+
+/* =====================================================
+   TABLE WRAPPER
+   ===================================================== */
+.account-management .account-table-wrapper {
+  background: var(--ac-surface2);
+  border: 1px solid var(--ac-border);
+  border-radius: var(--ac-radius);
+  overflow: hidden;
+  box-shadow: 0 0 24px rgba(79, 124, 255, 0.08);
+  margin-bottom: 20px;
+}
+
+/* =====================================================
+   TABLE
+   ===================================================== */
+.account-management .account-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* ---- Header ---- */
+.account-management .account-table thead {
+  background: #0e1224;
+}
+
+.account-management .account-table th {
+  padding: 14px 16px;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--ac-muted);
+  text-align: center;
+  border-right: 1px solid var(--ac-border2);
+  border-bottom: 1px solid var(--ac-border);
+  white-space: nowrap;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.account-management .account-table thead th:last-child {
+  border-right: none;
+}
+
+/* ---- Rows ---- */
+.account-management .account-table tbody tr {
+  background: var(--ac-surface2);
+  border-bottom: 1px solid var(--ac-border2);
+  transition: background 0.15s ease;
+}
+
+.account-management .account-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.account-management .account-table tbody tr:hover {
+  background: var(--ac-surface3);
+}
+
+/* ---- Cells ---- */
+.account-management .account-table td {
+  padding: 14px 16px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: center;
+  border-right: 1px solid var(--ac-border2);
+  color: var(--ac-text);
+}
+
+.account-management .account-table td:last-child {
+  border-right: none;
+}
+
+/* =====================================================
+   AVATAR
+   ===================================================== */
+.account-management .account-avatar {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--ac-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.account-management .account-avatar:hover {
+  transform: scale(1.08);
+  border-color: var(--ac-accent);
+}
+
+/* =====================================================
+   ACCOUNT INFO
+   ===================================================== */
+.account-management .account-name {
+  font-weight: 600;
+  color: var(--ac-text);
+  font-size: 13px;
+}
+
+.account-management .account-email {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ac-muted);
+}
+
+.account-management .account-email i {
+  color: var(--ac-accent);
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* =====================================================
+   ROLE BADGE
+   ===================================================== */
+.account-management .role-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(79, 124, 255, 0.15);
+  color: var(--ac-accent);
+  border: 1px solid rgba(79, 124, 255, 0.3);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+/* =====================================================
+   STATUS BADGE
+   ===================================================== */
+.account-management .status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.account-management .status-badge.active {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--ac-green);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.account-management .status-badge.active:hover {
+  background: rgba(34, 197, 94, 0.25);
+  transform: translateY(-1px);
+}
+
+.account-management .status-badge.inactive {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--ac-red);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.account-management .status-badge.inactive:hover {
+  background: rgba(239, 68, 68, 0.25);
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   ACTION BUTTONS
+   ===================================================== */
+.account-management .action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+.account-management .btn-action {
+  height: 34px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  white-space: nowrap;
+  gap: 5px;
+}
+
+.account-management .btn-action i {
+  font-size: 12px;
+}
+
+.account-management .btn-detail {
+  background: rgba(79, 124, 255, 0.15);
+  color: var(--ac-accent);
+  border: 1px solid rgba(79, 124, 255, 0.3);
+}
+
+.account-management .btn-detail:hover {
+  background: rgba(79, 124, 255, 0.25);
+  color: var(--ac-accent);
+  transform: translateY(-1px);
+}
+
+.account-management .btn-edit {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.account-management .btn-edit:hover {
+  background: rgba(245, 158, 11, 0.25);
+  color: #f59e0b;
+  transform: translateY(-1px);
+}
+
+.account-management .btn-delete {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--ac-red);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.account-management .btn-delete:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: var(--ac-red);
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   NO DATA
+   ===================================================== */
+.account-management .no-data {
+  text-align: center;
+  padding: 60px 20px !important;
+  color: var(--ac-muted);
+}
+
+.account-management .no-data i {
+  font-size: 52px;
+  margin-bottom: 16px;
+  display: block;
+  color: var(--ac-border);
+  opacity: 0.6;
+}
+
+.account-management .no-data p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ac-muted);
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 992px) {
+  .account-management .account-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .account-management .account-table {
+    min-width: 800px;
+  }
+}
+
+@media (max-width: 768px) {
+  .account-management {
+    padding: 16px;
+  }
+
+  .account-management .page-title {
+    font-size: 18px;
+  }
+
+  .account-management .action-buttons {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 576px) {
+  .account-management .account-table th,
+  .account-management .account-table td {
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+
+  .account-management .btn-action {
+    padding: 0 8px;
+    font-size: 11px;
+  }
+
+  .account-management .status-badge {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+}

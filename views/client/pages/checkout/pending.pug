@@ -1,0 +1,31 @@
+extends ../../layouts/default.pug
+
+block css
+  link(rel="stylesheet" href="/client/css/payment-success.css")
+
+block main
+  .success-page
+    .success-hero
+      .success-icon(style="background: rgba(245, 158, 11, 0.16); color: #d97706;")
+        svg(xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+          path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z")
+      h1 Đang chờ xác nhận thanh toán
+      p Giao dịch đã quay về từ cổng thanh toán nhưng hệ thống vẫn đang chờ webhook xác nhận cuối cùng từ VNPay.
+
+    .order-code-card
+      span.order-code-label Mã đơn hàng
+      .order-code-row
+        span.order-code= order.orderCode
+      span.order-date Hạn xác nhận: #{order.expiresAt ? new Date(order.expiresAt).toLocaleString('vi-VN') : 'Trong ít phút tới'}
+
+    .status-card
+      h3 Trạng thái hiện tại
+      p(style="margin: 0; color: #475569;") #{order.paymentStatusText || 'Chờ thanh toán'}
+      p(style="margin-top: 12px; color: #64748b;")
+        | Nếu webhook xác nhận thành công, đơn sẽ tự chuyển sang 
+        strong Đã thanh toán
+        |  mà không cần thao tác thêm.
+
+    .success-actions
+      a.btn-track(href=`/orders/${order._id}`) Xem chi tiết đơn hàng
+      a.btn-continue(href="/products") Tiếp tục mua sắm

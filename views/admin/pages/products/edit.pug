@@ -1,0 +1,364 @@
+extends ../../layouts/default.pug
+include ../../mixins/pagination.pug
+include ../../mixins/alert.pug
+
+block css
+    link(rel="stylesheet", href="/admin/css/pages/products/product-create.css")
+
+block main
+    +alert-success(3000)
+    +alertAddSuccess(3000)
+    +alert-unsuccess(3000)
+    +alert-error(5000)
+    .pc-wrapper
+        //- PAGE HEADER
+        .pc-header
+            .pc-header__title
+                h1.pc-title Chỉnh sửa sản phẩm
+                p.pc-subtitle Cập nhật thông tin chi tiết về sản phẩm
+            .pc-header__actions
+                a.pc-btn.pc-btn--ghost(href=`${prefixAdmin}/products` style="margin-right: 12px")
+                    svg(viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16")
+                        path(stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7")
+                    | Quay lại
+                button.pc-btn.pc-btn--primary(type="submit" form="product-edit-form")
+                    svg(viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16")
+                        path(d="M13 2H3a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1z")
+                        path(d="M10 2v5H6V2M6 10h4" stroke-linecap="round")
+                    | Lưu thay đổi
+
+        //- FORM
+        form#product-edit-form(
+            method="POST"
+            action=`${prefixAdmin}/products/edit/${product._id}?_method=PATCH`
+            enctype="multipart/form-data"
+        )
+            input(type="hidden" name="_csrf" value=csrfToken)
+            .pc-layout
+                //- LEFT COLUMN
+                .pc-main
+
+                    //- SECTION 1: CẤU TRÚC SẢN PHẨM
+                    .pc-card#section-structure
+                        .pc-card__head
+                            .pc-card__head-left
+                                .pc-section-index 01
+                                div
+                                     h2.pc-card__title Cấu trúc sản phẩm
+                                     p.pc-card__desc Xác định danh mục, thương hiệu và dòng sản phẩm
+                            .pc-card__head-right
+                                .pc-status-toggle
+                                    input(type="hidden" name="status" value=product.status)
+                                    input#statusToggle(
+                                        type="checkbox"
+                                        checked=(product.status === "active")
+                                        data-field="status"
+                                    )
+                                    label(for="statusToggle")
+                                        span.pc-status-toggle__track
+                                            span.pc-status-toggle__thumb
+                                        span.pc-status-toggle__label #{product.status === "active" ? "Đang hoạt động" : "Dừng hoạt động"}
+
+                        .pc-card__body
+                            .pc-field
+                                label.pc-label(for="productName") Tên sản phẩm
+                                input#productName.pc-input(
+                                    type="text"
+                                    name="title"
+                                    value=product.title
+                                    placeholder="VD: Apple iPhone 15 Pro Max 256GB"
+                                    required
+                                )
+                                p.pc-hint Tên hiển thị chính thức của sản phẩm trên hệ thống
+
+                            .pc-grid-2
+                                .pc-field
+                                    label.pc-label Danh mục
+                                    .pc-category-selector
+                                        .pc-category-selector__display
+                                            .pc-category-path
+                                                if product.category_id
+                                                    each cat in rootCategories
+                                                        if cat._id.toString() === product.category_id.toString()
+                                                            span.pc-category-path__root #{cat.title}
+                                                else
+                                                    span.pc-category-path__root Chọn danh mục
+                                        .pc-category-dropdown
+                                            if rootCategories && rootCategories.length > 0
+                                                each category in rootCategories
+                                                    .pc-category-item(
+                                                        data-category-id=category._id.toString()
+                                                        class=(product.category_id && category._id.toString() === product.category_id.toString() ? "selected" : "")
+                                                    )
+                                                        span #{category.title}
+                                    
+                                    input(
+                                        type="hidden"
+                                        id="categoryIdInput"
+                                        name="category_id"
+                                        value=(product.category_id ? product.category_id.toString() : "")
+                                    )
+
+                                .pc-field
+                                    label.pc-label(for="brandSelect") Thương hiệu
+                                    .pc-select-wrap
+                                        select#brandSelect.pc-select(
+                                            name="brand_id"
+                                            required
+                                            disabled
+                                        )
+                                            option(value="" disabled) Chọn thương hiệu
+                                            if brands && brands.length > 0
+                                                each brand in brands
+                                                    option(
+                                                        value=brand._id
+                                                        selected=(product.brand_id && brand._id.toString() === product.brand_id.toString())
+                                                    ) #{brand.title}
+                                        svg.pc-select__arrow(viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5")
+                                            path(d="M2 4l3 3 3-3")
+
+                    //- SECTION 2: THÔNG TIN SẢN PHẨM
+                    .pc-card#section-info
+                        .pc-card__head
+                            .pc-card__head-left
+                                .pc-section-index 02
+                                div
+                                    h2.pc-card__title Thông tin sản phẩm
+                                    p.pc-card__desc Mô tả, nội dung và điểm nổi bật
+                        .pc-card__body
+                            .pc-field
+                                label.pc-label(for="shortDesc") Mô tả ngắn
+                                input#shortDesc.pc-input(
+                                    type="text"
+                                    name="shortDescription"
+                                    value=product.shortDescription
+                                    placeholder="VD: Điện thoại cao cấp với chip A17 Pro và camera 48MP"
+                                )
+
+                            .pc-field
+                                label.pc-label Mô tả đầy đủ
+                                //- Không gán value= ở đây (HTML vỡ nếu mô tả có dấu "). JS hydrate + submit sync.
+                                input(type="hidden" name="description" id="descriptionInput")
+                                .pc-editor
+                                    .pc-editor__toolbar
+                                        //- Toolbar items same as create.pug
+                                        .pc-editor__toolbar-group
+                                            button.pc-editor__btn(type="button" title="Đậm") B
+                                            button.pc-editor__btn(type="button" title="Nghiêng") I
+                                            button.pc-editor__btn(type="button" title="Gạch chân") U
+                                    .pc-editor__content(
+                                        contenteditable="true"
+                                        data-placeholder="Nhập mô tả đầy đủ về sản phẩm..."
+                                        id="descriptionEditor"
+                                    ) !{product.description}
+
+                    //- SECTION 3: THUỘC TÍNH (Data passed to JS)
+                    .pc-card#section-attributes
+                        .pc-card__head
+                             .pc-card__head-left
+                                .pc-section-index 03
+                                div
+                                    h2.pc-card__title Thuộc tính biến thể
+                                    p.pc-card__desc Xác định các tùy chọn khách hàng có thể chọn khi mua
+                             .pc-card__head-right
+                                .pc-variant-counter
+                                    span.pc-variant-counter__num 0
+                                    span.pc-variant-counter__label biến thể được tạo
+                        .pc-card__body
+                            p.pc-field-hint.pc-field-hint--top Xác định các thuộc tính sản phẩm để khách hàng lựa chọn khi mua hàng.
+                            
+                            script.
+                                window.__ATTRIBUTES__ = !{JSON.stringify(attributes)};
+                                window.__BRAND_CATEGORY_OPTIONS__ = !{JSON.stringify(brandCategoriesByRoot || {})};
+                                window.__PRODUCT_EDIT__ = {
+                                    product: !{JSON.stringify(product)},
+                                    variants: !{JSON.stringify(variants)}
+                                };
+
+                            template#attr-card-template
+                                .pc-attr-card(data-index="__INDEX__")
+                                    .pc-attr-card__head
+                                        .pc-attr-card__drag
+                                            svg(viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5")
+                                                path(d="M2 4h10M2 7h10M2 10h10" stroke-linecap="round")
+                                        .pc-attr-card__main
+                                            .pc-grid-2
+                                                .pc-field.pc-field--compact
+                                                    label.pc-label Tên thuộc tính
+                                                    .pc-select-wrapper
+                                                        select.pc-select.js-attr-select(
+                                                            name="attributes[__INDEX__][attribute_id]"
+                                                            data-index="__INDEX__"
+                                                        )
+                                                            option(value="" disabled selected) Chọn thuộc tính...
+                                                            each attr in attributes
+                                                                option(
+                                                                    value=attr._id
+                                                                    data-name=attr.title
+                                                                    data-code=attr.code
+                                                                    data-values=attr.values.join(",")
+                                                                )= attr.title
+                                                        svg.pc-select-arrow(viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5")
+                                                            path(d="M1 1l4 4 4-4")
+                                                    input(
+                                                        type="hidden"
+                                                        class="js-attr-name"
+                                                        name="attributes[__INDEX__][name]"
+                                                    )
+                                                .pc-field.pc-field--compact
+                                                    label.pc-label Mã thuộc tính
+                                                    input.pc-input.js-attr-code(
+                                                        type="text"
+                                                        name="attributes[__INDEX__][code]"
+                                                        readonly
+                                                        tabindex="-1"
+                                                    )
+                                        button.pc-attr-card__remove(type="button" title="Xoá thuộc tính")
+                                            svg(viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5")
+                                                path(d="M2 2l10 10M12 2L2 12")
+                                    .pc-attr-card__body
+                                        .pc-field.pc-field--compact
+                                            label.pc-label Giá trị
+                                            .pc-dropdown-select.js-values-dropdown(data-index="__INDEX__")
+                                                .pc-dropdown-select__trigger
+                                                    span.pc-dropdown-select__placeholder Chọn giá trị...
+                                                    svg(viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5")
+                                                        path(d="M1 1l4 4 4-4")
+                                                .pc-dropdown-select__panel
+                                                    .pc-dropdown-select__empty Vui lòng chọn thuộc tính trước
+                                        .pc-attr-card__toggles
+                                            .pc-toggle-row
+                                                .pc-toggle
+                                                    input(type="checkbox" id="useVariant-__INDEX__" name="attributes[__INDEX__][useForVariant]" value="true")
+                                                    label(for="useVariant-__INDEX__"): span.pc-toggle__track: span.pc-toggle__thumb
+                                                span.pc-toggle-label Dùng để tạo biến thể
+                                            .pc-toggle-row
+                                                .pc-toggle
+                                                    input(type="checkbox" id="useVisual-__INDEX__" name="attributes[__INDEX__][affectsImage]" value="true")
+                                                    label(for="useVisual-__INDEX__"): span.pc-toggle__track: span.pc-toggle__thumb
+                                                span.pc-toggle-label Ảnh hưởng đến hình ảnh
+
+                            #attr-cards-container
+                            button.pc-btn-add-attr#btnAddAttr(type="button")
+                                svg(viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5")
+                                    path(d="M7 1v12M1 7h12" stroke-linecap="round")
+                                | Thêm thuộc tính
+
+                    //- SECTION 4: THÔNG SỐ KỸ THUẬT
+                    .pc-card#section-specs
+                        .pc-card__head
+                            .pc-card__head-left
+                                .pc-section-index 04
+                                div
+                                    h2.pc-card__title Thông số kỹ thuật
+                                    p.pc-card__desc Mô tả chi tiết kỹ thuật của sản phẩm
+                        .pc-card__body
+                            p.pc-field-hint.pc-field-hint--top Thông số kỹ thuật mô tả chi tiết sản phẩm và không tạo ra biến thể.
+                            
+                            template#spec-group-template
+                                .pc-spec-group(data-group-index="__GIDX__")
+                                    .pc-spec-group__head
+                                        .pc-spec-group__head-left
+                                            button.pc-spec-group__collapse(type="button" data-collapsed="false")
+                                                svg(viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"): path(d="M2 3l3 4 3-4")
+                                            input.pc-input.pc-spec-group__title(type="text" name="specifications[__GIDX__][groupName]" placeholder="Tên nhóm...")
+                                        .pc-spec-group__head-right
+                                            button.pc-spec-group__remove(type="button"): svg(viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"): path(d="M2 2l10 10M12 2L2 12")
+                                    .pc-spec-group__body
+                                        .pc-spec-rows
+                                        button.pc-btn-add-row(type="button") + Thêm hàng
+                            
+                            template#spec-row-template
+                                .pc-spec-row(data-row-index="__RIDX__")
+                                    .pc-spec-row__name: input.pc-input.pc-input--spec(type="text" name="specifications[__GIDX__][items][__RIDX__][key]" placeholder="Tên")
+                                    .pc-spec-row__value: input.pc-input.pc-input--spec(type="text" name="specifications[__GIDX__][items][__RIDX__][value]" placeholder="Giá trị")
+                                    button.pc-spec-row__remove(type="button"): svg(viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"): path(d="M2 2l10 10M12 2L2 12")
+                            
+                            #spec-groups-container
+                            button.pc-btn-add-spec#btnAddSpec(type="button") + Thêm nhóm thông số
+
+                    //- SECTION 5: HÌNH ẢNH BIẾN THỂ
+                    .pc-card#section-visuals
+                        .pc-card__head
+                            .pc-card__head-left
+                                .pc-section-index 05
+                                div
+                                    h2.pc-card__title Hình ảnh biến thể
+                                    p.pc-card__desc Ảnh theo từng giá trị thuộc tính hình ảnh
+                        .pc-card__body
+                            .pc-visual-info#visual-info
+                                span#visual-info-text Đang tải...
+                            .pc-visual-grid#visual-grid
+                            .pc-visual-empty#visual-empty(style="display:none")
+                            
+                            input#upload-thumb-input(type="file" accept="image/*" style="display:none")
+                            input#upload-gallery-input(type="file" accept="image/*" multiple style="display:none")
+
+                    //- SECTION 6: BIẾN THỂ SẢN PHẨM
+                    .pc-card#section-variants
+                        .pc-card__head
+                            .pc-card__head-left
+                                .pc-section-index 06
+                                div
+                                    h2.pc-card__title Biến thể sản phẩm
+                                    p.pc-card__desc Quản lý giá, tồn kho và SKU cho từng tổ hợp
+                        .pc-card__body
+                             .pc-variant-summary#variant-summary(style="display:none")
+                             .pc-bulk-toolbar#variant-bulk-toolbar(style="display:none")
+                             
+                             .pc-table-wrap#variant-table-wrap(style="display:none")
+                                table.pc-table#variant-table
+                                    thead
+                                        tr
+                                            th.pc-table__check: input#variant-check-all(type="checkbox")
+                                            th Tổ hợp
+                                            th Giá gốc
+                                            th Giảm giá
+                                            th Tồn kho
+                                            th SKU
+                                            th Ảnh
+                                            th Trạng thái
+                                            th
+                                    tbody#variant-tbody
+                             .pc-variant-empty#variant-empty
+
+                //- RIGHT SIDEBAR
+                .pc-sidebar
+                    //- 1. THUMBNAIL
+                    .pc-card.pc-card--sidebar
+                        .pc-card__head: h3.pc-card__title-sm Ảnh đại diện
+                        .pc-card__body.pc-card__body--tight
+                            .pc-upload-zone.pc-upload-zone--main#sidebar-thumb-zone
+                                .pc-sidebar-thumb-preview(style=(product.thumbnail ? "" : "display:none"))
+                                    img#sidebar-thumb-img(src=(product.thumbnail || "") alt="")
+                                    button.pc-sidebar-thumb-clear(type="button"): svg(viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"): path(d="M2 2l10 10M12 2L2 12")
+                                .pc-sidebar-thumb-placeholder(style=(product.thumbnail ? "display:none" : ""))
+                                    p.pc-upload-zone__text Tải ảnh lên
+                                    button.pc-btn.pc-btn--ghost.pc-btn--xs(type="button") Chọn file
+                            
+                            input#sidebar-thumb-input(type="file" name="thumbnail" accept="image/*" style="display:none")
+                            input(type="hidden" name="thumbnailExisting" value=product.thumbnail)
+
+                    //- 2. GALLERY
+                    .pc-card.pc-card--sidebar
+                        .pc-card__head
+                            .pc-sidebar-gallery-head
+                                h3.pc-card__title-sm Thư viện ảnh
+                                span.pc-sidebar-gallery-count#sidebar-gallery-count 0 / 20
+                        .pc-card__body.pc-card__body--tight
+                            .pc-sidebar-gallery-grid#sidebar-gallery-grid
+                                if product.images && product.images.length > 0
+                                    each img in product.images
+                                        .pc-sidebar-gallery-item
+                                            img(src=img)
+                                            button.pc-sidebar-gallery-remove(type="button"): svg(viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"): path(d="M2 2l10 10M12 2L2 12")
+                                            input(type="hidden" name="imagesExisting[]" value=img)
+                            
+                            .pc-sidebar-gallery-add#sidebar-gallery-add(style=(product.images && product.images.length > 0 ? "" : "display:none")) + Thêm ảnh
+                            .pc-upload-zone.pc-upload-zone--gallery-main#sidebar-gallery-zone(style=(product.images && product.images.length > 0 ? "display:none" : ""))
+                                p.pc-upload-zone__text Tải nhiều ảnh
+                            
+                            input#sidebar-gallery-input(type="file" name="images" accept="image/*" multiple style="display:none")
+
+block script
+    script(src="/admin/js/product-create.js")

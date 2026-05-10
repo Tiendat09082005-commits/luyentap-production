@@ -1,0 +1,294 @@
+/* ===== FOOTER CONTAINER ===== */
+.footer {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #94a3b8;
+  padding: 60px 0 0;
+  margin-top: 80px;
+  position: relative;
+  border-top: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+}
+
+/* ===== CONTAINER ===== */
+.footer .container-fluid {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
+/* ===== FOOTER CONTENT ===== */
+.footer-content {
+  padding-bottom: 40px;
+}
+
+.footer-content .row {
+  margin: 0 -15px;
+}
+
+/* ===== FOOTER COLUMNS ===== */
+.footer-column {
+  padding: 0 15px;
+  margin-bottom: 30px;
+}
+
+/* ===== LOGO & DESCRIPTION ===== */
+.footer-logo h3 {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+}
+
+.footer-description {
+  color: #94a3b8;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* ===== SOCIAL ICONS ===== */
+.footer-social {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.footer-social a {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 8px;
+  color: #94a3b8;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.footer-social a:hover {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* ===== FOOTER TITLE ===== */
+.footer-title {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+.footer-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%; /* 2. Đưa điểm bắt đầu ra giữa */
+  transform: translateX(-50%); /* 3. Dịch ngược lại 50% chiều rộng của chính nó để cân bằng */
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 2px;
+}
+
+/* ===== FOOTER LINKS ===== */
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 12px;
+}
+
+.footer-links li a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  display: inline-block;
+  position: relative;
+  padding-left: 15px;
+}
+
+.footer-links li a::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: #3b82f6;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.footer-links li a:hover {
+  color: #ffffff;
+  padding-left: 20px;
+}
+
+.footer-links li a:hover::before {
+  opacity: 1;
+  left: 0;
+}
+
+/* ===== FOOTER CONTACT ===== */
+.footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-contact li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.footer-contact li i {
+  width: 20px;
+  color: #3b82f6;
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.footer-contact li span {
+  flex: 1;
+  line-height: 1.6;
+}
+
+/* ===== FOOTER BOTTOM ===== */
+.footer-bottom {
+  border-top: 1px solid rgba(148, 163, 184, 0.1);
+  padding: 25px 0;
+  margin-top: 20px;
+}
+
+.footer-bottom .row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+}
+
+.footer-copyright,
+.footer-credits {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.footer-credits {
+  text-align: right;
+}
+
+.footer-credits i {
+  color: #ef4444;
+  margin: 0 5px;
+  animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+  .footer {
+    padding: 40px 0 0;
+  }
+  
+  .footer-column {
+    margin-bottom: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    margin-top: 40px;
+    padding: 30px 0 0;
+  }
+  
+  .footer .container-fluid {
+    padding: 0 15px;
+  }
+  
+  .footer-content {
+    padding-bottom: 20px;
+  }
+  
+  .footer-logo h3 {
+    font-size: 20px;
+  }
+  
+  .footer-title {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  
+  .footer-social {
+    justify-content: flex-start;
+  }
+  
+  .footer-bottom .row {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .footer-credits {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-social a {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+  
+  .footer-links li a,
+  .footer-contact li {
+    font-size: 13px;
+  }
+}
+
+.footer-links, .footer-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

@@ -1,0 +1,40 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block css
+  link(rel="stylesheet" href="/admin/css/editRole.css")
+
+block main
+  +alert-unsuccess(3000)
+  +alert-success(3000)
+
+  if(roles.permissions.includes("products_edit"))
+    .role-edit-page
+      .role-edit-wrap
+        h1 Chỉnh sửa nhóm quyền
+
+        .role-edit-card
+          form(
+            action=`${prefixAdmin}/roles/edit/${record.id}?_method=PATCH`
+            id="form-edit-roles"
+            method="POST"
+          )
+            input(type="hidden" name="_csrf" value=csrfToken)
+            .role-field
+              label(for="title") Tiêu đề
+              input(type="text" id="title" name="title" value=record.title required)
+
+            .role-field
+              label(for="desc") Mô tả
+              textarea(class="textarea-mce" id="desc" name="description" rows="5") !{record.description}
+
+            hr.role-edit-divider
+
+            .role-edit-actions
+              button(type="submit").role-btn.role-btn--submit Cập nhật
+              a(href=`${prefixAdmin}/roles`).role-btn.role-btn--back ← Quay lại
+
+  else
+    .role-edit-page
+      .role-edit-wrap
+        span.role-no-permission Bạn không được cấp quyền chỉnh sửa vai trò

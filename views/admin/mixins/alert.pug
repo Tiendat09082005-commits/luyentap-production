@@ -1,0 +1,62 @@
+mixin alert-success(time)
+    - if (messages.thanhcong)
+        .message.info
+            div(
+                class = "alert alert-success"
+                data-time = time
+                show-alert
+            )   #{messages.thanhcong} 
+                <span close-alert>X</span>
+mixin alert-unsuccess(time)
+    - if (messages.thatbai)
+        .message.info
+            div(
+                class = "alert alert-danger"
+                data-time = time
+                show-alert
+            )   #{messages.thatbai} <span close-alert>X</span>
+
+mixin alert-error(time)
+    - if (messages.error)
+        .message.info
+            div(
+                class = "alert alert-danger"
+                data-time = time
+                show-alert
+            )   #{messages.error} <span close-alert>X</span>
+
+mixin alertAddSuccess(time)
+    - if (messages.addSuccess)
+            .message.info
+                div(
+                    class = "alert alert-success"
+                    data-time = time
+                    show-alert
+                )   #{messages.addSuccess} <span close-alert>X</span>
+
+mixin alertUpdateSuccess(time)
+    - if (messages.updateSuccess)
+            .message.info
+                div(
+                    class = "alert alert-success"
+                    data-time = time
+                    show-alert
+                )   #{messages.updateSuccess} <span close-alert>X</span>
+mixin alertRestoreSuccess(time)
+    - if (messages.restoreSuccess)
+            .message.info
+                div(
+                    class = "alert alert-success"
+                    data-time = time
+                    show-alert
+                )   #{messages.restoreSuccess} <span close-alert>X</span>
+
+mixin alertDeleteHardSuccess(time)
+    - if (messages.deletedHardSuccess)
+            .message.info
+                div(
+                    class = "alert alert-success"
+                    data-time = time
+                    show-alert
+                )   #{messages.deletedHardSuccess} <span close-alert>X</span>
+

@@ -1,0 +1,175 @@
+/* =====================================================
+   detail.css — trang chi tiết người dùng
+   Nền đen, clean, hiện đại
+   ===================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ---- Card wrapper ---- */
+.card-detail {
+  max-width: 620px;
+  margin: 2rem auto;
+  border-radius: 12px;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  background: #1a1d24;
+}
+
+/* ---- Header ---- */
+.card-header-record {
+  background: #5a6af4;
+  padding: 20px 24px;
+  text-align: center;
+}
+
+.card-header-record h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+}
+
+/* ---- Body ---- */
+.card-body {
+  padding: 0 8px;
+}
+
+/* ---- Từng dòng chi tiết ---- */
+.detail-item {
+  display: flex;
+  align-items: center;
+  padding: 13px 16px;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.06);
+  gap: 16px;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+/* ---- Label bên trái ---- */
+.detail-item strong {
+  width: 150px;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: #8b8fa8;
+}
+
+/* ---- Giá trị bên phải ---- */
+.detail-item span {
+  flex: 1;
+  font-size: 13px;
+  color: #c5c8da;
+  word-break: break-all;
+}
+
+/* ---- Ảnh đại diện — hình chữ nhật bo tròn nhẹ ---- */
+.detail-item img {
+  width: 90px;
+  height: 72px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  display: block;
+}
+
+/* ---- Trạng thái ---- */
+.status-active {
+  color: #4ade80;
+  font-weight: 500;
+}
+
+.status-inactive {
+  color: #f87171;
+  font-weight: 500;
+}
+
+/* ---- ID / hash — dùng mono ---- */
+.detail-item .mono {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 12px;
+  color: #6b7280;
+  letter-spacing: 0.3px;
+}
+
+/* ---- Ngày giờ ---- */
+.detail-item .datetime {
+  font-size: 13px;
+  color: #c5c8da;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .card-detail {
+    margin: 1rem;
+    border-radius: 10px;
+  }
+
+  .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .detail-item strong {
+    width: auto;
+  }
+}
+
+/* ---- Khu vực nút hành động ---- */
+.card-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 24px;
+  border-top: 0.5px solid rgba(255, 255, 255, 0.06);
+}
+
+.btn-back,
+.btn-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  padding: 9px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  letter-spacing: 0.2px;
+}
+
+.btn-back {
+  background: transparent;
+  color: #8b8fa8;
+  border: 0.5px solid rgba(255, 255, 255, 0.12);
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #c5c8da;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-edit {
+  background: #5a6af4;
+  color: #ffffff;
+  border: none;
+}
+
+.btn-edit:hover {
+  background: #4757e0;
+}
+
+.btn-back:active,
+.btn-edit:active {
+  transform: scale(0.97);
+}

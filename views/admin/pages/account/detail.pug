@@ -1,0 +1,64 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/button-delete.pug
+
+block css
+    link(rel="stylesheet", href="/admin/css/detailAccountAdmin.css")
+
+block main
+    .card-detail
+        .card-header-record
+            h1 Chi Tiết Người Dùng
+
+        .card-body
+            .detail-item
+                strong Ảnh Đại Diện
+                span
+                    img(
+                        src=record.avatar,
+                        alt="Avatar",
+                        onerror="this.onerror=null;this.src='https://via.placeholder.com/90x72?text=No+Image';"
+                    )
+
+            .detail-item
+                strong ID
+                span.mono #{record._id}
+
+            .detail-item
+                strong Họ và Tên
+                span #{record.fullName}
+
+            .detail-item
+                strong Email
+                span #{record.email}
+
+            .detail-item
+                strong Số Điện Thoại
+                span #{record.phone}
+
+            .detail-item
+                strong Phân Quyền
+                span #{record.role_id ? record.role_id.title : 'Chưa phân quyền'}
+
+            .detail-item
+                strong Trạng Thái
+                span(class=record.status === 'active' ? 'status-active' : 'status-inactive')
+                    | #{record.status === 'active' ? 'Đang hoạt động' : 'Không hoạt động'}
+
+            .detail-item
+                strong Đã Xóa
+                span #{record.deleted ? 'Có' : 'Không'}
+
+            .detail-item
+                strong Ngày Tạo
+                span.datetime
+                    | #{new Date(record.createdAt).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+
+            .detail-item
+                strong Cập Nhật
+                span.datetime
+                    | #{new Date(record.updatedAt).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+
+        .card-actions
+            a.btn-back(href=`${prefixAdmin}/accounts`) Quay lại
+            a.btn-edit(href=`${prefixAdmin}/accounts/edit/${record._id}`) Chỉnh sửa

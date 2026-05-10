@@ -1,0 +1,54 @@
+mixin pagination (pagination)
+    nav(aria-label="Page navigation example")
+                ul(class="pagination")
+                    if(pagination.currentPage > 1)
+                        li(class="page-item")
+                            button(
+                                class="page-link", 
+                                type="button",
+                                button-pagination = 1 
+                            ) Trang đầu
+
+                    if(pagination.currentPage > 1)
+                        li(class="page-item")
+                            button(
+                                class="page-link", 
+                                type="button",
+                                button-pagination = pagination.currentPage - 1
+                            )
+                                i(class="fa-solid fa-angles-left")
+                                | Trang trước
+
+                    if (pagination.startPage > 1)
+                        li(class="page-item disabled")
+                            button(class="page-link" disabled)
+                                | ...
+
+                    - for (var i = pagination.startPage ; i <= pagination.endPage ; i++)
+                        li(class=["page-item", i === pagination.currentPage ? 'active' : ''])
+                            button(
+                                class="page-link",
+                                type="button",
+                                button-pagination=i
+                            ) #{i}
+
+                    if (pagination.endPage < pagination.totalPage)
+                        li(class="page-item disabled")
+                            button(class="page-link" disabled)
+                                | ...
+                    
+                    if(pagination.currentPage < pagination.totalPage)
+                        li(class="page-item")
+                            button(
+                                class="page-link", 
+                                type="button",
+                                button-pagination=parseInt(pagination.currentPage) + 1
+                            ) Trang sau 
+                    
+                    if(pagination.currentPage < pagination.totalPage)
+                        li(class="page-item")
+                            button(
+                                class="page-link", 
+                                type="button"
+                                button-pagination = pagination.totalPage 
+                            ) Trang cuối

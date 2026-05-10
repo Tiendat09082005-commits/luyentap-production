@@ -1,0 +1,603 @@
+/* =====================================================
+   product-trash.css — Thùng rác (Monochrome / Sharp)
+   Font: IBM Plex Sans
+   Icon: Lucide SVG outline — mờ, tinh tế
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:            #0e0e10;
+  --bg-2:          #131315;
+  --bg-3:          #18181b;
+  --bg-4:          #1e1e22;
+  --bg-5:          #26262c;
+  --line:          #2a2a30;
+  --line-2:        #34343c;
+  --white:         #ececee;
+  --white-2:       #9898a6;
+  --white-3:       #55555f;
+  --green:         #22c55e;
+  --green-bg:      rgba(34,197,94,0.08);
+  --green-border:  rgba(34,197,94,0.18);
+  --red:           #ef4444;
+  --red-bg:        rgba(239,68,68,0.08);
+  --red-border:    rgba(239,68,68,0.18);
+  --r:             3px;
+  --r-sm:          2px;
+  --t:             0.13s ease;
+  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+}
+
+/* ============================================================
+   RESET THÊM cho Bootstrap 4
+   ============================================================ */
+.products-page *,
+.products-page *::before,
+.products-page *::after {
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   PAGE
+   ============================================================ */
+.products-page {
+  padding: 30px 36px;
+  width: 100%;
+  background: var(--bg);
+  min-height: 100vh;
+  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+}
+
+.products-page h1 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: -0.2px;
+  margin: 0 0 24px;
+}
+
+/* ============================================================
+   CARD
+   ============================================================ */
+.products-page .card {
+  background: var(--bg-2) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--r) !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  margin-bottom: 14px !important;
+}
+
+.products-page .card-header {
+  background: transparent !important;
+  border-bottom: 1px solid var(--line) !important;
+  padding: 11px 18px !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  color: var(--white-3) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.4px !important;
+  font-family: 'IBM Plex Mono', monospace !important;
+}
+
+.products-page .card-body {
+  padding: 16px 18px !important;
+}
+
+/* ============================================================
+   FILTER BUTTONS
+   ============================================================ */
+.products-page .btn-outline-success {
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 34px !important;
+  padding: 0 14px !important;
+  border-radius: var(--r) !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+  border: 1px solid var(--line) !important;
+  background: transparent !important;
+  color: var(--white-2) !important;
+  cursor: pointer !important;
+  transition: all var(--t) !important;
+  text-decoration: none !important;
+  margin-right: 6px !important;
+  line-height: 1 !important;
+  box-shadow: none !important;
+}
+.products-page .btn-outline-success:hover {
+  background: var(--bg-4) !important;
+  border-color: var(--line-2) !important;
+  color: var(--white) !important;
+  box-shadow: none !important;
+}
+.products-page .btn-outline-success.active,
+.products-page .btn-outline-success:focus {
+  background: var(--white) !important;
+  border-color: var(--white) !important;
+  color: var(--bg) !important;
+  font-weight: 500 !important;
+  box-shadow: none !important;
+}
+
+/* ============================================================
+   SEARCH FORM
+   ============================================================ */
+.products-page #form-search .input-group {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+}
+/* Tắt Bootstrap input-group border merge */
+.products-page #form-search .input-group > * {
+  border-radius: var(--r) !important;
+}
+
+.products-page #form-search .input-group > .form-control,
+.products-page #form-search .input-group > .position-relative > .form-control {
+  flex: 1 !important;
+  height: 34px !important;
+  background: var(--bg-3) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--r) !important;
+  border-top-left-radius: var(--r) !important;
+  border-bottom-left-radius: var(--r) !important;
+  border-top-right-radius: var(--r) !important;
+  border-bottom-right-radius: var(--r) !important;
+  color: var(--white) !important;
+  font-size: 13px !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+  padding: 0 36px 0 12px !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: border-color var(--t) !important;
+}
+.products-page #form-search .input-group > .form-control::placeholder,
+.products-page #form-search .input-group > .position-relative > .form-control::placeholder {
+  color: var(--white-3) !important;
+}
+.products-page #form-search .input-group > .form-control:focus,
+.products-page #form-search .input-group > .position-relative > .form-control:focus {
+  border-color: var(--line-2) !important;
+  box-shadow: none !important;
+}
+.products-page #form-search .input-group-append { margin-left: 0 !important; }
+
+.products-page #form-search .input-group .btn-success,
+.products-page #form-search .input-group-append .btn-success,
+.products-page #form-search .btn-success {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 34px !important;
+  padding: 0 16px !important;
+  border-radius: var(--r) !important;
+  border-top-left-radius: var(--r) !important;
+  border-bottom-left-radius: var(--r) !important;
+  border-top-right-radius: var(--r) !important;
+  border-bottom-right-radius: var(--r) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+  background: var(--white) !important;
+  border: 1px solid var(--white) !important;
+  color: var(--bg) !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+  width: auto !important;
+  transition: all var(--t) !important;
+}
+.products-page #form-search .input-group .btn-success:hover,
+.products-page #form-search .btn-success:hover {
+  background: var(--white-2) !important;
+  border-color: var(--white-2) !important;
+}
+
+#clearBtn {
+  color: var(--white-3);
+  font-size: 11px;
+  z-index: 5;
+  transition: color var(--t);
+}
+#clearBtn:hover { color: var(--white); }
+
+/* ============================================================
+   BULK ACTION
+   ============================================================ */
+.products-page .col-8 form[form-change-multi] .d-flex {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+}
+.products-page .col-8 form[form-change-multi] .form-group {
+  margin-bottom: 0 !important;
+}
+.products-page .col-8 form[form-change-multi] select[name="type"] {
+  display: block !important;
+  width: auto !important;
+  min-width: 190px !important;
+  height: 34px !important;
+  background: var(--bg-3) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--white-2) !important;
+  border-radius: var(--r) !important;
+  padding: 0 12px !important;
+  font-size: 13px !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+  outline: none !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  transition: border-color var(--t) !important;
+  -webkit-appearance: auto !important;
+  appearance: auto !important;
+}
+.products-page .col-8 form[form-change-multi] select[name="type"]:focus {
+  border-color: var(--line-2) !important;
+  box-shadow: none !important;
+}
+.products-page .col-8 form[form-change-multi] button[type="submit"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  height: 34px !important;
+  padding: 0 18px !important;
+  background: var(--white) !important;
+  border: 1px solid var(--white) !important;
+  border-radius: var(--r) !important;
+  color: var(--bg) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+  cursor: pointer !important;
+  transition: all var(--t) !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+}
+.products-page .col-8 form[form-change-multi] button[type="submit"]:hover {
+  background: var(--white-2) !important;
+  border-color: var(--white-2) !important;
+}
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+.products-page .table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  table-layout: auto !important;
+  margin-bottom: 0 !important;
+  color: var(--white) !important;
+  background: transparent !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+}
+.products-page .table thead tr {
+  border-bottom: 1px solid var(--line) !important;
+  background: transparent !important;
+}
+.products-page .table thead th {
+  padding: 10px 16px !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  color: var(--white-3) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.2px !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+  border: none !important;
+  background: transparent !important;
+  vertical-align: middle !important;
+  font-family: 'IBM Plex Mono', monospace !important;
+}
+.products-page .table thead th:first-child,
+.products-page .table thead th:nth-child(4) { text-align: left !important; }
+.products-page .table thead th:first-child {
+  width: 38px !important;
+  padding-left: 18px !important;
+}
+
+.products-page .table tbody tr {
+  border-bottom: 1px solid var(--line) !important;
+  background: transparent !important;
+  transition: background var(--t) !important;
+}
+.products-page .table tbody tr:last-child { border-bottom: none !important; }
+.products-page .table.table-hover tbody tr:hover {
+  background: var(--bg-3) !important;
+  color: var(--white) !important;
+}
+
+.products-page .table tbody td {
+  padding: 12px 16px !important;
+  vertical-align: middle !important;
+  font-size: 13px !important;
+  color: var(--white) !important;
+  border: none !important;
+  text-align: center !important;
+}
+.products-page .table tbody td:first-child,
+.products-page .table tbody td:nth-child(4) { text-align: left !important; }
+.products-page .table tbody td:first-child { padding-left: 18px !important; }
+
+/* STT */
+.products-page .table tbody td:nth-child(2) {
+  color: var(--white-3) !important;
+  font-size: 12px !important;
+  font-family: 'IBM Plex Mono', monospace !important;
+  text-align: center !important;
+}
+
+/* Checkbox */
+.products-page .table input[type="checkbox"] {
+  width: 14px !important;
+  height: 14px !important;
+  accent-color: var(--white) !important;
+  cursor: pointer !important;
+}
+
+/* Thumbnail */
+.products-page .table tbody td img {
+  width: 38px !important;
+  height: 38px !important;
+  object-fit: cover !important;
+  border-radius: var(--r) !important;
+  border: 1px solid var(--line) !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+/* Tiêu đề */
+.products-page .table tbody td:nth-child(4) {
+  font-weight: 500 !important;
+  color: var(--white) !important;
+  font-size: 13.5px !important;
+}
+
+/* Loại */
+.products-page .table tbody td:nth-child(5) {
+  color: var(--white-2) !important;
+  font-size: 12.5px !important;
+}
+
+/* Position input */
+.products-page .table input[type="number"] {
+  width: 54px !important;
+  background: var(--bg-4) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--white) !important;
+  border-radius: var(--r-sm) !important;
+  padding: 4px 6px !important;
+  font-size: 12px !important;
+  font-family: 'IBM Plex Mono', monospace !important;
+  text-align: center !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: border-color var(--t) !important;
+}
+.products-page .table input[type="number"]:focus {
+  border-color: var(--line-2) !important;
+}
+
+/* Giá */
+.products-page .table tbody td:nth-child(7) {
+  font-family: 'IBM Plex Mono', monospace !important;
+  font-size: 12.5px !important;
+  color: var(--white-2) !important;
+}
+
+/* ============================================================
+   STATUS BADGE
+   ============================================================ */
+.products-page .table .badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 3px 9px !important;
+  border-radius: var(--r) !important;
+  font-size: 11.5px !important;
+  font-weight: 400 !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+  cursor: pointer !important;
+  border: 1px solid transparent !important;
+  white-space: nowrap !important;
+  transition: opacity var(--t) !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+.products-page .table .badge:hover { opacity: 0.65 !important; }
+
+.products-page .table .badge-success {
+  background: var(--green-bg) !important;
+  color: var(--green) !important;
+  border-color: var(--green-border) !important;
+}
+.products-page .table .badge-danger {
+  background: var(--red-bg) !important;
+  color: var(--red) !important;
+  border-color: var(--red-border) !important;
+}
+.products-page .table .badge-success::before,
+.products-page .table .badge-danger::before {
+  content: '';
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.products-page .table .badge-success::before { background: var(--green); }
+.products-page .table .badge-danger::before  { background: var(--red); }
+
+/* ============================================================
+   ACTION BUTTONS — icon style như ảnh
+   Dùng Lucide SVG được inject qua JS (lucide.createIcons())
+   hoặc inline SVG trong pug
+   ============================================================ */
+.products-page .table tbody td:last-child {
+  white-space: nowrap !important;
+}
+
+/* Base button — hình vuông, trong suốt, border mờ */
+.products-page .table tbody td:last-child a.btn,
+.products-page .table tbody td:last-child button.btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  padding: 0 !important;
+  margin: 0 1px !important;
+  border-radius: var(--r) !important;
+  border: 1px solid var(--line) !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: all var(--t) !important;
+  color: var(--white-3) !important;         /* icon mờ mặc định */
+  font-size: 0 !important;                  /* ẩn text Bootstrap */
+  line-height: 1 !important;
+  vertical-align: middle !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+  position: relative !important;
+}
+
+/* Icon SVG bên trong — dùng Lucide hoặc FA */
+.products-page .table tbody td:last-child a.btn svg,
+.products-page .table tbody td:last-child button.btn svg,
+.products-page .table tbody td:last-child a.btn i,
+.products-page .table tbody td:last-child button.btn i {
+  width: 13px !important;
+  height: 13px !important;
+  stroke-width: 1.5 !important;
+  display: block !important;
+  font-size: 12px !important;
+  color: inherit !important;
+  pointer-events: none !important;
+  flex-shrink: 0 !important;
+}
+
+/* Sửa — hover sáng nhẹ */
+.products-page .table tbody td:last-child a.btn-warning,
+.products-page .table tbody td:last-child button.btn-warning { color: var(--white-3) !important; }
+.products-page .table tbody td:last-child a.btn-warning:hover,
+.products-page .table tbody td:last-child button.btn-warning:hover {
+  background: var(--bg-5) !important;
+  border-color: var(--line-2) !important;
+  color: var(--white) !important;
+}
+
+/* Xóa vĩnh viễn — hover đỏ nhạt */
+.products-page .table tbody td:last-child a.btn-danger,
+.products-page .table tbody td:last-child button.btn-danger { color: var(--white-3) !important; }
+.products-page .table tbody td:last-child a.btn-danger:hover,
+.products-page .table tbody td:last-child button.btn-danger:hover {
+  background: var(--red-bg) !important;
+  border-color: var(--red-border) !important;
+  color: var(--red) !important;
+}
+
+/* Xem chi tiết */
+.products-page .table tbody td:last-child a.btn-secondary,
+.products-page .table tbody td:last-child button.btn-secondary { color: var(--white-3) !important; }
+.products-page .table tbody td:last-child a.btn-secondary:hover,
+.products-page .table tbody td:last-child button.btn-secondary:hover {
+  background: var(--bg-5) !important;
+  border-color: var(--line-2) !important;
+  color: var(--white) !important;
+}
+
+/* Khôi phục — hover xanh nhạt */
+.products-page .table tbody td:last-child a.btn-primary,
+.products-page .table tbody td:last-child button.btn-primary { color: var(--white-3) !important; }
+.products-page .table tbody td:last-child a.btn-primary:hover,
+.products-page .table tbody td:last-child button.btn-primary:hover {
+  background: var(--green-bg) !important;
+  border-color: var(--green-border) !important;
+  color: var(--green) !important;
+}
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+.products-page .pagination {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  list-style: none !important;
+  margin: 18px 0 0 !important;
+  padding: 0 !important;
+  justify-content: center !important;
+}
+.products-page .pagination .page-item .page-link,
+.products-page .pagination li > a,
+.products-page .pagination li > span {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: var(--r) !important;
+  background: transparent !important;
+  border: 1px solid var(--line) !important;
+  color: var(--white-3) !important;
+  font-size: 12px !important;
+  font-family: 'IBM Plex Mono', monospace !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: all var(--t) !important;
+  box-shadow: none !important;
+}
+.products-page .pagination .page-item .page-link:hover,
+.products-page .pagination li > a:hover {
+  border-color: var(--line-2) !important;
+  color: var(--white) !important;
+  background: var(--bg-4) !important;
+}
+.products-page .pagination .page-item.active .page-link,
+.products-page .pagination li.active > a,
+.products-page .pagination li.active > span {
+  background: var(--white) !important;
+  border-color: var(--white) !important;
+  color: var(--bg) !important;
+  font-weight: 600 !important;
+}
+.products-page .pagination .page-item.disabled .page-link,
+.products-page .pagination li.disabled > a,
+.products-page .pagination li.disabled > span {
+  opacity: 0.2 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+/* ============================================================
+   ALERT
+   ============================================================ */
+.alert {
+  border-radius: var(--r) !important;
+  border: 1px solid var(--line) !important;
+  font-size: 13px !important;
+  font-family: 'IBM Plex Sans', sans-serif !important;
+}
+.alert-success {
+  background: var(--green-bg) !important;
+  color: var(--green) !important;
+  border-color: var(--green-border) !important;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .products-page { padding: 16px; }
+  .products-page .card-body .row { flex-direction: column; gap: 12px; }
+  .products-page .card-body .col-6,
+  .products-page .card-body .col-8 {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+}

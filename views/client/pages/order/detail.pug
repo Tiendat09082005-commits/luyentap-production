@@ -1,0 +1,142 @@
+extends ../../layouts/default.pug
+
+block css
+  link(rel="stylesheet" href="/client/css/payment-success.css")
+
+block main
+  .success-page
+    //- ===== HEADER =====
+    .success-hero
+      .success-icon.order-detail-icon
+        svg(xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+          path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2")
+      h1 Chi tiết đơn hàng
+      p Xem thông tin chi tiết và theo dõi đơn hàng của bạn
+
+    //- ===== ORDER CODE =====
+    .order-code-card
+      span.order-code-label Mã đơn hàng
+      .order-code-row
+        span.order-code= order.orderCode
+        button.copy-btn(type="button" onclick="copyCode(this)" title="Sao chép mã đơn")
+          svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z")
+      span.order-date Ngày đặt hàng: #{new Date(order.createdAt).toLocaleDateString('vi-VN', { day: 'numeric', month: 'long', year: 'numeric' })}
+
+    //- ===== ORDER STATUS TRACKER =====
+    .status-card
+      .status-header-flex
+        h3 Trạng thái đơn hàng
+        span.status-badge(class=order.statusClass)= order.statusText
+      
+      .status-track
+        .status-step(class=(['chờ xác nhận', 'đã xác nhận', 'đang giao', 'đã giao'].includes(order.status.toLowerCase()) ? 'done' : ''))
+          .step-circle
+            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+              path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7")
+          span Đặt hàng
+        
+        .step-line(class=(['đã xác nhận', 'đang giao', 'đã giao'].includes(order.status.toLowerCase()) ? 'done' : ''))
+        
+        div.status-step(class=(['đã xác nhận', 'đang giao', 'đã giao'].includes(order.status.toLowerCase()) ? 'done' : ''))
+          .step-circle
+            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+              path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12h12L19 8")
+          span Xác nhận
+          
+        .step-line(class=(['đang giao', 'đã giao'].includes(order.status.toLowerCase()) ? 'done' : ''))
+        
+        div.status-step(class=(['đang giao', 'đã giao'].includes(order.status.toLowerCase()) ? 'done' : ''))
+          .step-circle
+            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+              path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0")
+          span Giao hàng
+          
+        .step-line(class=(['đã giao'].includes(order.status.toLowerCase()) ? 'done' : ''))
+        
+        div.status-step(class=(['đã giao'].includes(order.status.toLowerCase()) ? 'done' : ''))
+          .step-circle
+            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+              path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z")
+          span Hoàn tất
+
+      if order.status.toLowerCase() === 'đã hủy'
+        .cancelled-msg.alert.alert-danger(style="margin-top: 20px; border-radius: 12px; font-weight: 500;")
+          | Đơn hàng này đã bị hủy. Vui lòng liên hệ bộ phận hỗ trợ nếu bạn có thắc mắc.
+
+    //- ===== INFO ROW =====
+    .info-row
+      .info-col
+        .info-col-header
+          svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z")
+            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z")
+          span Địa chỉ giao hàng
+        .info-col-body
+          p.info-name= order.userInfo.fullName
+          p.info-sub= order.userInfo.phone
+          p.info-sub
+            if order.userInfo.address
+               | #{order.userInfo.address.street}, #{order.userInfo.address.wardName}, #{order.userInfo.address.districtName}, #{order.userInfo.address.provinceName}
+            else
+               | Chưa cập nhật địa chỉ
+
+      .info-col
+        .info-col-header
+          svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z")
+          span Thanh toán
+        .info-col-body
+          p.info-sub= order.paymentMethodText || 'Chưa chọn'
+          p.info-sub Trạng thái: 
+            span(class=(order.paymentStatus === 'paid' ? 'text-success' : 'text-warning') style="font-weight: 600;")= order.paymentStatusText || order.paymentStatus
+          p.info-total-label Tổng cộng
+          p.info-total= (order.totalPrice || 0).toLocaleString('vi-VN') + 'đ'
+
+    //- ===== PRODUCTS =====
+    .products-card
+      h3 Sản phẩm đã đặt
+
+      .products-list
+        each item in order.products
+          .product-row
+            .product-icon
+              if item.thumbnail
+                img(src=item.thumbnail alt=item.title style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px;")
+              else
+                svg(xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                  path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4")
+            .product-info
+              p.product-name= item.title
+              span.product-variant= (item.variant || '') + (item.variant ? ' x ' : '') + (item.quantity || 1)
+            span.product-price= (item.price || 0).toLocaleString('vi-VN') + 'đ'
+
+      .products-summary
+        .summary-row
+          span Tạm tính
+          span= (order.totalPrice || 0).toLocaleString('vi-VN') + 'đ'
+        .summary-row
+          span Phí vận chuyển
+          span.shipping-free Miễn phí
+        .summary-divider
+        .summary-total
+          span Tổng thanh toán
+          span= (order.totalPrice || 0).toLocaleString('vi-VN') + 'đ'
+
+    //- ===== ACTIONS =====
+    .success-actions
+      a.btn-continue(href="/user/detail/" + user.id) Quay lại hồ sơ
+      a.btn-track(href="/products") Tiếp tục mua sắm
+
+  script.
+    function copyCode(btn) {
+      var code = document.querySelector('.order-code').textContent.trim();
+      navigator.clipboard.writeText(code).then(function() {
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>';
+        btn.style.color = '#22c55e';
+        setTimeout(function() {
+          btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }

@@ -1,0 +1,133 @@
+extends ../../layouts/default.pug
+
+block css
+  link(rel="stylesheet" href="/client/css/payment-success.css")
+
+block main
+  .success-page
+    //- ===== SUCCESS HEADER =====
+    .success-hero
+      .success-icon
+        svg(xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+          path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7")
+      h1 Đặt hàng thành công!
+      p Cảm ơn bạn đã đặt hàng tại Tida. Chúng tôi sẽ xử lý đơn hàng của bạn trong thời gian sớm nhất.
+
+    //- ===== ORDER CODE =====
+    .order-code-card
+      span.order-code-label Mã đơn hàng
+      .order-code-row
+        span.order-code= order.orderCode
+        button.copy-btn(type="button" onclick="copyCode(this)" title="Sao chép mã đơn")
+          svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z")
+      span.order-date Ngày đặt hàng: #{new Date(order.createdAt || Date.now()).toLocaleDateString('vi-VN')}
+
+    //- ===== ORDER STATUS TRACKER =====
+    .status-card
+      h3 Trạng thái đơn hàng
+      .status-track
+        .status-step.done
+          .step-circle
+            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+              path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7")
+          span Đặt hàng
+        .step-line.done
+        .status-step
+          .step-circle
+            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+              path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12h12L19 8")
+          span Chuẩn bị
+        .step-line
+        .status-step
+          .step-circle
+            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+              path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0")
+          span Giao hàng
+        .step-line
+        .status-step
+          .step-circle
+            svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+              path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z")
+          span Hoàn tất
+
+      .estimated-delivery
+        svg(xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+          circle(cx="12" cy="12" r="9" stroke-width="2")
+          polyline(points="12 6 12 12 16 14" stroke-width="2" stroke-linecap="round")
+        | Dự kiến giao hàng: #{order.estimatedDelivery || '24/03/2026 - 26/03/2026'}
+
+    //- ===== INFO ROW =====
+    .info-row
+      .info-col
+        .info-col-header
+          svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z")
+            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z")
+          span Địa chỉ giao hàng
+        .info-col-body
+          p.info-name= order.userInfo.fullName
+          p.info-sub= order.userInfo.phone
+          p.info-sub
+            if order.userInfo.address
+              | #{order.userInfo.address.street}, #{order.userInfo.address.wardName}, #{order.userInfo.address.districtName}, #{order.userInfo.address.provinceName}
+            else
+              | 123 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh
+
+      .info-col
+        .info-col-header
+          svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z")
+          span Thanh toán
+        .info-col-body
+          p.info-sub= order.paymentMethodText || 'Chưa chọn'
+          p.info-total-label Tổng thanh toán
+          p.info-total= (order.totalPrice || 0).toLocaleString('vi-VN') + 'đ'
+
+    //- ===== PRODUCTS =====
+    .products-card
+      h3 Sản phẩm đã đặt
+
+      .products-list
+        each item in order.products
+          .product-row
+            .product-icon
+              if item.thumbnail
+                img(src=item.thumbnail alt=item.title style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;")
+              else
+                svg(xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                  path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4")
+            .product-info
+              p.product-name= item.title
+              span.product-variant= (item.variant || '') + (item.variant ? ' x ' : '') + (item.quantity || 1)
+            span.product-price= (item.price || 0).toLocaleString('vi-VN') + 'đ'
+
+      .products-summary
+        .summary-row
+          span Tạm tính
+          span= (order.subtotal || order.totalPrice || 0).toLocaleString('vi-VN') + 'đ'
+        .summary-row
+          span Phí vận chuyển
+          span.shipping-free Miễn phí
+        .summary-divider
+        .summary-total
+          span Tổng cộng
+          span= (order.totalPrice || 0).toLocaleString('vi-VN') + 'đ'
+
+    //- ===== ACTIONS =====
+    .success-actions
+      a.btn-continue(href="/products") Tiếp tục mua sắm
+      a.btn-track(href=`/orders/${order._id}`) Theo dõi đơn hàng
+
+  script.
+    function copyCode(btn) {
+      var code = document.querySelector('.order-code').textContent.trim();
+      navigator.clipboard.writeText(code).then(function() {
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>';
+        btn.style.color = '#22c55e';
+        setTimeout(function() {
+          btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }

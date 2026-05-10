@@ -1,0 +1,178 @@
+/* =====================================================
+   sider.css — scoped hoàn toàn trong .sider
+   KHÔNG override html, body, .header, .main, .dashboard
+   ===================================================== */
+
+/* ---- CSS variables scoped trong .sider ---- */
+.sider {
+  --sd-width:       206px;
+  --sd-bg:          #1e1e1e;
+  --sd-border:      #2a2a2a;
+  --sd-text:        #dddddd;
+  --sd-text-active: #ffffff;
+  --sd-muted:       #888888;
+  --sd-accent:      #4f7cff;
+  --sd-hover-bg:    #2a2a2a;
+  --sd-active-bg:   rgba(79, 124, 255, 0.12);
+
+  position: fixed;
+  top: 70px;          /* đúng bằng .header height */
+  left: 0;
+
+  width: var(--sd-width);
+  min-width: var(--sd-width);
+  height: calc(100vh - 70px);
+
+  background: var(--sd-bg);
+  border-right: 1px solid var(--sd-border);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  z-index: 900;      /* dưới header (1000) */
+
+  /* Ẩn scrollbar nhưng vẫn scroll được */
+  scrollbar-width: thin;
+  scrollbar-color: var(--sd-border) transparent;
+}
+
+.sider::-webkit-scrollbar       { width: 4px; }
+.sider::-webkit-scrollbar-track { background: transparent; }
+.sider::-webkit-scrollbar-thumb { background: var(--sd-border); border-radius: 2px; }
+
+/* ---- Section label (tuỳ chọn) ---- */
+.sider .menu-label {
+  padding: 18px 18px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--sd-muted);
+  user-select: none;
+}
+
+/* ---- Menu list ---- */
+.sider .inner-menu {
+  flex: 1;
+  padding: 12px 0;
+}
+
+.sider .inner-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sider .inner-menu li {
+  margin: 2px 8px;
+}
+
+.sider .inner-menu li a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+  border-radius: 8px;
+
+  color: var(--sd-text);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+
+  transition: background 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sider .inner-menu li a:hover {
+  background: var(--sd-hover-bg);
+  color: var(--sd-text-active);
+}
+
+/* ---- Active state ---- */
+.sider .inner-menu li.active a,
+.sider .inner-menu li a.active {
+  background: var(--sd-active-bg);
+  color: var(--sd-accent);
+  font-weight: 600;
+  position: relative;
+}
+
+.sider .inner-menu li.active a::before,
+.sider .inner-menu li a.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 3px;
+  background: var(--sd-accent);
+  border-radius: 0 4px 4px 0;
+}
+
+/* ---- Menu icon (nếu dùng) ---- */
+.sider .inner-menu li a .menu-icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+.sider .inner-menu li a:hover .menu-icon,
+.sider .inner-menu li.active a .menu-icon {
+  opacity: 1;
+}
+
+/* ---- Badge count (tuỳ chọn) ---- */
+.sider .menu-badge {
+  margin-left: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--sd-accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ---- Divider trong menu ---- */
+.sider .menu-divider {
+  height: 1px;
+  background: var(--sd-border);
+  margin: 8px 18px;
+}
+
+/* ---- Footer của sider (user info, logout...) ---- */
+.sider .sider-footer {
+  padding: 16px 16px;
+  border-top: 1px solid var(--sd-border);
+}
+
+/* =====================================================
+   RESPONSIVE — collapse sider trên mobile
+   ===================================================== */
+@media (max-width: 900px) {
+  .sider {
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+
+  /* Thêm class .sider--open qua JS để mở sider trên mobile */
+  .sider.sider--open {
+    transform: translateX(0);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+  }
+}

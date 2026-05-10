@@ -1,0 +1,72 @@
+/* =====================================================
+   pagination-admin.css — Global Dark Theme Pagination
+   ===================================================== */
+
+.pagination-wrapper, 
+.pagination-bar {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 8px;
+}
+
+.page-item .page-link,
+.page-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 12px;
+  background: #1a1d24; /* surface-1 equivalent */
+  border: 1px solid rgba(79, 124, 255, 0.25); /* ac-border equivalent */
+  color: #e8eaf2; /* text-primary equivalent */
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.page-item.active .page-link,
+.page-btn.active {
+  background: #3b82f6; /* brand-accent equivalent */
+  border-color: #3b82f6;
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.page-item:not(.active):not(.disabled) .page-link:hover,
+.page-btn:not(.active):not(.disabled):hover {
+  background: #272b35; /* surface-3 equivalent */
+  border-color: #3b82f6;
+  color: #3b82f6;
+  transform: translateY(-2px);
+}
+
+.page-item.disabled .page-link,
+.page-btn:disabled,
+.page-btn[disabled] {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.page-item .page-link i,
+.page-btn svg {
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+}

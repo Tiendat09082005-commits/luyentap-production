@@ -1,0 +1,162 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/button-delete.pug
+include ../../mixins/pagination.pug
+
+block css
+  link(rel="stylesheet", href="/admin/css/accountUser.css")
+
+block main
+  .user-management
+    h1.page-title
+      i.fas.fa-users
+      | Quản Lý Người Dùng
+
+    //- Bộ lọc và tìm kiếm
+    .filter-section
+      .filter-container
+        .filter-item
+          form#form-search
+            .input-group
+              input.search-input(
+                type="text"
+                name="keyword"
+                value=keyword
+                autocomplete="off"
+                placeholder="Tìm kiếm theo tên, email..."
+              )
+              .suggest-box#suggestBox
+
+        .filter-item
+          .filter-buttons
+            each item in filterStatus
+              button(
+                class=`btn-filter ${item.class}`
+                type="button"
+                button-status=item.status
+              )
+                if item.status == "active"
+                  i.fas.fa-check-circle
+                else if item.status == "deleted"
+                  i.fas.fa-ban
+                else
+                  i.fas.fa-list
+                | #{item.name}
+
+    //- Bảng danh sách người dùng
+    .user-table-wrapper
+      table.user-table
+        thead
+          tr
+            th STT
+            th Họ tên
+            th Email
+            th Số điện thoại
+            th Token User
+            th Trạng thái
+            th Ngày tạo
+            th Thao tác
+
+        tbody
+          if listUser && listUser.length > 0
+            each user, index in listUser
+              tr(data-user-id=user._id class=user.deleted ? 'row-deleted' : '')
+                td= index + 1
+
+                td
+                  .user-name= user.fullName || 'Chưa cập nhật'
+
+                td
+                  .user-email
+                    i.fas.fa-envelope
+                    = user.email
+
+                td
+                  .user-phone
+                    i.fas.fa-phone
+                    = user.phone || 'Chưa cập nhật'
+
+                td
+                  span.user-token= user.tokenUser ? user.tokenUser.substring(0, 20) + '...' : 'N/A'
+
+                td
+                  if user.deleted
+                    span.status-badge.deleted
+                      i.fas.fa-ban
+                      | Đã xóa
+                  else if user.status === "inactive"
+                    span.status-badge.inactive
+                      i.fas.fa-user-lock
+                      | Bị khóa
+                  else
+                    span.status-badge.active
+                      i.fas.fa-check-circle
+                      | Hoạt động
+
+                td
+                  .date-cell
+                    if user.createdAt
+                      .date-text= new Date(user.createdAt).toLocaleDateString('vi-VN')
+                      .time-text= new Date(user.createdAt).toLocaleTimeString('vi-VN')
+                    else
+                      span N/A
+                td
+                  .action-buttons
+                    //- Xem đơn hàng
+                    a.btn-action.btn-view(
+                      href=`/admin/accounts/user/orders/${user._id}`
+                      title="Xem đơn hàng"
+                    )
+                      i.fas.fa-shopping-cart
+
+                    //- Chuyển trạng thái
+                    if user.deleted
+                      form(method="POST" action=`/admin/accounts/user/restore/${user._id}?_method=PATCH` style="display: inline;")
+                        input(type="hidden" name="_csrf" value=csrfToken)
+                        button.btn-action.btn-restore(type="submit" title="Khôi phục tài khoản")
+                          i.fas.fa-undo
+                    else
+                      if user.status === "inactive"
+                        form(
+                          method="POST"
+                          action=`/admin/accounts/user/change-status/active/${user._id}?_method=PATCH`
+                          style="display: inline;"
+                          onsubmit=`return confirm('Bạn có chắc chắn muốn mở khóa tài khoản ${user.fullName}?')`
+                        )
+                          input(type="hidden" name="_csrf" value=csrfToken)
+                          button.btn-action.btn-restore(type="submit" title="Mở khóa tài khoản")
+                            i.fas.fa-unlock
+                      else
+                        form(
+                          method="POST"
+                          action=`/admin/accounts/user/change-status/inactive/${user._id}?_method=PATCH`
+                          style="display: inline;"
+                          onsubmit=`return confirm('Bạn có chắc chắn muốn khóa tài khoản ${user.fullName}?')`
+                        )
+                          input(type="hidden" name="_csrf" value=csrfToken)
+                          button.btn-action.btn-lock(type="submit" title="Khóa tài khoản")
+                            i.fas.fa-lock
+
+                    //- Xóa tài khoản
+                    form(
+                      method="POST"
+                      action=`/admin/accounts/user/delete/${user._id}?_method=DELETE`
+                      style="display: inline;"
+                      onsubmit=`return confirm('Bạn có chắc chắn muốn xóa tài khoản ${user.fullName}?')`
+                    )
+                      input(type="hidden" name="_csrf" value=csrfToken)
+                      button.btn-action.btn-delete(type="submit" title="Xóa tài khoản")
+                        i.fas.fa-trash
+
+          else
+            tr
+              td.no-data(colspan="9")
+                i.fas.fa-user-slash
+                p Không có người dùng nào
+
+    //- Phân trang
+    if listUser && listUser.length > 0
+      .pagination-wrapper
+        +pagination(pagination)
+
+    script(src="/admin/js/script.js")

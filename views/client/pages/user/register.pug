@@ -1,0 +1,161 @@
+include ../../mixins/alert.pug
+doctype html
+html(lang="vi")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    link(rel="stylesheet" href="/client/css/register.css")
+    title Đăng Ký - Tida
+
+  body
+    +alert-success(3000)
+    +alert-unsuccess(3000)
+
+    .login-page
+      //- ===== LEFT PANEL =====
+      .login-left
+        .login-left-inner
+          a.login-brand(href="/")
+            .brand-icon T
+            span Tida
+
+          .login-hero
+            h2 Tham gia cộng đồng Tida ngay hôm nay
+            p Đăng ký tài khoản để mua sắm dễ dàng, theo dõi đơn hàng và nhận ưu đãi độc quyền dành riêng cho thành viên.
+
+          .login-stats
+            .stat-item
+              span.stat-number 50K+
+              span.stat-label Khách hàng
+            .stat-item
+              span.stat-number 100%
+              span.stat-label Chính hãng
+            .stat-item
+              span.stat-number 24/7
+              span.stat-label Hỗ trợ
+
+          .login-features
+            .login-feature-item
+              .feature-check
+                svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                  path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7")
+              .feature-text
+                span.feature-name Ưu đãi thành viên độc quyền
+                span.feature-desc Giảm thêm 5–10% cho đơn hàng đầu tiên
+
+            .login-feature-item
+              .feature-check
+                svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                  path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7")
+              .feature-text
+                span.feature-name Theo dõi đơn hàng realtime
+                span.feature-desc Biết ngay trạng thái giao hàng của bạn
+
+            .login-feature-item
+              .feature-check
+                svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                  path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7")
+              .feature-text
+                span.feature-name Lưu địa chỉ & thanh toán
+                span.feature-desc Mua sắm nhanh hơn cho lần sau
+
+            .login-feature-item
+              .feature-check
+                svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                  path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7")
+              .feature-text
+                span.feature-name Tích điểm đổi quà
+                span.feature-desc Mỗi đơn hàng tích lũy điểm thưởng hấp dẫn
+
+      //- ===== RIGHT PANEL =====
+      .login-right
+        .register-container
+          .register-header
+            h1 Tạo tài khoản mới
+            p Điền thông tin bên dưới để bắt đầu mua sắm
+
+          form(action="/user/register" method="POST")
+            input(type="hidden" name="_csrf" value=csrfToken)
+            .form-row
+              .form-group
+                label(for="fullName") Họ và tên
+                  span.required *
+                input(
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  placeholder="Nhập họ và tên"
+                  required
+                )
+
+            .form-group.full-width
+              label(for="email") Email
+                span.required *
+              input(
+                type="email"
+                id="email"
+                name="email"
+                placeholder="example@email.com"
+                required
+              )
+
+            .form-group.full-width
+              label(for="phone") Số điện thoại
+              input(
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="0123456789"
+              )
+
+            .form-group.full-width
+              label(for="password") Mật khẩu
+                span.required *
+              .password-input-wrap
+                input(
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="Tối thiểu 8 ký tự"
+                  required
+                )
+                button.toggle-password(type="button" tabindex="-1" data-target="password")
+                  svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                    path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z")
+                    path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z")
+
+            .form-group.full-width
+              label(for="confirmPassword") Xác nhận mật khẩu
+                span.required *
+              .password-input-wrap
+                input(
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="Nhập lại mật khẩu"
+                  required
+                )
+                button.toggle-password(type="button" tabindex="-1" data-target="confirmPassword")
+                  svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                    path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z")
+                    path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z")
+
+            button.btn-register(type="submit")
+              | Đăng ký
+              svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7")
+
+          .divider
+            span hoặc
+
+          .login-link
+            p Đã có tài khoản?
+              a(href="/user/login") &nbsp;Đăng nhập ngay
+
+    script.
+      document.querySelectorAll('.toggle-password').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var target = document.getElementById(this.dataset.target);
+          target.type = target.type === 'password' ? 'text' : 'password';
+        });
+      });

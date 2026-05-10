@@ -1,0 +1,47 @@
+doctype html
+html
+  head
+    title= pageTitle
+    meta(name="csrf-token" content=csrfToken || '')
+
+    // CSS bắt buộc
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css")
+    link(rel="stylesheet", href="/admin/css/slider.css")
+    link(rel="stylesheet", href="/admin/css/header.css")
+    link(rel="stylesheet", href="/admin/css/layout.css")
+    link(rel="stylesheet", href="/admin/css/pagination-admin.css")
+    link(rel="stylesheet", href="/client/css/header.css")
+
+    // CSS riêng từng trang
+    block css
+
+  body
+    include ../partials/header.pug
+
+    .layout
+      .layout__body
+        include ../partials/sider-active.pug
+        .main
+          block main
+
+    // JS chung
+    script(src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js")
+    script(src="/client/js/search-api.js")
+    script(src="/client/js/header-search.js")
+    script(src="https://cdn.tiny.cloud/1/gl3dbchgnj2u0ml7xcyui0qkkxdpe2v1ncrwdrq2ud7sgrph/tinymce/7/tinymce.min.js" referrerpolicy="origin")
+    script(type="application/javascript", src="/admin/js/tinyMCE-config.js")
+    script(src="/shared/js/csrf.js")
+    script(src="/admin/js/script.js")
+    script(src="/socket.io/socket.io.js")
+    script(type="module").
+      import 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js'
+    script(src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js")
+    script.
+      lucide.createIcons()
+
+    // JS riêng từng trang
+    block script
+    
+    

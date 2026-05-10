@@ -1,0 +1,552 @@
+/* =====================================================
+   accountUser.css — scoped trong .user-management
+   Dark theme khớp với dashboard & products
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* =====================================================
+   DARK THEME VARIABLES
+   ===================================================== */
+.user-management {
+  --um-surface:   #151820;
+  --um-surface2:  #12172b;
+  --um-surface3:  #1a2240;
+  --um-border:    rgba(79, 124, 255, 0.25);
+  --um-border2:   rgba(79, 124, 255, 0.15);
+  --um-text:      #e8eaf2;
+  --um-muted:     #6b7394;
+  --um-accent:    #4f7cff;
+  --um-green:     #22c55e;
+  --um-red:       #ef4444;
+  --um-yellow:    #f59e0b;
+  --um-cyan:      #00d4aa;
+  --um-radius:    12px;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 24px 28px 28px;
+  min-height: 100%;
+  color: var(--um-text);
+}
+
+/* =====================================================
+   PAGE TITLE
+   ===================================================== */
+.user-management .page-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--um-text);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-management .page-title i {
+  color: var(--um-accent);
+  font-size: 20px;
+}
+
+/* =====================================================
+   FILTER SECTION
+   ===================================================== */
+.user-management .filter-section {
+  background: var(--um-surface);
+  border: 1px solid var(--um-border);
+  padding: 16px 20px;
+  border-radius: var(--um-radius);
+  margin-bottom: 20px;
+}
+
+.user-management .filter-container {
+  display: grid;
+  grid-template-columns: 2fr auto;
+  gap: 15px;
+  align-items: center;
+}
+
+.user-management .filter-item {
+  width: 100%;
+  position: relative;
+}
+
+/* ---- Search input ---- */
+.user-management .search-input {
+  width: 100%;
+  padding: 10px 16px;
+  border: 1.5px solid var(--um-border);
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s ease;
+  background: var(--um-surface2);
+  color: var(--um-text);
+  font-family: 'Inter', sans-serif;
+}
+
+.user-management .search-input:focus {
+  border-color: var(--um-accent);
+  box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.15);
+}
+
+.user-management .search-input::placeholder {
+  color: var(--um-muted);
+}
+
+/* ---- Filter buttons ---- */
+.user-management .filter-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.user-management .btn-filter {
+  padding: 9px 16px;
+  border: 1.5px solid var(--um-border);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  background: var(--um-surface2);
+  color: var(--um-muted);
+  font-family: 'Inter', sans-serif;
+}
+
+.user-management .btn-filter:hover {
+  color: var(--um-text);
+  border-color: var(--um-accent);
+}
+
+.user-management .btn-filter.active,
+.user-management .btn-filter[data-filter="all"].active {
+  background: rgba(79, 124, 255, 0.15);
+  color: var(--um-accent);
+  border-color: rgba(79, 124, 255, 0.4);
+}
+
+.user-management .btn-filter[data-filter="active"].active {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--um-green);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.user-management .btn-filter[data-filter="deleted"].active {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--um-red);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* ---- Suggest box ---- */
+.user-management .suggest-box {
+  position: absolute;
+  width: 100%;
+  background: var(--um-surface);
+  border: 1px solid var(--um-border);
+  border-radius: 0 0 8px 8px;
+  max-height: 250px;
+  overflow-y: auto;
+  display: none;
+  z-index: 999;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.user-management .suggest-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--um-text);
+  transition: background 0.15s;
+}
+
+.user-management .suggest-item:hover {
+  background: var(--um-surface3);
+}
+
+/* =====================================================
+   TABLE WRAPPER
+   ===================================================== */
+.user-management .user-table-wrapper {
+  background: var(--um-surface2);
+  border: 1px solid var(--um-border);
+  border-radius: var(--um-radius);
+  overflow: hidden;
+  box-shadow: 0 0 24px rgba(79, 124, 255, 0.08);
+  margin-bottom: 20px;
+}
+
+/* =====================================================
+   TABLE
+   ===================================================== */
+.user-management .user-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* ---- Header ---- */
+.user-management .user-table thead {
+  background: #0e1224;
+}
+
+.user-management .user-table th {
+  padding: 14px 16px;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--um-muted);
+  text-align: center;
+  border-right: 1px solid var(--um-border2);
+  border-bottom: 1px solid var(--um-border);
+  white-space: nowrap;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.user-management .user-table thead th:last-child {
+  border-right: none;
+}
+
+/* ---- Rows ---- */
+.user-management .user-table tbody tr {
+  background: var(--um-surface2);
+  border-bottom: 1px solid var(--um-border2);
+  transition: background 0.15s ease;
+}
+
+.user-management .user-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.user-management .user-table tbody tr:hover {
+  background: var(--um-surface3);
+}
+
+/* Row bị xóa */
+.user-management .user-table tbody tr.row-deleted {
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.user-management .user-table tbody tr.row-deleted:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* ---- Cells ---- */
+.user-management .user-table td {
+  padding: 14px 16px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: center;
+  border-right: 1px solid var(--um-border2);
+  color: var(--um-text);
+}
+
+.user-management .user-table td:last-child {
+  border-right: none;
+}
+
+/* =====================================================
+   USER INFO
+   ===================================================== */
+.user-management .user-name {
+  font-weight: 600;
+  color: var(--um-text);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.user-management .user-email {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--um-muted);
+}
+
+.user-management .user-email i {
+  color: var(--um-accent);
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.user-management .user-phone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--um-muted);
+}
+
+.user-management .user-phone i {
+  color: var(--um-cyan);
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.user-management .user-token {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  background: rgba(79, 124, 255, 0.08);
+  color: var(--um-muted);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--um-border2);
+  display: inline-block;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =====================================================
+   STATUS BADGE
+   ===================================================== */
+.user-management .status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.user-management .status-badge.active {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--um-green);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.user-management .status-badge.deleted {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--um-red);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.user-management .status-badge.inactive {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--um-yellow);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* =====================================================
+   DATE
+   ===================================================== */
+.user-management .date-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.user-management .date-text {
+  font-size: 13px;
+  color: var(--um-text);
+  font-weight: 600;
+}
+
+.user-management .time-text {
+  font-size: 11px;
+  color: var(--um-muted);
+}
+
+/* =====================================================
+   ACTION BUTTONS
+   ===================================================== */
+.user-management .action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+.user-management .btn-action {
+  width: 36px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.user-management .btn-action i {
+  font-size: 13px;
+}
+
+.user-management .btn-view {
+  background: rgba(79, 124, 255, 0.12);
+  color: var(--um-accent);
+  border-color: rgba(79, 124, 255, 0.3);
+}
+
+.user-management .btn-view:hover {
+  background: rgba(79, 124, 255, 0.22);
+  color: var(--um-accent);
+  transform: translateY(-1px);
+}
+
+.user-management .btn-restore {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--um-green);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.user-management .btn-restore:hover {
+  background: rgba(34, 197, 94, 0.22);
+  transform: translateY(-1px);
+}
+
+.user-management .btn-lock {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--um-yellow);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.user-management .btn-lock:hover {
+  background: rgba(245, 158, 11, 0.22);
+  transform: translateY(-1px);
+}
+
+.user-management .btn-delete {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--um-red);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.user-management .btn-delete:hover {
+  background: rgba(239, 68, 68, 0.22);
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   NO DATA
+   ===================================================== */
+.user-management .no-data {
+  text-align: center;
+  padding: 60px 20px !important;
+  color: var(--um-muted);
+}
+
+.user-management .no-data i {
+  font-size: 52px;
+  margin-bottom: 16px;
+  display: block;
+  color: var(--um-border);
+  opacity: 0.5;
+}
+
+.user-management .no-data p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--um-muted);
+}
+
+/* =====================================================
+   PAGINATION
+   ===================================================== */
+.user-management .pagination-wrapper {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.user-management .pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  gap: 6px;
+  margin: 0;
+}
+
+.user-management .page-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 6px 10px;
+  background: var(--um-surface2);
+  color: var(--um-muted);
+  border: 1px solid var(--um-border);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.user-management .page-link:hover {
+  background: rgba(79, 124, 255, 0.15);
+  color: var(--um-accent);
+  border-color: rgba(79, 124, 255, 0.4);
+}
+
+.user-management .page-item.active .page-link {
+  background: rgba(79, 124, 255, 0.2);
+  color: var(--um-accent);
+  border-color: rgba(79, 124, 255, 0.5);
+}
+
+.user-management .page-item.disabled .page-link {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 1200px) {
+  .user-management .filter-container {
+    grid-template-columns: 1fr;
+  }
+
+  .user-management .filter-buttons {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 992px) {
+  .user-management .user-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .user-management .user-table {
+    min-width: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-management {
+    padding: 16px;
+  }
+
+  .user-management .page-title {
+    font-size: 18px;
+  }
+
+  .user-management .filter-buttons {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 576px) {
+  .user-management .user-table th,
+  .user-management .user-table td {
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+}

@@ -1,0 +1,140 @@
+extends ../../layouts/default
+
+block main
+  style.
+    .user-profile-page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .user-profile-page .profile-title {
+      font-size: 2rem;
+      color: #2c3e50;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 3px solid #3498db;
+    }
+    .user-profile-page .profile-avatar {
+      display: block;
+      border-radius: 50%;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+      transition: transform 0.3s ease;
+    }
+    .user-profile-page .profile-avatar:hover {
+      transform: scale(1.05);
+    }
+    .user-profile-page .profile-info {
+      background: #f8f9fa;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      border-left: 4px solid #3498db;
+      font-size: 1rem;
+      color: #34495e;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    .user-profile-page .profile-info:hover {
+      background: #e8f4f8;
+      border-left-color: #2980b9;
+      transform: translateX(5px);
+    }
+    .user-profile-page .profile-info b {
+      color: #2c3e50;
+      font-weight: 600;
+      min-width: 120px;
+    }
+    .user-profile-page .profile-status {
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .user-profile-page .status-active {
+      background: #27ae60;
+      color: white;
+    }
+    .user-profile-page .status-inactive {
+      background: #e74c3c;
+      color: white;
+    }
+    .user-profile-page .profile-edit-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white !important;
+      padding: 0.9rem 2rem;
+      border-radius: 8px;
+      text-decoration: none !important;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    .user-profile-page .profile-edit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
+    @media (max-width: 768px) {
+      .user-profile-page {
+        padding: 1rem;
+      }
+      .user-profile-page .profile-title {
+        font-size: 1.5rem;
+      }
+      .user-profile-page .profile-avatar {
+        width: 120px !important;
+        height: 120px !important;
+        margin: 0 auto 1.5rem;
+      }
+      .user-profile-page .profile-info {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .user-profile-page .profile-info b {
+        min-width: auto;
+      }
+    }
+
+  .user-profile-page
+    h1.profile-title Thông tin cá nhân
+
+    // Hiển thị Avatar
+    if user.avatar
+      img.profile-avatar(src=user.avatar, width="150px")
+    else
+      img.profile-avatar(src="/admin/images/avatar.png", width="150px")
+
+    // Hiển thị Họ tên
+    if user.fullName
+      p.profile-info Họ tên: 
+        b= user.fullName
+
+    // Hiển thị Email
+    if user.email
+      p.profile-info Email: 
+        b= user.email
+
+    // Hiển thị Số điện thoại
+    if user.phone
+      p.profile-info Số điện thoại: 
+        b= user.phone
+
+    // Hiển thị Trạng thái
+    p.profile-info Trạng thái: 
+      span.profile-status(class=user.status === "active" ? "status-active" : "status-inactive")= user.status === "active" ? "Hoạt động" : "Dừng hoạt động"
+
+    // Hiển thị Phân quyền (Role)
+    if role.title
+      p.profile-info Phân quyền: 
+        b= role.title
+
+    // Nút Chỉnh sửa thông tin
+    a.profile-edit-btn(href=`${prefixAdmin}/accounts/edit/${user.id}`) Chỉnh sửa thông tin

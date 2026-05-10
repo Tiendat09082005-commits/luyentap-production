@@ -1,0 +1,125 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block css
+    link(rel="stylesheet", href="/admin/css/editAccount.css")
+
+block main
+    if(roles.permissions.includes("account_edit"))
+        h1(class="mb-4") Chỉnh sửa tài khoản
+    
+        form(
+            action=`${prefixAdmin}/accounts/edit/${record._id}?_method=PATCH`,
+            id="form-edit-account",
+            method="POST",
+            enctype="multipart/form-data"
+        )
+            input(type="hidden" name="_csrf" value=csrfToken)
+            // Họ tên 
+            div(class="form-group")
+                label(for="fullName") Họ Và Tên * 
+                input(
+                    type="text",
+                    class="form-control",
+                    id="fullName",
+                    name="fullName",
+                    value = record.fullName,
+                    required
+                )
+            // Email
+            div(class="form-group")
+                label(for="email") Email * 
+                input(
+                    type="email",
+                    class="form-control",
+                    id="email",
+                    name="email",
+                    value = record.email,
+                    required
+                )
+
+            // Số điện thoại
+            div(class="form-group")
+                label(for="phone") Số điện thoại * 
+                input(
+                    type="number",
+                    class="form-control",
+                    id="phone",
+                    name="phone",
+                    value = record.phone
+                )
+            
+            // Quyền (Roles)
+            div(class="form-group")
+                label(for="role_id") Phân quyền
+                select(name="role_id" id="role_id" class="form-control")
+                    option(disabled) -- Chọn quyền --
+                    each item in roleList
+                        option(
+                            value=item._id
+                            selected=(item._id.toString() == record.role_id.toString() ? true : false)
+                        ) #{item.title}
+
+            // Avatar (Avatar)
+            div(
+                class="form-group"
+                upload-image
+            )
+                label(for="thumbnail") Ảnh
+                .upload-row
+                    .preview-wrapper(style="position: relative; display: inline-block; margin-top: 10px;")
+                        img.image-preview(
+                            src= record.avatar
+                            upload-image-preview
+                            style="max-width: 200px; border-radius: 8px;"
+                        )
+                        button.remove-preview-btn(
+                            type="button"
+                            upload-image-remove
+                            style="display:none; position:absolute; top:4px; right:4px; border:none; background:rgba(0,0,0,0.6); color:white; border-radius:50%; width:22px; height:22px; cursor:pointer;"
+                        ) ✖
+                    .upload-left
+                        input(
+                            type="file",
+                            class="form-control-file",
+                            id="thumbnail",
+                            name="avatar"
+                            accept="image/*"
+                            upload-image-input
+                        )
+                    
+            // Trạng thái (Radio buttons)
+            div(class="form-group")
+                .form-group.form-check.form-check-inline
+                input(
+                    type="radio",
+                    class="form-check-input",
+                    id="statusActive",
+                    name="status",
+                    value="active",
+                    checked = (record.status == "active" ? true : false)
+                )
+                label(for="statusActive" class="form-check-label") Hoạt động
+                .form-group.form-check.form-check-inline
+                input(
+                    type="radio",
+                    class="form-check-input",
+                    id="statusInActive",
+                    name="status",
+                    value="inactive",
+                    checked = (record.status == "inactive" ? true : false)
+                )
+                label(for="statusInActive" class="form-check-label") Dừng hoạt động
+
+
+            // Nút gửi (Submit button)
+            // Nút hành động
+            .form-actions
+                a.btn-back(href=`${prefixAdmin}/accounts`) Quay lại
+                button.btn.btn-primary(type="submit") Xác nhận
+
+        script(src="/admin/js/product.js")
+        link(rel="stylesheet", href="/admin/css/create.css")
+    else
+        h1 Bạn không được cấp quyền chỉnh sửa tài khoản
+           

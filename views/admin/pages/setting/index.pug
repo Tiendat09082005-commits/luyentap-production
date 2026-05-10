@@ -1,0 +1,443 @@
+extends ../../layouts/default.pug
+
+
+block css
+    link(rel="stylesheet", href="/admin/css/settings.css")
+block main
+  .settings-page
+    .settings-header
+      .settings-header__icon
+        svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5")
+          path(d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z")
+          circle(cx="12" cy="12" r="3")
+      .settings-header__text
+        h1.settings-header__title Cài đặt hệ thống
+        p.settings-header__subtitle Quản lý thông tin & giao diện hiển thị cho khách hàng
+
+    form.settings-form(action=`${prefixAdmin}/setting` method="POST" enctype="multipart/form-data")
+      input(type="hidden" name="_csrf" value=csrfToken)
+      input(type="hidden" name="removeHeroImage" id="removeHeroImage" value="false")
+
+      //- ── NHÓM 1: THÔNG TIN TRANG WEB ──────────────────────────────
+      .settings-section
+        .settings-section__label
+          span.settings-section__number 01
+          h2.settings-section__title Thông tin trang web
+          p.settings-section__desc Tên, mô tả, favicon — hiển thị trên tab trình duyệt & kết quả tìm kiếm
+
+        .settings-section__fields
+          .field-group
+            .field
+              label.field__label(for="siteName") Tên trang web
+              .field__control
+                input.field__input(
+                  type="text"
+                  id="siteName"
+                  name="siteName"
+                  value=settings.siteName
+                  placeholder="Ví dụ: Thế Giới Nội Thất"
+                  autocomplete="off"
+                )
+              p.field__hint Hiển thị trên tab trình duyệt và tiêu đề trang
+
+            .field
+              label.field__label(for="siteSlogan") Khẩu hiệu (tagline)
+              .field__control
+                input.field__input(
+                  type="text"
+                  id="siteSlogan"
+                  name="siteSlogan"
+                  value=settings.siteSlogan
+                  placeholder="Ví dụ: Nâng tầm không gian sống"
+                  autocomplete="off"
+                )
+              p.field__hint Dòng mô tả ngắn bên dưới tên trang
+
+          .field
+            label.field__label(for="metaDescription") Mô tả SEO
+            .field__control
+              textarea.field__input.field__input--textarea(
+                id="metaDescription"
+                name="metaDescription"
+                rows="3"
+                placeholder="Mô tả ngắn về trang web, tối đa 160 ký tự..."
+                maxlength="160"
+              )= settings.metaDescription
+            .field__hint-row
+              p.field__hint Hiển thị trong kết quả tìm kiếm Google
+              span.field__counter#metaCounter #{settings.metaDescription ? settings.metaDescription.length : 0}/160
+
+          .field-row
+            .field
+              label.field__label Favicon
+              .upload-box.upload-box--small(data-target="favicon")
+                if settings.faviconUrl
+                  img.upload-box__preview(src=settings.faviconUrl alt="favicon" id="favicon-preview")
+                else
+                  .upload-box__placeholder(id="favicon-preview")
+                    svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5")
+                      rect(x="3" y="3" width="18" height="18" rx="2")
+                      path(d="M3 9h18M9 21V9")
+                input.upload-box__input(type="file" name="favicon" id="favicon" accept=".ico,.png,.svg")
+                label.upload-box__btn(for="favicon") Chọn ảnh
+              p.field__hint Định dạng .ico, .png hoặc .svg — 32×32px
+
+            .field
+              label.field__label Logo trang web
+              .upload-box(data-target="logo")
+                if settings.logoUrl
+                  img.upload-box__preview(src=settings.logoUrl alt="logo" id="logo-preview")
+                else
+                  .upload-box__placeholder(id="logo-preview")
+                    svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5")
+                      rect(x="3" y="3" width="18" height="18" rx="2")
+                      circle(cx="9" cy="9" r="2")
+                      path(d="m21 15-5-5L5 21")
+                input.upload-box__input(type="file" name="logo" id="logo" accept="image/*")
+                label.upload-box__btn(for="logo") Chọn ảnh
+              p.field__hint PNG/SVG nền trong, khuyến nghị chiều cao 60px
+
+      //- ── NHÓM 2: THANH CHẠY CHỮ (MARQUEE) ─────────────────────────
+      .settings-section
+        .settings-section__label
+          span.settings-section__number 02
+          h2.settings-section__title Dòng chữ chạy (Marquee)
+          p.settings-section__desc Văn bản cuộn liên tục trên tiêu đề trang
+
+        .settings-section__fields
+          .field
+            label.field__label(for="marqueeText") Nội dung chạy chữ
+            .field__control
+              textarea.field__input.field__input--textarea(
+                id="marqueeText"
+                name="marqueeText"
+                rows="2"
+                placeholder="Ví dụ: 🎉 Khuyến mãi đến 50% | Miễn phí vận chuyển toàn quốc | Đặt hàng ngay hôm nay..."
+              )= settings.marqueeText
+            p.field__hint Dùng ký tự | để phân cách các đoạn thông báo
+
+          .field-row
+            .field
+              label.field__label(for="marqueeSpeed") Tốc độ cuộn
+              .field__control
+                .slider-wrap
+                  input.slider(
+                    type="range"
+                    id="marqueeSpeed"
+                    name="marqueeSpeed"
+                    min="20"
+                    max="120"
+                    step="5"
+                    value=settings.marqueeSpeed || 60
+                  )
+                  span.slider__value #{settings.marqueeSpeed || 60}s
+
+            .field
+              label.field__label Hiển thị
+              .toggle-group
+                label.toggle
+                  input.toggle__input(
+                    type="checkbox"
+                    name="marqueeEnabled"
+                    id="marqueeEnabled"
+                    checked=settings.marqueeEnabled
+                  )
+                  span.toggle__track
+                  span.toggle__label Bật dòng chữ chạy
+
+      //- ── NHÓM 3: HERO SECTION ───────────────────────────────────────
+      .settings-section
+        .settings-section__label
+          span.settings-section__number 03
+          h2.settings-section__title Khu vực Hero
+          p.settings-section__desc Ảnh nổi bật & nội dung hiển thị trên trang chủ
+
+        .settings-section__fields
+          .field
+            label.field__label(for="heroHeading") Tiêu đề Hero
+            .field__control
+              input.field__input(
+                type="text"
+                id="heroHeading"
+                name="heroHeading"
+                value=settings.heroHeading
+                placeholder="Ví dụ: Bộ sưu tập mới nhất 2025"
+              )
+
+          .field
+            label.field__label(for="heroSubheading") Mô tả phụ
+            .field__control
+              input.field__input(
+                type="text"
+                id="heroSubheading"
+                name="heroSubheading"
+                value=settings.heroSubheading
+                placeholder="Ví dụ: Khám phá phong cách sống hiện đại"
+              )
+
+          .field
+            label.field__label Nút kêu gọi hành động (CTA)
+            .field__control.field__control--split
+              input.field__input(
+                type="text"
+                id="heroCtaText"
+                name="heroCtaText"
+                value=settings.heroCtaText
+                placeholder="Văn bản nút, ví dụ: Mua ngay"
+              )
+              input.field__input(
+                type="text"
+                id="heroCtaLink"
+                name="heroCtaLink"
+                value=settings.heroCtaLink
+                placeholder="Đường dẫn, ví dụ: /products"
+              )
+            p.field__hint Văn bản và đường dẫn nút CTA
+
+          .field
+            label.field__label Ảnh Hero (sản phẩm nổi bật)
+            .hero-upload
+              .hero-upload__preview
+                if settings.heroImageUrl
+                  img#hero-preview(src=settings.heroImageUrl alt="Hero image")
+                else
+                  .hero-upload__placeholder#hero-preview
+                    svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1")
+                      rect(x="3" y="3" width="18" height="18" rx="2")
+                      circle(cx="9" cy="9" r="2")
+                      path(d="m21 15-5-5L5 21")
+                    p Chưa có ảnh hero
+              .hero-upload__actions
+                input.upload-box__input(type="file" name="heroImage" id="heroImage" accept="image/*")
+                label.btn.btn--secondary(for="heroImage")
+                  svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor")
+                    path(d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z")
+                  | Tải ảnh lên
+                if settings.heroImageUrl
+                  button.btn.btn--danger(type="button" data-action="clear-hero")
+                    svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor")
+                      path(d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z")
+                    | Xóa ảnh
+              p.field__hint Khuyến nghị kích thước 1440×700px, định dạng WebP hoặc JPG
+
+      //- ── NHÓM 4: LIÊN HỆ & ĐỊA CHỈ ────────────────────────────────
+      .settings-section
+        .settings-section__label
+          span.settings-section__number 04
+          h2.settings-section__title Thông tin liên hệ
+          p.settings-section__desc Địa chỉ, số điện thoại, email — hiển thị trên footer & trang liên hệ
+
+        .settings-section__fields
+          .field
+            label.field__label(for="address") Địa chỉ cửa hàng
+            .field__control
+              textarea.field__input.field__input--textarea(
+                id="address"
+                name="address"
+                rows="2"
+                placeholder="Ví dụ: 123 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh"
+              )= settings.address
+
+          .field-row
+            .field
+              label.field__label(for="phone") Số điện thoại
+              .field__control
+                input.field__input(
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value=settings.phone
+                  placeholder="0901 234 567"
+                )
+
+            .field
+              label.field__label(for="email") Email liên hệ
+              .field__control
+                input.field__input(
+                  type="email"
+                  id="email"
+                  name="email"
+                  value=settings.email
+                  placeholder="contact@example.com"
+                )
+
+          .field
+            label.field__label(for="googleMapEmbed") Google Maps (mã nhúng)
+            .field__control
+              textarea.field__input.field__input--textarea(
+                id="googleMapEmbed"
+                name="googleMapEmbed"
+                rows="3"
+                placeholder='<iframe src="https://www.google.com/maps/embed?..." ...></iframe>'
+              )= settings.googleMapEmbed
+            p.field__hint Dán mã iframe từ Google Maps
+
+          .field
+            label.field__label(for="workingHours") Giờ làm việc
+            .field__control
+              input.field__input(
+                type="text"
+                id="workingHours"
+                name="workingHours"
+                value=settings.workingHours
+                placeholder="Ví dụ: T2 – T7: 8:00 – 20:00 | CN: 9:00 – 17:00"
+              )
+
+      //- ── NHÓM 5: MẠNG XÃ HỘI ───────────────────────────────────────
+      .settings-section
+        .settings-section__label
+          span.settings-section__number 05
+          h2.settings-section__title Mạng xã hội
+          p.settings-section__desc Đường dẫn đến các trang mạng xã hội của thương hiệu
+
+        .settings-section__fields
+          each platform in ['Facebook', 'Instagram', 'Zalo', 'TikTok', 'YouTube']
+            .field
+              label.field__label(for=`social${platform}`) #{platform}
+              .field__control.field__control--icon
+                span.field__icon
+                  svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor")
+                    circle(cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5")
+                    path(d="M10 6v8M6 10h8")
+                input.field__input(
+                  type="url"
+                  id=`social${platform}`
+                  name=`social${platform}`
+                  value=settings[`social${platform}`]
+                  placeholder=`https://www.${platform.toLowerCase()}.com/yourpage`
+                )
+
+      //- ── ACTION BAR ─────────────────────────────────────────────────
+      .settings-section
+        .settings-section__label
+          span.settings-section__number 06
+          h2.settings-section__title Thanh toan
+          p.settings-section__desc Cau hinh thoi gian giu phien thanh toan truoc khi he thong tu choi tao hoac xac nhan don
+
+        .settings-section__fields
+          .field
+            label.field__label(for="onlinePaymentTimeoutMinutes") Thoi gian thanh toan (phut)
+            .field__control
+              input.field__input(
+                type="number"
+                id="onlinePaymentTimeoutMinutes"
+                name="onlinePaymentTimeoutMinutes"
+                min="1"
+                max="180"
+                step="1"
+                value=settings.onlinePaymentTimeoutMinutes || 15
+                placeholder="15"
+              )
+            p.field__hint Ap dung cho phien checkout va han thanh toan online VNPay
+
+      .settings-actions
+        .settings-actions__left
+          span.settings-actions__saved#savedIndicator
+            svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor")
+              path(fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd")
+            | Đã lưu
+
+        .settings-actions__right
+          button.btn.btn--ghost(type="button" onclick="history.back()") Huỷ
+          button.btn.btn--primary(type="submit")
+            svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor")
+              path(d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.235a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 00-1.09-1.03l-2.955 3.129V2.75z")
+            | Lưu thay đổi
+
+  script.
+    // Preview ảnh upload (favicon, logo)
+    document.querySelectorAll('.upload-box__input').forEach(input => {
+      input.addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        const previewId = this.id + '-preview';
+        reader.onload = e => {
+          const el = document.getElementById(previewId);
+          if (!el) return;
+          if (el.tagName === 'IMG') {
+            el.src = e.target.result;
+          } else {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'upload-box__preview';
+            img.id = previewId;
+            el.replaceWith(img);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    // Preview ảnh hero
+    const heroInput = document.getElementById('heroImage');
+    const removeHeroInput = document.getElementById('removeHeroImage');
+    if (heroInput) {
+      heroInput.addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+        if (removeHeroInput) removeHeroInput.value = 'false';
+        const reader = new FileReader();
+        reader.onload = e => {
+          const el = document.getElementById('hero-preview');
+          if (el.tagName === 'IMG') {
+            el.src = e.target.result;
+          } else {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.id = 'hero-preview';
+            el.replaceWith(img);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    const clearHeroButton = document.querySelector('[data-action="clear-hero"]');
+    if (clearHeroButton) {
+      clearHeroButton.addEventListener('click', function () {
+        const el = document.getElementById('hero-preview');
+        if (heroInput) heroInput.value = '';
+        if (removeHeroInput) removeHeroInput.value = 'true';
+        if (!el) return;
+
+        const placeholder = document.createElement('div');
+        placeholder.className = 'hero-upload__placeholder';
+        placeholder.id = 'hero-preview';
+        placeholder.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+            <circle cx="9" cy="9" r="2"></circle>
+            <path d="m21 15-5-5L5 21"></path>
+          </svg>
+          <p>Chua co anh hero</p>
+        `;
+        el.replaceWith(placeholder);
+        this.remove();
+      });
+    }
+
+    // Slider value display
+    document.querySelectorAll('.slider').forEach(slider => {
+      const val = slider.parentElement.querySelector('.slider__value');
+      slider.addEventListener('input', function () {
+        if (val) val.textContent = this.value + 's';
+      });
+    });
+
+    // Đếm ký tự meta description
+    const metaTA = document.getElementById('metaDescription');
+    const metaCounter = document.getElementById('metaCounter');
+    if (metaTA && metaCounter) {
+      metaTA.addEventListener('input', function () {
+        metaCounter.textContent = this.value.length + '/160';
+        metaCounter.classList.toggle('field__counter--warn', this.value.length > 140);
+      });
+    }
+
+    // Chỉ báo đã lưu
+    document.querySelector('.settings-form').addEventListener('submit', function () {
+      const el = document.getElementById('savedIndicator');
+      setTimeout(() => el && el.classList.add('visible'), 800);
+      setTimeout(() => el && el.classList.remove('visible'), 3200);
+    });

@@ -1,0 +1,28 @@
+header.header
+  .header__logo
+    a(href='/admin/dashboard') TIDA ADMIN
+
+  .header__actions
+
+    a(
+      href=`${prefixAdmin}/my-account`
+      class="header__btn header__btn--primary"
+    ) #{user.fullName}
+    form(
+      action=`${prefixAdmin}/auth/logout`
+      method="POST"
+      style="display: inline-block"
+    )
+      input(type="hidden" name="_csrf" value=csrfToken)
+      button(
+        type="submit"
+        class="header__btn header__btn--danger"
+      ) Đăng xuất
+    //- a(
+      href=`${prefixAdmin}/auth/logout`
+      class="header__btn header__btn--danger"
+    //- ) ÄÄƒng xuáº¥t
+    a(
+      href=`http://localhost:2701/`
+      class="header__btn header__btn--danger"
+    ) Trang Client

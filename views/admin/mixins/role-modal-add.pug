@@ -1,0 +1,61 @@
+mixin modalAddRole(csrfToken)
+  //- ── BACKDROP ──────────────────────────────────────────────
+  #modal-add-role.bm-backdrop(
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-add-title"
+    aria-hidden="true"
+  )
+    .bm-dialog
+      //- ── HEADER ────────────────────────────────────────────
+      .bm-header
+        .bm-header__icon
+          svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z")
+        .bm-header__text
+          h2#modal-add-title.bm-title Thêm nhóm quyền mới
+          p.bm-subtitle Tạo nhóm quyền mới để phân bổ các quyền hạn trong hệ thống.
+        button.bm-close(type="button" aria-label="Đóng" data-bm-close)
+          svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
+
+      //- ── FORM ──────────────────────────────────────────────
+      form#form-add-role.bm-form(
+        method="POST"
+        action=`${prefixAdmin}/roles/create`
+        novalidate
+      )
+        input(type="hidden" name="_csrf" value=csrfToken)
+
+        .bm-body
+          //- Tên nhóm quyền
+          .bm-field
+            label.bm-label(for="bm-title-input")
+              | Tên nhóm quyền
+              span.bm-required *
+            input#bm-title-input.bm-input(
+              type="text"
+              name="title"
+              placeholder="Ví dụ: Quản trị viên, Biên tập viên..."
+              autocomplete="off"
+              required
+            )
+            span.bm-error(data-error="title") Vui lòng nhập tên nhóm quyền.
+
+          //- Mô tả
+          .bm-field
+            label.bm-label(for="bm-desc-input") Mô tả
+            textarea#bm-desc-input.bm-textarea(
+              name="description"
+              rows="4"
+              placeholder="Nhập mô tả về trách nhiệm của nhóm quyền này..."
+            )
+
+        //- ── FOOTER ──────────────────────────────────────────
+        .bm-footer
+          button.bm-btn.bm-btn--ghost(type="button" data-bm-close)
+            | Hủy
+          button.bm-btn.bm-btn--primary(type="submit")
+            svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor")
+              path(stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15")
+            | Tạo nhóm quyền

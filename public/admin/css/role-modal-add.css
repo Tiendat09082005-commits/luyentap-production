@@ -1,0 +1,245 @@
+/* ================================================================
+   role-modal-add.css
+   Modal "Thêm nhóm quyền mới" — CSS thuần, không framework
+   Prefix: bm- (giống brand-modal để tận dụng style)
+   ================================================================ */
+
+/* ── BACKDROP ────────────────────────────────────────────────── */
+.bm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+
+  /* Hidden by default */
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease, visibility 200ms ease;
+}
+
+.bm-backdrop.is-open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── DIALOG BOX ──────────────────────────────────────────────── */
+.bm-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  max-height: min(90vh, 90dvh);
+  background: #fff;
+  border-radius: 18px;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.22),
+    0 8px 16px -4px rgba(0, 0, 0, 0.10);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  /* Slide-up from backdrop */
+  transform: translateY(12px) scale(0.985);
+  transition: transform 200ms ease, opacity 200ms ease;
+  opacity: 0;
+}
+
+.bm-backdrop.is-open .bm-dialog {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* ── HEADER ──────────────────────────────────────────────────── */
+.bm-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+
+.bm-header__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.bm-header__icon svg { width: 22px; height: 22px; }
+
+.bm-header__text { flex: 1; min-width: 0; }
+
+.bm-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+
+.bm-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Close button */
+.bm-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 150ms ease;
+  padding: 0;
+}
+.bm-close svg { width: 15px; height: 15px; }
+.bm-close:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+  border-color: #cbd5e1;
+}
+
+/* ── FORM ───────────────────────────────────────────────────── */
+.bm-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.bm-body {
+  padding: 22px 24px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── FORM FIELD ──────────────────────────────────────────────── */
+.bm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bm-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.bm-required {
+  color: #dc2626;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.bm-input,
+.bm-textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 13.5px;
+  color: #1e293b;
+  outline: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+  transition: all 150ms ease;
+  box-sizing: border-box;
+}
+
+.bm-input:focus,
+.bm-textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.bm-input.is-invalid,
+.bm-textarea.is-invalid {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.10);
+}
+
+.bm-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+.bm-error {
+  font-size: 12px;
+  color: #dc2626;
+  display: none;
+}
+.bm-error.is-visible { display: block; }
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
+.bm-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid #f1f5f9;
+  flex-shrink: 0;
+  background: #f8fafc;
+}
+
+.bm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 20px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 150ms ease;
+  white-space: nowrap;
+  line-height: 1;
+}
+.bm-btn svg { width: 15px; height: 15px; }
+
+.bm-btn--primary {
+  background: #2563eb;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(37,99,235,.3);
+}
+.bm-btn--primary:hover {
+  background: #1d4ed8;
+  box-shadow: 0 3px 8px rgba(37,99,235,.35);
+}
+
+.bm-btn--ghost {
+  background: #fff;
+  color: #475569;
+  border-color: #e2e8f0;
+}
+.bm-btn--ghost:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}

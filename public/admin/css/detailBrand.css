@@ -1,0 +1,371 @@
+/* ============================================================
+   detailBrand.css — Premium Admin Detail Page
+   Aesthetic: Dark · Crisp cards · Refined data display
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --accent:      #5b8dee;
+  --accent-soft: rgba(91,141,238,0.12);
+  --green:       #34d399;
+  --green-soft:  rgba(52,211,153,0.12);
+  --red:         #f87171;
+  --red-soft:    rgba(248,113,113,0.12);
+  --card:        #1e2235;
+  --card-border: rgba(255,255,255,0.07);
+  --txt-primary:   #eef0f6;
+  --txt-secondary: #7c85a2;
+  --txt-muted:     #454d68;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-card: 0 8px 40px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.05) inset;
+  --shadow-logo: 0 12px 32px rgba(0,0,0,0.5);
+  --font-main: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+.brand-detail-wrapper *,
+.brand-detail-wrapper *::before,
+.brand-detail-wrapper *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.brand-detail-wrapper {
+  font-family: var(--font-main);
+  color: var(--txt-primary);
+  padding: 36px 40px 60px;
+  max-width: 1020px;
+  margin: 0 auto;
+  animation: fadeUp 0.45s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* HEADER */
+.brand-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 18px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  color: var(--txt-secondary);
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.btn-back:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.13);
+  color: var(--txt-primary);
+  transform: translateX(-2px);
+}
+
+.btn-back i { font-size: 12px; }
+
+.breadcrumb-trail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--txt-muted);
+}
+
+.breadcrumb-trail i { font-size: 9px; }
+
+.btn-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 22px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(91,141,238,0.35);
+  transition: var(--transition);
+}
+
+.btn-edit:hover {
+  background: #4a7de0;
+  box-shadow: 0 6px 28px rgba(91,141,238,0.5);
+  transform: translateY(-1px);
+}
+
+.btn-edit i { font-size: 12px; }
+
+/* MAIN CARD */
+.brand-detail-card {
+  display: flex;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  animation: fadeUp 0.5s 0.08s ease both;
+}
+
+/* LOGO PANEL */
+.brand-logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px 36px;
+  min-width: 220px;
+  background: linear-gradient(160deg, rgba(91,141,238,0.06) 0%, transparent 60%);
+  border-right: 1px solid var(--card-border);
+  position: relative;
+}
+
+.brand-logo-section::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.4;
+  box-shadow: 0 0 10px 2px var(--accent);
+}
+
+.logo-frame {
+  width: 148px;
+  height: 148px;
+  border-radius: var(--radius-md);
+  background: #252a3d;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: var(--shadow-logo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.logo-frame:hover {
+  border-color: rgba(91,141,238,0.3);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 0 3px rgba(91,141,238,0.1);
+}
+
+.brand-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 16px;
+}
+
+.logo-placeholder {
+  color: var(--txt-muted);
+  font-size: 44px;
+  opacity: 0.6;
+}
+
+/* Status badge */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.status-badge::before {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.badge--active {
+  background: var(--green-soft);
+  color: var(--green);
+  border: 1px solid rgba(52,211,153,0.2);
+}
+
+.badge--active::before {
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: pulse 2s infinite;
+}
+
+.badge--inactive {
+  background: var(--red-soft);
+  color: var(--red);
+  border: 1px solid rgba(248,113,113,0.2);
+}
+
+.badge--inactive::before { background: var(--red); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* INFO PANEL */
+.brand-info-section {
+  flex: 1;
+  padding: 40px 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.brand-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--txt-primary);
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+/* Info Grid - bordered table style */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.info-item {
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: background var(--transition);
+}
+
+.info-item:hover { background: rgba(255,255,255,0.02); }
+
+.info-item:nth-child(1) {
+  border-right: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+}
+.info-item:nth-child(2) { border-bottom: 1px solid var(--card-border); }
+.info-item:nth-child(3) { border-right: 1px solid var(--card-border); }
+
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--txt-muted);
+}
+
+.info-label i {
+  font-size: 11px;
+  color: var(--accent);
+  opacity: 0.7;
+}
+
+.info-value {
+  font-size: 14.5px;
+  color: var(--txt-primary);
+  font-weight: 500;
+}
+
+.slug-code {
+  display: inline-block;
+  background: rgba(91,141,238,0.1);
+  border: 1px solid rgba(91,141,238,0.18);
+  border-radius: 6px;
+  padding: 3px 11px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: #8ab4f8;
+  letter-spacing: 0.3px;
+}
+
+.text--active  { color: var(--green); font-weight: 600; }
+.text--inactive { color: var(--red); font-weight: 600; }
+
+.info-divider {
+  border: none;
+  border-top: 1px solid var(--card-border);
+}
+
+/* Description */
+.info-description {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.description-content {
+  font-size: 14.5px;
+  color: var(--txt-secondary);
+  line-height: 1.75;
+  white-space: pre-line;
+}
+
+.empty-text {
+  color: var(--txt-muted);
+  font-style: italic;
+  font-size: 14px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+  .brand-detail-wrapper { padding: 20px 16px 40px; }
+  .brand-detail-card { flex-direction: column; }
+
+  .brand-logo-section {
+    border-right: none;
+    border-bottom: 1px solid var(--card-border);
+    padding: 28px 24px;
+    min-width: unset;
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+
+  .brand-logo-section::before { display: none; }
+  .logo-frame { width: 88px; height: 88px; flex-shrink: 0; }
+  .brand-info-section { padding: 28px 24px; }
+  .info-grid { grid-template-columns: 1fr; }
+
+  .info-item:nth-child(1),
+  .info-item:nth-child(2),
+  .info-item:nth-child(3) {
+    border-right: none;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .info-item:last-child { border-bottom: none; }
+}

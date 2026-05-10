@@ -1,0 +1,161 @@
+extends ../../layouts/default.pug
+
+block css
+    link(rel="stylesheet", href="/admin/css/detailOrder.css")
+
+block main
+  .order-detail-page
+    .container
+      //- Header
+      .order-header
+        .order-header__left
+          a.btn-back(href="/admin/order")
+            i.fas.fa-arrow-left
+            span Quay lại
+          h1.page-title Chi Tiết Đơn Hàng
+        .order-header__right
+          span.order-code  #{order.orderCode}
+          span.order-status(class=`status--${order.status.replace(/\s+/g, '-')}`)= order.status
+
+      .order-body
+        .row
+          //- Cột trái
+          .col-left
+            //- Thông tin khách hàng
+            .card
+              .card__header
+                i.fas.fa-user
+                h2 Thông Tin Khách Hàng
+              .card__body
+                .info-row
+                  span.info-label Họ và tên:
+                  span.info-value= order.userInfo.fullName
+                .info-row
+                  span.info-label Số điện thoại:
+                  span.info-value= order.userInfo.phone
+                .info-row
+                  span.info-label Địa chỉ:
+                  span.info-value
+                    | #{order.userInfo.address.street},
+                    | #{order.userInfo.address.wardName},
+                    | #{order.userInfo.address.districtName},
+                    | #{order.userInfo.address.provinceName}
+
+            //- Ghi chú
+            if order.note
+              .card
+                .card__header
+                  i.fas.fa-sticky-note
+                  h2 Ghi Chú
+                .card__body
+                  p.note-text= order.note
+
+            //- Thông tin đơn hàng
+            .card
+              .card__header
+                i.fas.fa-info-circle
+                h2 Thông Tin Đơn Hàng
+              .card__body
+                .info-row
+                  span.info-label Mã đơn hàng:
+                  span.info-value= order.orderCode
+                .info-row
+                  span.info-label Ngày tạo:
+                  span.info-value= new Date(order.createdAt).toLocaleString('vi-VN')
+                .info-row
+                  span.info-label Cập nhật lần cuối:
+                  span.info-value= new Date(order.updatedAt).toLocaleString('vi-VN')
+                .info-row
+                  span.info-label Trạng thái:
+                  span.order-status(class=`status--${order.status.replace(/\s+/g, '-')}`)= order.status
+                .info-row
+                  span.info-label Thanh toán:
+                  - const methodMap = { 'cod': 'COD', 'card': 'Thẻ tín dụng', 'bank': 'Chuyển khoản', 'ewallet': 'Ví điện tử' }
+                  span.info-value= methodMap[order.paymentMethod] || 'Chưa chọn'
+                .info-row
+                  span.info-label Trạng thái trả tiền:
+                  span.payment-status(class=`payment--${(order.paymentStatus || 'Chưa thanh toán').replace(/\s+/g, '-')}`)= order.paymentStatus || 'Chưa thanh toán'
+
+          //- Cột phải
+          .col-right
+            //- Danh sách sản phẩm
+            .card
+              .card__header
+                i.fas.fa-box
+                h2 Sản Phẩm Đặt Hàng
+              .card__body
+                table.product-table
+                  thead
+                    tr
+                      th STT
+                      th Sản Phẩm
+                      th Đơn giá
+                      th Giảm giá
+                      th Số lượng
+                      th Thành tiền
+                  tbody
+                    each product, index in order.products
+                      - const price = product.price || 0
+                      - const priceNew = product.priceNew || 0
+                      - const quantity = product.quantity || 0
+                      - const subtotal = priceNew * quantity
+                      tr
+                        td= index + 1
+                        td.product-title= product.title
+                        td.price= price.toLocaleString('vi-VN') + ' ₫'
+                        td.discount
+                          if product.discount > 0
+                            span.badge-discount -#{product.discount}%
+                          else
+                            span 0%
+                        td.quantity= product.quantity
+                        td.subtotal= subtotal.toLocaleString('vi-VN') + ' ₫'
+
+            //- Tổng tiền
+            .card.card--total
+              .card__body
+                .total-row
+                  span.total-label Số lượng sản phẩm:
+                  span.total-value= order.products.length + ' sản phẩm'
+                .total-row.total-row--main
+                  span.total-label Tổng thanh toán:
+                  span.total-price= (order.totalPrice || 0).toLocaleString('vi-VN') + ' ₫'
+
+      //- Actions
+      .order-actions
+        if order.status === 'chờ xác nhận'
+          button.btn.btn--confirm(
+            data-id=order._id
+            status-update = "đã xác nhận"
+          )
+            i.fas.fa-check
+            | Xác Nhận Đơn
+          button.btn.btn--cancel(
+            data-id=order._id
+            status-update = "đã hủy"
+          )
+            i.fas.fa-times
+            | Huỷ Đơn
+
+        if order.status === 'đã xác nhận'
+          button.btn.btn--shipping(
+            data-id=order._id
+            status-update = "đang giao"
+          )
+            i.fas.fa-shipping-fast
+            | Giao Hàng
+
+          button.btn.btn--cancel(
+            data-id=order._id
+            status-update = "đã hủy"
+          )
+            i.fas.fa-times
+            | Huỷ Đơn
+
+        if order.status === 'đang giao'
+          button.btn.btn--done(
+            data-id=order._id
+            status-update="đã giao"
+          )
+            i.fas.fa-check-double
+            | Hoàn Thành

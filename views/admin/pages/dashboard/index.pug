@@ -1,0 +1,128 @@
+extends ../../layouts/default.pug
+
+block css
+  link(rel="stylesheet", href="/admin/css/dashboard.css")
+
+block main
+  -
+    const filters = (dashboard && dashboard.filters) || { period: 'month', periodLabel: '30 ngày qua', recentLimit: 8, topLimit: 5 }
+    const overviewCards = (dashboard && dashboard.overviewCards) || []
+    const recentOrders = (dashboard && dashboard.recentOrders) || []
+    const topProducts = (dashboard && dashboard.topProducts) || []
+    const statusDistribution = (dashboard && dashboard.statusDistribution) || []
+    const revenueChart = (dashboard && dashboard.revenueChart) || { labels: [], revenue: [], profit: [], summary: '0đ' }
+
+  .dashboard
+    .topbar
+      .topbar__left
+        h1.topbar__title Bảng điều khiển
+        p.topbar__sub Theo dõi doanh thu, đơn hàng và sản phẩm nổi bật theo dữ liệu thực.
+      .topbar__right
+        form.dashboard-filter-form(method="GET" action="")
+          .tab-btns
+            button.tab-btn(class=filters.period === 'week' ? 'tab-btn--active' : '' type="submit" name="period" value="week") 7 ngày
+            button.tab-btn(class=filters.period === 'month' ? 'tab-btn--active' : '' type="submit" name="period" value="month") 30 ngày
+            button.tab-btn(class=filters.period === 'year' ? 'tab-btn--active' : '' type="submit" name="period" value="year") 12 tháng
+        span.date-badge= (dashboard && dashboard.currentDateLabel) || ''
+
+    section.cards-grid
+      if overviewCards.length
+        each card in overviewCards
+          .card
+            .card__glow
+            .card__icon= card.icon
+            .card__value= card.value
+            .card__label= card.label
+            .card__trend(class=card.trend === 'up' ? 'card__trend--up' : 'card__trend--down')= card.trendText
+      else
+        .card
+          .card__value 0
+          .card__label Chưa có dữ liệu dashboard
+
+    section.charts-row
+      .chart-box
+        .chart-box__header
+          .chart-box__info
+            h2.chart-box__title Doanh thu theo thời gian
+            p.chart-box__sub= 'Giai đoạn: ' + filters.periodLabel
+          .chart-summary
+            strong.chart-summary__value= revenueChart.summary
+            span.chart-summary__label Tổng doanh thu
+        canvas#revenueChart(data-chart=JSON.stringify(revenueChart))
+        .chart-legend
+          span.chart-legend__item
+            span.chart-legend__dot.chart-legend__dot--revenue
+            | Doanh thu
+          span.chart-legend__item
+            span.chart-legend__dot.chart-legend__dot--profit
+            | Lợi nhuận ước tính
+
+      .chart-box
+        .chart-box__header
+          .chart-box__info
+            h2.chart-box__title Trạng thái đơn hàng
+            p.chart-box__sub Phân bố trong khoảng thời gian đang chọn
+        canvas#statusChart(data-chart=JSON.stringify(statusDistribution))
+        .status-list
+          each item in statusDistribution
+            .status-list__item
+              .status-list__meta
+                span.status-list__dot(style='background:' + item.color)
+                span= item.label
+              strong= item.total.toLocaleString('vi-VN')
+
+    section.bottom-row
+      .table-box
+        .table-box__header
+          .table-box__info
+            h2.table-box__title Đơn hàng gần đây
+            p.table-box__sub= recentOrders.length + ' đơn mới nhất'
+          a.view-all(href="/admin/order") Xem tất cả →
+        table.orders-table
+          thead
+            tr
+              th Mã đơn hàng
+              th Khách hàng
+              th Sản phẩm
+              th Tổng tiền
+              th Trạng thái
+          tbody
+            if recentOrders.length
+              each order in recentOrders
+                tr
+                  td.order-id= order.id
+                  td= order.customer
+                  td.text-muted= order.product
+                  td.fw-bold= order.total
+                  td
+                    span.badge(class='badge--' + order.status)
+                      span.badge__dot
+                      | #{order.statusLabel}
+            else
+              tr
+                td(colspan="5" class="text-muted") Chưa có đơn hàng để hiển thị
+
+      .products-box
+        .products-box__header
+          .chart-box__info
+            h2.chart-box__title Sản phẩm bán chạy
+            p.chart-box__sub= 'Top ' + filters.topLimit + ' sản phẩm bán tốt nhất'
+          a.view-all(href="/admin/products") Tất cả →
+        .products-list
+          if topProducts.length
+            each product, index in topProducts
+              .product-item
+                .product-item__rank(class=index < 3 ? 'product-item__rank--top' : '')= index + 1
+                .product-item__info
+                  p.product-item__name= product.name
+                  p.product-item__cat= product.cat
+                  .product-item__bar-wrap
+                    .product-item__bar(style='width:' + product.width + '%')
+                .product-item__sold
+                  strong= product.soldText
+                  span đã bán
+          else
+            .text-muted Chưa có dữ liệu bán hàng
+
+block script
+  script(src="/admin/js/dashboard.js")

@@ -1,0 +1,60 @@
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 70px;
+  background: #1e1e1e;
+  border-bottom: 1px solid #2a2a2a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 1000;
+}
+
+.header__logo a {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: -0.3px;
+}
+
+.header__logo a:hover { opacity: 0.85; }
+
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Đổi từ .header .btn → .header__btn để tránh Bootstrap */
+.header__btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.header__btn:hover { opacity: 0.85; }
+
+.header__btn--primary {
+  background: #4f7cff;
+  color: #fff;
+}
+
+.header__btn--danger {
+  background: #e53935;
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  .header { padding: 0 16px; }
+}

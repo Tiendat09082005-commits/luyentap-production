@@ -1,0 +1,407 @@
+/* ===== VARIABLES ===== */
+:root {
+  --red: #dc2626;
+  --red-light: #fff5f5;
+  --red-border: #fecaca;
+  --orange: #f97316;
+  --orange-light: #fff7ed;
+  --orange-border: #fed7aa;
+  --blue: #1558c0;
+  --blue-light: #eef3ff;
+  --green: #16a34a;
+  --gray-bg: #f5f6f8;
+  --gray-border: #e4e6ea;
+  --gray-text: #666;
+  --gray-label: #999;
+  --black: #111;
+  --white: #fff;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --transition: 0.2s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+a, a:hover, a:focus, a:active, a:visited {
+  text-decoration: none !important;
+  color: inherit;
+}
+
+/* ===== PAGE ===== */
+.failed-page {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ===== HERO ===== */
+.failed-hero {
+  text-align: center;
+  padding: 8px 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.failed-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--red-light);
+  border: 2px solid var(--red-border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--red);
+  animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes pop-in {
+  0%   { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.failed-hero h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--black);
+  letter-spacing: -0.02em;
+}
+
+.failed-hero p {
+  font-size: 14px;
+  color: var(--gray-text);
+  line-height: 1.65;
+  max-width: 380px;
+}
+
+/* ===== ERROR NOTICE ===== */
+.error-notice {
+  background: var(--red-light);
+  border: 1px solid var(--red-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.error-notice-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--red-border);
+}
+
+.error-notice-icon {
+  width: 36px;
+  height: 36px;
+  background: #fee2e2;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--red);
+  flex-shrink: 0;
+}
+
+.error-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--red);
+  margin-bottom: 3px;
+}
+
+.error-code {
+  font-size: 12.5px;
+  color: #f87171;
+}
+
+.error-detail {
+  padding: 14px 18px;
+  font-size: 13.5px;
+  color: #7f1d1d;
+  line-height: 1.6;
+  border-bottom: 1px solid var(--red-border);
+}
+
+.error-suggestions {
+  padding: 14px 18px;
+}
+
+.suggestions-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #991b1b;
+  margin-bottom: 10px;
+}
+
+.suggestions-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.suggestions-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #7f1d1d;
+}
+
+.suggestions-list li svg { color: var(--red); flex-shrink: 0; }
+
+/* ===== TRANSACTION CARD ===== */
+.transaction-card {
+  background: var(--white);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.transaction-card h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--black);
+}
+
+.transaction-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.transaction-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.transaction-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-label);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.transaction-value {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--black);
+}
+
+.transaction-value.amount {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--red);
+}
+
+/* ===== ACTION CARDS ===== */
+.action-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.action-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--white);
+  border: 1.5px solid var(--gray-border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.action-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.action-retry:hover { border-color: var(--blue); }
+.action-change:hover { border-color: var(--blue); }
+
+.action-card-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.action-retry .action-card-icon { background: var(--blue-light); color: var(--blue); }
+.action-change .action-card-icon { background: var(--gray-bg); color: var(--gray-text); }
+
+.action-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.action-card-info span:first-child {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--black);
+}
+
+.action-card-info span:last-child {
+  font-size: 12px;
+  color: var(--gray-text);
+}
+
+.action-card > svg:last-child { color: var(--gray-label); flex-shrink: 0; }
+
+/* ===== REFUND NOTICE ===== */
+.refund-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 18px;
+  background: var(--orange-light);
+  border: 1px solid var(--orange-border);
+  border-radius: var(--radius-sm);
+}
+
+.refund-notice > svg { color: var(--orange); flex-shrink: 0; margin-top: 2px; }
+
+.refund-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #9a3412;
+  margin-bottom: 6px;
+}
+
+.refund-desc {
+  font-size: 13px;
+  color: #7c2d12;
+  line-height: 1.65;
+}
+
+/* ===== BOTTOM ACTIONS ===== */
+.failed-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px;
+  background: var(--white);
+  border: 1.5px solid var(--gray-border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-text);
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.btn-back:hover { border-color: #bbb; color: var(--black); }
+
+.btn-retry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 13px;
+  background: var(--black);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  transition: background var(--transition), transform var(--transition);
+}
+
+.btn-retry:hover { background: #222; transform: translateY(-1px); color: var(--white); }
+
+/* ===== SUPPORT CARD ===== */
+.support-card {
+  background: var(--gray-bg);
+  border: 1px solid var(--gray-border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.support-icon { color: var(--gray-text); }
+
+.support-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--black);
+}
+
+.support-card > p {
+  font-size: 13.5px;
+  color: var(--gray-text);
+}
+
+.support-contacts {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.support-contact {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  color: var(--gray-text);
+}
+
+.support-contact svg { flex-shrink: 0; }
+.support-contact strong { color: var(--black); font-weight: 700; }
+
+.btn-chat {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 6px;
+  padding: 10px 22px;
+  background: var(--white);
+  border: 1.5px solid var(--gray-border);
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--black);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.btn-chat:hover {
+  border-color: var(--blue);
+  box-shadow: 0 2px 10px rgba(21,88,192,0.12);
+  color: var(--blue);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+  .transaction-grid { grid-template-columns: 1fr; }
+  .action-cards { grid-template-columns: 1fr; }
+  .failed-actions { grid-template-columns: 1fr; }
+  .failed-hero h1 { font-size: 22px; }
+}

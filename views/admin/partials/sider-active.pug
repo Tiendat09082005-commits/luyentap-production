@@ -1,0 +1,78 @@
+link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css")
+
+-
+  const isActive = (path, exact = false, excludePaths = []) => {
+    const currentPathOnly = currentUrl ? currentUrl.split('?')[0].split('#')[0] : "";
+    if (exact) {
+      return currentPathOnly === path;
+    }
+    const isMatch = currentPathOnly === path || currentPathOnly.startsWith(path + "/");
+    if (!isMatch) return false;
+
+    for (const exclude of excludePaths) {
+      if (currentPathOnly === exclude || currentPathOnly.startsWith(exclude + "/")) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+.sider
+  .inner-menu
+    ul
+      li(class=isActive(`${prefixAdmin}/dashboard`) ? "active" : "")
+        a(href=`${prefixAdmin}/dashboard`)
+          i.ri-layout-grid-line
+          span Tổng quan
+      if(roles.permissions.includes("products_view"))
+        li(class=isActive(`${prefixAdmin}/products`) ? "active" : "")
+          a(href=`${prefixAdmin}/products`)
+            i.ri-box-3-line
+            span Danh sách sản phẩm
+      if(roles.permissions.includes("brands_view"))
+        li(class=isActive(`${prefixAdmin}/brands`) ? "active" : "")
+          a(href=`${prefixAdmin}/brands`)
+            i.ri-award-line
+            span Quản lý thương hiệu
+      if(roles.permissions.includes("attributes_view"))
+        li(class=isActive(`${prefixAdmin}/attribute`) ? "active" : "")
+          a(href=`${prefixAdmin}/attribute`)
+            i.ri-box-3-line
+            span Quản lý thuộc tính
+      if(roles.permissions.includes("products-category_view"))
+        li(class=isActive(`${prefixAdmin}/products-category`) ? "active" : "")
+          a(href=`${prefixAdmin}/products-category`)
+            i.ri-price-tag-3-line
+            span Danh mục sản phẩm
+      if(roles.permissions.includes("roles_view"))
+        li(class=isActive(`${prefixAdmin}/roles`, false, [`${prefixAdmin}/roles/permission`]) ? "active" : "")
+          a(href=`${prefixAdmin}/roles`)
+            i.ri-shield-user-line
+            span Nhóm quyền
+      if(roles.permissions.includes("roles_permissions"))
+        li(class=isActive(`${prefixAdmin}/roles/permission`) ? "active" : "")
+          a(href=`${prefixAdmin}/roles/permission`)
+            i.ri-lock-2-line
+            span Phân quyền
+      if(roles.permissions.includes("account_view"))
+        li(class=isActive(`${prefixAdmin}/accounts`, false, [`${prefixAdmin}/accounts/user`]) ? "active" : "")
+          a(href=`${prefixAdmin}/accounts`)
+            i.ri-user-settings-line
+            span Quản lý tài khoản Admin
+        li(class=isActive(`${prefixAdmin}/accounts/user`) ? "active" : "")
+          a(href=`${prefixAdmin}/accounts/user`)
+            i.ri-group-line
+            span Quản lý tài khoản User
+      if(roles.permissions.includes("orders_view"))
+        li(class=isActive(`${prefixAdmin}/order`) ? "active" : "")
+          a(href=`${prefixAdmin}/order`)
+            i.ri-shopping-cart-2-line
+            span Quản lý đơn hàng
+      li(class=isActive(`${prefixAdmin}/message`) ? "active" : "")
+        a(href=`${prefixAdmin}/message`)
+          i.ri-message-3-line
+          span Tin nhắn
+      li(class=isActive(`${prefixAdmin}/setting`) ? "active" : "")
+        a(href=`${prefixAdmin}/setting`)
+          i.ri-settings-3-line
+          span Cài đặt chung

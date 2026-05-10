@@ -1,0 +1,293 @@
+/* ===== Page Layout ===== */
+.roles-page {
+  padding: 2rem 2.5rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ===== Page Header ===== */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.page-header__left h1 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #e8eaf2;
+}
+
+.page-header__left p {
+  font-size: 13px;
+  color: #6b7080;
+}
+
+.page-header__right .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  background: #3b7eff;
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+.page-header__right .btn-primary:hover {
+  background: #2d6ee0;
+}
+
+.page-header__right .btn-primary i {
+  font-size: 12px;
+}
+
+/* ===== Card ===== */
+.card {
+  background: #181b24;
+  border: 1px solid #23263a;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* ===== Table ===== */
+.table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.roles-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  table-layout: fixed;
+}
+
+.roles-table col:nth-child(1) { width: 6%; }
+.roles-table col:nth-child(2) { width: 22%; }
+.roles-table col:nth-child(3) { width: 50%; }
+.roles-table col:nth-child(4) { width: 22%; }
+
+.roles-table thead tr {
+  border-bottom: 1px solid #23263a;
+  background: #1e2130;
+}
+
+.roles-table th {
+  padding: 11px 20px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #4a4f6a;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.roles-table td {
+  padding: 14px 20px;
+  color: #c8cad8;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid #1e2130;
+}
+
+.roles-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.roles-table tbody tr:hover td {
+  background: #1e2130;
+}
+
+/* ===== Cell: STT ===== */
+.roles-table td:first-child {
+  color: #4a4f6a;
+  font-size: 13px;
+}
+
+/* ===== Cell: Role Title ===== */
+.role-title {
+  font-weight: 600;
+  color: #e8eaf2;
+}
+
+/* ===== Cell: Description ===== */
+.role-description {
+  font-size: 13px;
+  color: #6b7080;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0 auto;
+}
+
+/* ===== Action Buttons — icon only, no border ===== */
+.action-group {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #4a4f6a;
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.12s ease;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  background: #23263a;
+  color: #c8cad8;
+}
+
+.action-btn.view:hover  { color: #60a5fa; background: #0f1e35; }
+.action-btn.edit:hover  { color: #fbbf24; background: #261d00; }
+.action-btn.delete-btn  {
+  background: transparent;
+  border: none;
+  color: #4a4f6a;
+}
+.action-btn.delete-btn:hover {
+  background: #2a1215;
+  color: #f87171;
+}
+
+/* ===== Empty State ===== */
+.empty-state {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.empty-state__icon {
+  width: 44px;
+  height: 44px;
+  border: 1px solid #23263a;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: #4a4f6a;
+  font-size: 18px;
+}
+
+.empty-state h3 {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #e8eaf2;
+}
+
+.empty-state p {
+  font-size: 13px;
+  color: #4a4f6a;
+}
+/* ===== Action Buttons ===== */
+.action-group {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #4a4f6a;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.12s ease;
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  background: #23263a;
+  color: #c8cad8;
+}
+
+.action-btn.view:hover { color: #60a5fa; background: #0f1e35; }
+.action-btn.edit:hover { color: #fbbf24; background: #261d00; }
+
+/* ===== Nút Xóa — reset Bootstrap, icon only ===== */
+button[button-delete] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #4a4f6a;
+  font-size: 0;           /* ẩn chữ "Xóa" */
+  cursor: pointer;
+  transition: all 0.12s ease;
+  position: relative;
+}
+
+/* Thay chữ "Xóa" bằng icon trash qua pseudo-element */
+button[button-delete]::before {
+  content: "";
+  display: block;
+  width: 14px;
+  height: 14px;
+  background-color: #4a4f6a;
+  transition: background-color 0.12s ease;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6'/%3E%3Cpath d='M10 11v6M14 11v6'/%3E%3Cpath d='M9 6V4h6v2'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6'/%3E%3Cpath d='M10 11v6M14 11v6'/%3E%3Cpath d='M9 6V4h6v2'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+
+button[button-delete]:hover {
+  background: #2a1215;
+}
+
+button[button-delete]:hover::before {
+  background-color: #f87171;
+}
+
+/* ẩn form con bên trong button ===== */
+button[button-delete] form {
+  display: none;
+}
+
+/* Reset các class Bootstrap can thiệp */
+button[button-delete].btn-danger,
+button[button-delete].btn {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  padding: 0 !important;
+}

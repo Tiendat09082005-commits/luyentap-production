@@ -1,0 +1,123 @@
+mixin modalAddBrand(csrf)
+  //- ── BACKDROP ──────────────────────────────────────────────
+  #modal-add-brand.bm-backdrop(
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-add-title"
+    aria-hidden="true"
+  )
+    .bm-dialog
+      //- ── HEADER ────────────────────────────────────────────
+      .bm-header
+        .bm-header__icon
+          svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z")
+            path(stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z")
+        .bm-header__text
+          h2#modal-add-title.bm-title Thêm thương hiệu mới
+          p.bm-subtitle Điền thông tin bên dưới để thêm thương hiệu vào hệ thống.
+        button.bm-close(type="button" aria-label="Đóng" data-bm-close)
+          svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
+
+      //- ── FORM ──────────────────────────────────────────────
+      form#form-add-brand.bm-form(
+        method="POST"
+        action="/admin/brands/create"
+        enctype="multipart/form-data"
+        novalidate
+      )
+        input(type="hidden" name="_csrf" value=csrfToken)
+
+        .bm-body
+
+          //- ── 1. Thông tin cơ bản ───────────────────────────
+          p.bm-section-label Thông tin cơ bản
+
+          //- Tên thương hiệu
+          .bm-field
+            label.bm-label(for="bm-title-input")
+              | Tên thương hiệu
+              span.bm-required *
+            input#bm-title-input.bm-input(
+              type="text"
+              name="title"
+              placeholder="Ví dụ: Apple, Samsung, Logitech..."
+              autocomplete="off"
+              required
+            )
+            span.bm-error(data-error="title") Vui lòng nhập tên thương hiệu.
+
+          //- Mô tả
+          .bm-field
+            label.bm-label(for="bm-desc-input") Mô tả
+            textarea#bm-desc-input.bm-textarea(
+              name="description"
+              rows="3"
+              placeholder="Nhập mô tả ngắn về thương hiệu (tuỳ chọn)..."
+            )
+
+          //- ── 2. Logo ───────────────────────────────────────
+          p.bm-section-label Logo & Trạng thái
+
+          .bm-field
+            label.bm-label Logo thương hiệu
+            .bm-upload-wrap
+
+              //- Preview
+              .bm-upload-preview#bm-logo-preview
+                .bm-upload-empty#bm-empty-state
+                  svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor")
+                    path(stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 21h18M3.75 3h16.5M21 21V7.5a.75.75 0 00-.75-.75H3.75a.75.75 0 00-.75.75V21")
+                  span Chưa có logo
+                img#bm-logo-img(src="" alt="Preview logo" style="display:none")
+                button.bm-remove-logo(
+                  type="button"
+                  id="bm-remove-logo"
+                  aria-label="Xóa ảnh"
+                  style="display:none"
+                )
+                  svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor")
+                    path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
+
+              //- Controls
+              .bm-upload-controls
+                p.bm-upload-controls-title Tải lên logo
+                label.bm-upload-btn(for="bm-logo-input")
+                  svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor")
+                    path(stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5")
+                  | Chọn ảnh
+                input#bm-logo-input(
+                  type="file"
+                  name="logo"
+                  accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                  style="display:none"
+                )
+                p.bm-hint PNG, JPG, WEBP hoặc SVG · Tối đa 2 MB
+
+          //- ── 3. Trạng thái ─────────────────────────────────
+          .bm-field
+            label.bm-label Trạng thái
+            .bm-radio-group
+              label.bm-radio-card(for="status-active")
+                input#status-active(type="radio" name="status" value="active" checked)
+                span.bm-radio-indicator
+                .bm-radio-body
+                  span.bm-radio-title Hoạt động
+                  span.bm-radio-desc Hiển thị cho người dùng trên website
+
+              label.bm-radio-card(for="status-inactive")
+                input#status-inactive(type="radio" name="status" value="inactive")
+                span.bm-radio-indicator
+                .bm-radio-body
+                  span.bm-radio-title Tạm ẩn
+                  span.bm-radio-desc Không hiển thị, có thể bật lại sau
+
+        //- ── FOOTER ──────────────────────────────────────────
+        .bm-footer
+          button.bm-btn.bm-btn--ghost(type="button" data-bm-close)
+            | Hủy
+          button.bm-btn.bm-btn--primary(type="submit")
+            svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor")
+              path(stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15")
+            | Thêm thương hiệu

@@ -1,0 +1,93 @@
+extends ../../layouts/default.pug
+include ../../mixins/brand-modal-edit.pug
+
+block css
+  link(rel="stylesheet", href="/admin/css/detailBrand.css")
+  link(rel="stylesheet", href="/admin/css/brand-modal-add.css")
+
+block main
+  .brand-detail-wrapper
+    //- Header
+    .brand-detail-header
+      .header-left
+        a.btn-back(href=`${prefixAdmin}/brands`)
+          i.fas.fa-arrow-left
+          span Quay lại
+        .breadcrumb-trail
+          span Thương hiệu
+          i.fas.fa-chevron-right
+          span Chi tiết
+      .header-right
+        button.btn-edit(
+          type="button"
+          data-id=brand._id
+          data-title=brand.title
+          data-description=brand.description || ''
+          data-logo=brand.logo || ''
+          data-status=brand.status
+          onclick="openEditModal(this)"
+        )
+          i.fas.fa-pen
+          span Chỉnh sửa
+
+
+    //- Main Card
+    .brand-detail-card
+      //- Left: Logo panel
+      .brand-logo-section
+        .logo-frame
+          if brand.logo
+            img.brand-logo(src=brand.logo, alt=brand.title)
+          else
+            .logo-placeholder
+              i.fas.fa-tag
+        .status-badge(class=brand.status === 'active' ? 'badge--active' : 'badge--inactive')
+          span= brand.status === 'active' ? 'Đang hoạt động' : 'Không hoạt động'
+
+      //- Right: Info panel
+      .brand-info-section
+        h1.brand-title= brand.title
+
+        .info-grid
+          .info-item
+            .info-label
+              i.fas.fa-link
+              span Slug
+            .info-value
+              code.slug-code= brand.slug
+
+          .info-item
+            .info-label
+              i.fas.fa-circle-dot
+              span Trạng thái
+            .info-value
+              span(class=brand.status === 'active' ? 'text--active' : 'text--inactive')
+                = brand.status === 'active' ? 'Hoạt động' : 'Không hoạt động'
+
+          .info-item
+            .info-label
+              i.fas.fa-calendar-plus
+              span Ngày tạo
+            .info-value= brand.createdAt ? new Date(brand.createdAt).toLocaleString('vi-VN') : '—'
+
+          .info-item
+            .info-label
+              i.fas.fa-calendar-check
+              span Cập nhật lần cuối
+            .info-value= brand.updatedAt ? new Date(brand.updatedAt).toLocaleString('vi-VN') : '—'
+
+        hr.info-divider
+
+        .info-description
+          .info-label
+            i.fas.fa-align-left
+            span Mô tả
+          if brand.description
+            p.description-content= brand.description
+          else
+            p.description-content.empty-text Chưa có mô tả.
+
+  +modalEditBrand(csrfToken)
+
+block script
+  script(src="/admin/js/brand-modal-edit.js" defer)

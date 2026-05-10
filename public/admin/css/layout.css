@@ -1,0 +1,82 @@
+/* =====================================================
+   layout.css — cấu trúc tổng thể trang
+   Chỉ định nghĩa: html, body, .layout, .main
+   KHÔNG touch .header, .sider, .dashboard
+   ===================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #111318;
+  color: #e8eaf2;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Wrapper bọc toàn bộ app ---- */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ---- Vùng dưới header: sider + main ---- */
+.layout__body {
+  display: flex;
+  flex: 1;
+  padding-top: 70px; /* đúng bằng .header height */
+}
+
+/* ---- Main content — đẩy sang phải để tránh sider ---- */
+.main {
+  flex: 1;
+  margin-left: 202px; /* đúng bằng .sider width */
+  min-width: 0;       /* tránh overflow khi nội dung dài */
+  padding: 0;
+}
+
+
+
+/* Tablet: sider thu hẹp hoặc ẩn */
+@media (max-width: 900px) {
+  .main {
+    margin-left: 0;
+  }
+}
+
+/* ---- Alerts (Toast notifications) ---- */
+[show-alert] {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 9999;
+  min-width: 250px;
+  max-width: 350px;
+  transition: all 0.5s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+[show-alert].alert-hidden {
+  right: -500px;
+  opacity: 0;
+  visibility: hidden;
+}
+
+[show-alert] [close-alert] {
+  cursor: pointer;
+  margin-left: 15px;
+  font-weight: bold;
+  padding: 0 5px;
+}

@@ -1,0 +1,141 @@
+include ../../mixins/alert.pug
+doctype html
+html(lang="vi")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    link(rel="stylesheet" href="/client/css/alert.css")
+    link(rel="stylesheet" href="/client/css/login.css")
+    title Đăng Nhập - Tida
+
+  body
+    +alert-success(3000)
+    +alert-unsuccess(3000)
+
+    .login-page
+      //- ===== LEFT PANEL =====
+      .login-left
+        .login-left-inner
+          a.login-brand(href="/")
+            .brand-icon T
+            span Tida
+
+          .login-hero
+            h2 Đồ công nghệ chính hãng giá tốt nhất thị trường
+            p Tida – Cửa hàng đồ công nghệ uy tín với laptop, điện thoại, phụ kiện chính hãng và dịch vụ bảo hành tận tâm.
+
+          .login-stats
+            .stat-item
+              span.stat-number 50K+
+              span.stat-label Khách hàng
+            .stat-item
+              span.stat-number 100%
+              span.stat-label Chính hãng
+            .stat-item
+              span.stat-number 24/7
+              span.stat-label Hỗ trợ
+
+          .login-features
+            .login-feature-item
+              .feature-check
+                svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                  path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7")
+              .feature-text
+                span.feature-name Giao hàng nhanh toàn quốc
+                span.feature-desc Nhận hàng trong 24–48 giờ, miễn phí từ 500K
+
+            .login-feature-item
+              .feature-check
+                svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                  path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7")
+              .feature-text
+                span.feature-name Bảo hành chính hãng 12–24 tháng
+                span.feature-desc Đổi trả dễ dàng, hỗ trợ tận nơi
+
+            .login-feature-item
+              .feature-check
+                svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                  path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7")
+              .feature-text
+                span.feature-name Giá tốt nhất thị trường
+                span.feature-desc Cam kết hoàn tiền nếu tìm được nơi rẻ hơn
+
+            .login-feature-item
+              .feature-check
+                svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                  path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7")
+              .feature-text
+                span.feature-name Hỗ trợ 24/7
+                span.feature-desc Tư vấn viên luôn sẵn sàng giải đáp
+
+      //- ===== RIGHT PANEL =====
+      .login-right
+        .login-container
+          .login-header
+            h1 Chào mừng trở lại
+            p Đăng nhập để tiếp tục sử dụng dịch vụ của chúng tôi
+
+          //- Social login
+          .login-social
+            a.social-btn.social-google(href="/user/auth/google")
+              svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48")
+                path(fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z")
+                path(fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z")
+                path(fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z")
+                path(fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z")
+              span Google
+
+            a.social-btn.social-zalo(href="/auth/zalo")
+              svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 50 50")
+                rect(width="50" height="50" rx="11" fill="#0068FF")
+                path(fill="#fff" d="M13.5 17.2c0-1 .8-1.8 1.8-1.8h4.9c3.6 0 6.3 2.4 6.3 5.7 0 3.4-2.7 5.8-6.3 5.8h-2.8v3.7c0 .6-.4 1-1 1h-1.9c-.6 0-1-.4-1-1V17.2zm3.9 6.3h2.6c1.4 0 2.4-.9 2.4-2.4 0-1.4-1-2.3-2.4-2.3h-2.6v4.7zM33 29.8l-4.5-5.5 4.2-4.7c.5-.6.1-1.4-.6-1.4h-2c-.4 0-.7.2-.9.4l-3.6 4.2v-5.6c0-.6-.4-1-1-1h-1.8c-.6 0-1 .4-1 1v15.2c0 .6.4 1 1 1h1.8c.6 0 1-.4 1-1v-4.7l3.9 5.2c.2.3.5.5.9.5h2.1c.7 0 1.1-.9.5-1.6z")
+              span Zalo
+
+          .divider
+            span hoặc đăng nhập bằng email
+
+          form(action="/user/login" method="POST")
+            input(type="hidden" name="_csrf" value=csrfToken)
+            .form-group
+              label(for="email") Email
+              input(
+                type="email"
+                id="email"
+                name="email"
+                placeholder="name@company.com"
+                required
+              )
+
+            .form-group
+              .password-label-row
+                label(for="password") Mật khẩu
+                a.forgot-password(href="/user/forgot-password") Quên mật khẩu?
+              .password-input-wrap
+                input(
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  required
+                )
+                button.toggle-password(type="button" tabindex="-1")
+                  svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                    path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z")
+                    path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z")
+
+            .checkbox-group
+              input(type="checkbox" id="remember" name="remember")
+              label(for="remember") Ghi nhớ đăng nhập trong 30 ngày
+
+            button.btn-login(type="submit")
+              | Đăng nhập
+              svg(xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7")
+
+          .register-link
+            p Chưa có tài khoản?
+              a(href="/user/register") &nbsp;Đăng ký ngay
+
+    script(src="/client/js/script.js")
+    script(src="/client/js/login.js")
+

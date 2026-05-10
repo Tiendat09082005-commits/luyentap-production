@@ -1,0 +1,158 @@
+/* =====================================================
+   roles-edit.css — trang chỉnh sửa vai trò
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+.role-edit-page {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #0a0a0a;
+}
+
+.role-edit-wrap {
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+}
+
+.role-edit-wrap h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #f0efe8;
+  letter-spacing: -.02em;
+  margin: 0 0 1.5rem;
+}
+
+/* ---- Card ---- */
+.role-edit-card {
+  background: #0f0f0f;
+  border: 0.5px solid #222225;
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+/* ---- Form field ---- */
+.role-field {
+  margin-bottom: 1.5rem;
+}
+
+.role-field label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #3e3e44;
+  margin-bottom: .6rem;
+}
+
+/* ---- Input ---- */
+.role-field input[type="text"] {
+  width: 100%;
+  background: #080808;
+  border: 0.5px solid #222225;
+  border-radius: 10px;
+  padding: .75rem 1rem;
+  font-size: 13.5px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+  color: #e0dfd8;
+  line-height: 1.6;
+  outline: none;
+  transition: border-color .15s;
+}
+
+.role-field input[type="text"]:focus {
+  border-color: #3e3c6e;
+  background: #0a0a0a;
+}
+
+.role-field input[type="text"]::placeholder {
+  color: #333338;
+}
+
+/* ---- Textarea ẩn đi vì TinyMCE thay thế ---- */
+.role-field textarea {
+  display: none;
+}
+
+/* ---- Wrapper cho TinyMCE để bo góc + border khớp theme ---- */
+.role-field .tox-tinymce {
+  border: 0.5px solid #222225 !important;
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+
+/* ---- Divider ---- */
+.role-edit-divider {
+  border: none;
+  border-top: 0.5px solid #1a1a1e;
+  margin: 1.75rem 0 1.5rem;
+}
+
+/* ---- Actions ---- */
+.role-edit-actions {
+  display: flex;
+  gap: .75rem;
+}
+
+.role-btn {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: .02em;
+  padding: 9px 20px;
+  border-radius: 8px;
+  border: 0.5px solid;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .15s;
+  line-height: 1;
+}
+
+.role-btn--submit {
+  color: #f0efe8;
+  background: #1e1d36;
+  border-color: #3b3870;
+}
+
+.role-btn--submit:hover {
+  background: #252350;
+}
+
+.role-btn--back {
+  color: #555;
+  background: transparent;
+  border-color: #222225;
+}
+
+.role-btn--back:hover {
+  background: #111114;
+  color: #bbb;
+}
+
+/* ---- No permission ---- */
+.role-no-permission {
+  font-size: 13px;
+  color: #8a4040;
+  background: #100808;
+  border: 0.5px solid #3d1a1a;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  display: inline-block;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .role-edit-page { padding: 1.25rem 1rem; align-items: flex-start; }
+  .role-edit-card { padding: 1.25rem; }
+}

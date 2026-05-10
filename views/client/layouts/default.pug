@@ -1,0 +1,40 @@
+doctype html
+html(lang="vi")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    meta(name="csrf-token" content=csrfToken || '')
+    title Trang chủ
+    link(rel="preconnect" href="https://fonts.googleapis.com")
+    link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap")
+    link(rel="stylesheet" href="/client/css/layout.css")
+    link(rel="stylesheet" href="/client/css/hero.css")
+    link(rel="stylesheet" href="/client/css/header.css")
+    link(rel="stylesheet" href="/client/css/footer.css")
+    link(rel="stylesheet" href="/client/css/alert.css")
+    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css")
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
+    block css
+
+  body
+    include ../partials/header.pug
+
+    block main
+
+    include ../partials/footer.pug
+    include ../partials/chat.pug
+
+    script(src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js")
+    script(src="/shared/js/csrf.js")
+    script(src="/client/js/script.js")
+    script(src="/client/js/search-api.js")
+    script(src="/client/js/header-search.js")
+    script(src="/socket.io/socket.io.js")
+    script(src="/client/js/chat.socket.js")
+    script(src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js")
+    script.
+      lucide.createIcons()
+
+    block script

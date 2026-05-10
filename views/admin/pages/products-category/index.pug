@@ -1,0 +1,56 @@
+extends ../../layouts/default.pug
+include ../../mixins/select-tree.pug
+include ../../mixins/themdanhmuc.pug
+
+block css
+  link(rel="stylesheet" href="/admin/css/pages/product-category/product-category-view.css")
+
+block main
+  .page-header
+    .page-header__info
+      h1.page-header__title Quản lý danh mục sản phẩm
+    .page-header__actions
+      if(roles.permissions.includes("products-category_create"))
+        button.btn.btn--primary#btn-open-modal
+          span + Thêm danh mục
+
+  .stats-grid
+    .stat-card
+      p.stat-card__label Tổng danh mục
+      span.stat-card__value= stats.total || 0
+    .stat-card
+      p.stat-card__label Đang hoạt động
+      span.stat-card__value.stat-card__value--active= stats.active || 0
+    .stat-card
+      p.stat-card__label Cấp 1
+      span.stat-card__value= stats.level1 || 0
+    .stat-card
+      p.stat-card__label Cấp 2
+      span.stat-card__value= stats.level2 || 0
+    .stat-card
+      p.stat-card__label Cấp 3
+      span.stat-card__value= stats.level3 || 0
+
+  .filter-bar
+    .filter-bar__search
+      svg.filter-bar__search-icon(xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+        circle(cx='11' cy='11' r='8')
+        line(x1='21' y1='21' x2='16.65' y2='16.65')
+      input.filter-bar__input(type='text' placeholder='Tìm kiếm danh mục...')
+    .filter-bar__selects
+  .category-tree#category-tree
+    if records && records.length
+      each item in records
+        +categoryRow(item, 1)
+    else
+      p.category-tree__empty Không có danh mục nào
+
+  //- Render modal
+  if(roles.permissions.includes("products-category_create") || roles.permissions.includes("products-category_edit"))
+    +modalThemDanhMuc(records)
+
+block script
+  script.
+    window.categoryIconPresets = !{JSON.stringify(categoryIconPresets || [])};
+    window.defaultCategoryIcon = !{JSON.stringify(defaultCategoryIcon || "smartphone")};
+  script(src="/admin/js/product-category.js")

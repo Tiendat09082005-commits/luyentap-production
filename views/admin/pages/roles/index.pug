@@ -1,0 +1,93 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/button-delete.pug
+include ../../mixins/pagination.pug
+include ../../mixins/role-modal-add.pug
+
+block css
+  link(rel="stylesheet", href="/admin/css/roles.css")
+  link(rel="stylesheet", href="/admin/css/role-modal-add.css")
+
+block main
+  if roles.permissions.includes("roles_view")
+    .roles-page
+      +alert-unsuccess(3000)
+      +alert-success(3000)
+
+      .page-header
+        .page-header__left
+          h1 Nhóm Quyền
+          p Danh sách các nhóm quyền hiện có trong hệ thống
+
+        if roles.permissions.includes("roles_create")
+          .page-header__right
+            button.btn.btn-primary(
+              type="button"
+              data-open-add-role
+              aria-haspopup="dialog"
+              aria-controls="modal-add-role"
+            )
+              i.fas.fa-plus
+              | Thêm nhóm quyền
+
+      .card
+        .table-wrapper
+          if records && records.length > 0
+            table.roles-table(checkbox-multi)
+              colgroup
+                col
+                col
+                col
+                col
+              thead
+                tr
+                  th STT
+                  th Nhóm quyền
+                  th Mô tả ngắn
+                  th Hành động
+
+              tbody
+                each item, index in records
+                  tr
+                    td= index + 1
+
+                    td
+                      span.role-title= item.title
+
+                    td
+                      span.role-description(title=item.description || '—')= item.description || '—'
+
+                    td
+                      .action-group
+                        if roles.permissions.includes("roles_view")
+                          a.action-btn.view(
+                            href=`${prefixAdmin}/roles/detail/${item._id}`
+                            title="Chi tiết"
+                          )
+                            i.fas.fa-eye
+
+                        if roles.permissions.includes("roles_edit")
+                          a.action-btn.edit(
+                            href=`${prefixAdmin}/roles/edit/${item._id}`
+                            title="Sửa"
+                          )
+                            i.fas.fa-pen
+
+                        if roles.permissions.includes("roles_delete")
+                          +button-delete(item, "roles")
+
+          else
+            .empty-state
+              .empty-state__icon
+                i.fas.fa-shield-alt
+              h3 Chưa có nhóm quyền nào
+              p Hệ thống hiện chưa có nhóm quyền để hiển thị.
+              
+      if records && records.length > 0
+      .pagination-wrapper
+        +pagination(pagination)
+
+    +modalAddRole(csrfToken)
+
+  script(src="/admin/js/product.js")
+  script(src="/admin/js/role-modal-add.js")

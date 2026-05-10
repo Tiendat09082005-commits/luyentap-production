@@ -1,0 +1,141 @@
+extends ../../layouts/default.pug
+include ../../mixins/pagination.pug
+include ../../mixins/alert.pug
+block css
+    link(rel="stylesheet", href="/admin/css/pages/products/product-trash.css")
+    link(rel="stylesheet", href="/css/pagination.css")
+block main
+    if(roles.permissions.includes("products_view_trash"))
+        +alert-success(3000)
+        +alertAddSuccess(3000)
+        .products-page 
+            h1 Thùng rác 
+
+            .card.mb-3
+                .card-header Bộ lọc và Tìm kiếm
+                .card-body
+                    .row
+                        .col-6
+                            each item in filterStatus
+                                button(
+                                    class=`btn btn-sm ml-1 btn-outline-success ${item.class}`
+                                    button-status= item.status
+                                ) #{item.name}
+                        .col-6
+                            form(id="form-search")
+                                .input-group
+                                    .position-relative(style="flex: 1;")
+                                        input(
+                                            type="text"
+                                            placeholder="Nhập từ khóa cần tìm kiếm ..."
+                                            name="keyword"
+                                            class="form-control"
+                                            value = keyword
+                                            autocomplete="off"
+                                        )                
+                                        span(
+                                            id = "clearBtn",
+                                            class  = "position-absolute",
+                                            style="right: 50px; top: 50%; transform: translateY(-50%); cursor: pointer; display: none;"
+                                        ) ✕
+                                    button(
+                                        class="btn btn-success"
+                                        type="submit"
+                                    ) Tìm
+            .card.mb-3
+                .card-header Danh sách sản phẩm bị xóa 
+                .card-body
+                    .row
+                        .col-8
+                            form(
+                                action=`${prefixAdmin}/products/change-multi?_method=PATCH`,
+                                method="POST",
+                                form-change-multi
+                            )
+                                input(type="hidden" name="_csrf" value=csrfToken)
+                                .d-flex.align-items-start
+                                    .form-group
+                                        select(name="type", class="form-control")
+                                            option(disabled selected) -- Chọn hành động --
+                                            option(value="delete-all") Xóa tất cả (đã chọn)
+                                    .form-group
+                                        input(
+                                            type="text",
+                                            name="ids",
+                                            value="",
+                                            class="form-control d-none"
+                                        )
+                                    button(type="submit", class="btn btn-primary") Áp dụng
+                            
+
+                    table(
+                        class = "table table-hover table-sm"
+                        checkbox-multi
+                    )
+                        thead
+                            tr
+                                th
+                                    input(type="checkbox" name="checkall" id="checkall")
+                                th STT
+                                th Hình ảnh
+                                th Tiêu đề
+                                th Trạng thái
+                                th Hành động
+                        tbody
+                            each item, index in products
+                                tr  
+                                    td
+                                        input(type="checkbox" name="checkbox" id="checkbox" , value = item._id)
+                                    td #{index + 1}
+                                    td
+                                        if item.thumbnail
+                                            img(
+                                                src= item.thumbnail
+                                                alt= item.title
+                                                width="60px"
+                                                height="auto"
+                                            )
+                                        else
+                                            span —
+                                    td #{item.title}
+                                    td
+                                        if(item.status === "active")
+                                            span.badge.badge-success Hoạt động
+                                        else
+                                            span.badge.badge-secondary Dừng hoạt động
+                                    td
+                                        if(roles.permissions.includes("products_edit"))
+                                            a(href=`${prefixAdmin}/products/edit/${item._id}` class="btn btn-warning btn-sm" title="Chỉnh sửa")
+                                                i(data-lucide="pencil")
+                                        if(roles.permissions.includes("products_edit"))
+                                            //- Khôi phục: PATCH /restore/:id (có CSRF)
+                                            form(
+                                                action=`${prefixAdmin}/products/restore/${item._id}?_method=PATCH`
+                                                method="POST"
+                                                style="display:inline"
+                                            )
+                                                input(type="hidden" name="_csrf" value=csrfToken)
+                                                button(type="submit" class="btn btn-primary btn-sm ml-1" title="Khôi phục")
+                                                    i(data-lucide="rotate-ccw")
+                                        if(roles.permissions.includes("products_delete"))
+                                            //- Xóa vĩnh viễn: DELETE /hard-delete/:id (có CSRF)
+                                            form(
+                                                action=`${prefixAdmin}/products/hard-delete/${item._id}?_method=DELETE`
+                                                method="POST"
+                                                style="display:inline"
+                                                onsubmit="return confirm('Xóa vĩnh viễn? Không thể hoàn tác!')"
+                                            )
+                                                input(type="hidden" name="_csrf" value=csrfToken)
+                                                button(type="submit" class="btn btn-danger btn-sm ml-1" title="Xóa vĩnh viễn")
+                                                    i(data-lucide="trash-2")
+                                        if(roles.permissions.includes("products_view"))
+                                            a(
+                                                href=`${prefixAdmin}/products/detail/${item._id}`
+                                                class="btn btn-secondary btn-sm"
+                                                title="Xem chi tiết"
+                                            )
+                                                i(data-lucide="eye")
+
+            +pagination(pagination)
+
+            script(src="/admin/js/product.js")

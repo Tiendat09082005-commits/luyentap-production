@@ -1,0 +1,320 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+include ../../mixins/comment-tree.pug
+
+block css
+  link(rel="stylesheet" href="/client/css/product-detail.css")
+
+block main
+  +alert-success(3000)
+  +alert-unsuccess(3000)
+
+  main.product-detail
+    .container
+
+      //- Breadcrumb
+      nav.breadcrumb
+        a(href="/") Trang chủ
+        span.sep /
+        a(href="/products") Sản phẩm
+        if product.category
+          span.sep /
+          a(href=`/products?category=${product.category_id}`) #{product.category}
+        span.sep /
+        span.current #{product.title}
+
+      //- ===== PRODUCT HEADER (Top full-width) =====
+      .product-header
+        .product-header-left
+          h1.product-title#productTitle #{product.title}
+          .product-meta-top
+            .rating-section
+              .stars
+                - var fullStars = Math.floor(product.rating || 0)
+                - var hasHalfStar = (product.rating % 1) >= 0.5
+                - for (var i = 0; i < fullStars; i++)
+                  span.star.filled ★
+                - if (hasHalfStar)
+                  span.star.half-star ★
+                - for (var i = 0; i < (5 - Math.ceil(product.rating || 0)); i++)
+                  span.star.empty ☆
+              span.rating-value #{(product.rating || 0).toFixed(1)}
+              span.sep |
+              span.sku SKU: #{product.sku || 'N/A'}
+
+        .product-header-right
+          button.btn-wishlist(
+            type="button" 
+            title="Thêm vào yêu thích" 
+            onclick="toggleWishlist(this)"
+            class=(isFavorite ? 'active' : '')
+            data-id=product._id
+            data-logged-in=(user ? "true" : "false")
+          )
+            svg(xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill=(isFavorite ? "var(--red)" : "none") stroke=(isFavorite ? "var(--red)" : "currentColor") stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+              path(d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z")
+            span Yêu thích
+
+      .product-detail-wrapper
+
+        //- ===== LEFT: GALLERY =====
+        .product-images
+          //- Ảnh chính (nhỏ gọn hơn)
+          .main-image#mainImage
+            if product.thumbnail
+              img(src=product.thumbnail alt=product.title id="mainImg")
+            else
+              img(src="/images/no-image.jpg" alt=product.title id="mainImg")
+            //- Nút prev/next trên ảnh chính
+            button.main-img-nav.main-img-prev(type="button" onclick="mainImgNav(-1)" aria-label="Ảnh trước") ‹
+            button.main-img-nav.main-img-next(type="button" onclick="mainImgNav(1)" aria-label="Ảnh sau") ›
+
+          //- Strip thumbnail với nút prev/next
+          .thumb-strip-wrap
+            button.thumb-nav.thumb-nav-prev(type="button" id="thumbPrev" onclick="scrollThumbs(-1)" aria-label="Cuộn trái") ‹
+            .thumbnail-gallery#thumbTrack
+              if galleryImages && galleryImages.length > 0
+                each image, index in galleryImages
+                  .thumbnail-item(class=(index === 0 ? 'active' : '') data-src=image data-idx=index onclick="selectThumb(this)")
+                    img(src=image alt=`${product.title} ${index + 1}`)
+            button.thumb-nav.thumb-nav-next(type="button" id="thumbNext" onclick="scrollThumbs(1)" aria-label="Cuộn phải") ›
+
+        //- ===== RIGHT: PRODUCT INFO =====
+        .product-details
+
+          .price-section#priceSection
+            span.current-price#currentPrice
+              if product.priceNew
+                | #{product.priceNew.toLocaleString('vi-VN')}₫
+              else
+                | Liên hệ
+            if product.discount && product.discount > 0
+              span.original-price#originalPrice #{product.price.toLocaleString('vi-VN')}₫
+              span.discount-badge -#{product.discount}%
+
+          if product.attributes && product.attributes.length > 0
+            .variant-section#variantSection
+              each attr in product.attributes
+                if attr.selectedValues && attr.selectedValues.length > 0
+                  .attr-group(data-attr-code=attr.code)
+                    .attr-label #{attr.name}:
+                      span.attr-selected-val(id=`${attr.code}-selected`) #{attr.selectedValues[0]}
+                    .attr-options
+                      each val in attr.selectedValues
+                        button.attr-btn(
+                          class=(attr.affectsImage ? 'affects-image' : '')
+                          data-attr=attr.code
+                          data-val=val
+                          onclick=`selectVariant(this, '${attr.code}', '${val}')`
+                        ) #{val}
+
+          .action-section
+            .quantity-row
+              label(for="quantity") Số lượng
+              .qty-control
+                button.qty-btn(type="button" onclick="changeQty(-1)") −
+                input#quantity(
+                  type="number"
+                  name="quantity"
+                  value="1"
+                  min="1"
+                  max=product.stock || 99
+                  readonly
+                )
+                button.qty-btn(type="button" onclick="changeQty(1)") +
+              if product.stock !== undefined
+                span.stock-label#stockLabel
+                  if product.stock > 0
+                    span.in-stock#stockStatus ✓ Còn #{product.stock} sản phẩm
+                  else
+                    span.out-of-stock#stockStatus ✗ Hết hàng
+
+            .cta-buttons
+              form(action="/cart/add" method="POST" class="add-to-cart-form" id="addCartForm")
+                input(type="hidden" name="_csrf" value=csrfToken)
+                input(type="hidden" name="productId" value=product._id id="hiddenProductId")
+                input(type="hidden" name="variantId" value="" id="hiddenVariantId")
+                input(type="hidden" name="quantity" id="hiddenQty" value="1")
+                button.btn.btn-add-cart(type="submit")
+                  span.btn-icon 🛒
+                  span Thêm vào giỏ
+              button.btn.btn-buy-now(type="button" data-id=product._id)
+                span Mua ngay
+
+          .promotion-info
+            h4.promo-title Ưu đãi đặc biệt
+            ul.promo-list
+              li
+                span.promo-num 01
+                span Trả góp 0% — không phụ thu, không trả trước
+              li
+                span.promo-num 02
+                span Miễn phí vận chuyển toàn quốc
+              li
+                span.promo-num 03
+                span Bảo hành chính hãng 12 tháng
+              li
+                span.promo-num 04
+                span Đổi trả trong 30 ngày nếu lỗi sản phẩm
+
+
+      //- ===== THÔNG SỐ KỸ THUẬT (Dưới 2 cột chính) =====
+      if product.specifications && product.specifications.length > 0
+        .specs-summary-section
+          h2.section-title Thông số kỹ thuật
+          .specs-summary-grid
+            each group in product.specifications.slice(0, 2)
+              .specs-column
+                h3.specs-column-title #{group.groupName}
+                table.specs-table-summary
+                  tbody
+                    each item in group.items.slice(0, 5)
+                      tr
+                        td.spec-key #{item.key}
+                        td.spec-val #{item.value}
+          .specs-view-more
+            button.btn-view-specs#btnToggleSpecs(onclick="toggleSpecs(this)") 
+              | Xem đầy đủ thông số 
+              span.icon ⌄
+
+
+      //- ===== TABS =====
+      .product-tabs-section
+        .tab-nav
+          button.tab-btn.active(onclick="switchTab(this,'tab-desc')") Mô tả sản phẩm
+          if product.specifications && product.specifications.length > 0
+            button.tab-btn(onclick="switchTab(this,'tab-spec')") Thông số kỹ thuật
+          if product.shortDescription
+            button.tab-btn(onclick="switchTab(this,'tab-highlight')") Tính năng nổi bật
+
+        .tab-content#tab-desc.tab-pane.active
+          if product.description
+            .description-content !{product.description}
+          else
+            p.empty-state Chưa có mô tả cho sản phẩm này.
+
+        //- ===== THÔNG SỐ KỸ THUẬT - bảng đầy đủ =====
+        if product.specifications && product.specifications.length > 0
+          .tab-content#tab-spec.tab-pane
+            .specs-full-wrap
+              each group in product.specifications
+                .spec-block
+                  .spec-block-header
+                    span.spec-block-dot
+                    | #{group.groupName}
+                  table.spec-table-full
+                    tbody
+                      each item, idx in group.items
+                        tr(class=idx % 2 === 0 ? '' : 'row-alt')
+                          td.spec-key #{item.key}
+                          td.spec-val #{item.value}
+
+        if product.shortDescription
+          .tab-content#tab-highlight.tab-pane
+            .highlight-content !{product.shortDescription}
+
+      //- ===== RELATED PRODUCTS =====
+      if relatedProducts && relatedProducts.length > 0
+        .related-products
+          h2.section-title Sản phẩm liên quan
+          .product-grid
+            each rp in relatedProducts.slice(0, 6)
+              .product-card(data-href=`/products/detail/${rp._id}`)
+                a.product-image(href=`/products/${rp.slug || rp._id}`)
+                  img(src=rp.thumbnail || "/images/no-image.jpg" alt=rp.title loading="lazy")
+                  if rp.discount && rp.discount > 0
+                    span.card-badge -#{rp.discount}%
+                .product-info
+                  h3.product-name
+                    a(href=`/products/${rp.slug || rp._id}`) #{rp.title}
+                  .product-price
+                    if rp.priceNew
+                      span.card-price #{rp.priceNew.toLocaleString('vi-VN')}₫
+                    else
+                      span.card-price #{rp.price.toLocaleString('vi-VN')}₫
+                  .card-rating
+                    span.star ⭐
+                    span #{(rp.rating || 0).toFixed(1)}
+
+
+      //- ===== STICKY PRODUCT BAR (Floating Bottom) =====
+      section.product-comments-section(data-product-id=product._id)
+        .comments-section-header
+          .comments-section-heading
+            span.comments-section-kicker Discussion
+            h2.section-title Binh luan san pham
+          p.comments-section-subtitle Dat cau hoi, chia se trai nghiem va tra loi theo chuoi.
+
+        .comment-form-card
+          form#commentForm.comment-form
+            input(type="hidden" name="_csrf" value=csrfToken)
+            input(type="hidden" name="productId" value=product._id)
+            input(type="hidden" name="parentId" value="" id="commentParentId")
+            .comment-form-top
+              strong#commentFormTitle Viet binh luan moi
+              button#commentCancelReply.comment-cancel-reply(type="button" hidden) Bo tra loi
+            textarea#commentContent.comment-textarea(
+              name="content"
+              rows="4"
+              maxlength="1000"
+              placeholder=(user ? "Nhap noi dung binh luan cua ban..." : "Ban dang gui voi tu cach khach. Noi dung se hien thi ten mac dinh 'Khach'.")
+              required
+            )
+            .comment-form-bottom
+              p.comment-form-hint#commentReplyHint Khong ho tro HTML. Toi da 1000 ky tu.
+              button.comment-submit-btn(type="submit") Gui binh luan
+
+        .comments-list-card
+          .comments-list-head
+            strong Danh sach binh luan
+            span#commentCountBadge.comment-count-badge #{commentsData && commentsData.pagination ? commentsData.pagination.totalRootComments : 0} chu de
+
+          #commentFeedback.comment-feedback(hidden)
+
+          if commentsData && commentsData.comments && commentsData.comments.length > 0
+            #commentList.comment-list
+              +commentTree(commentsData.comments)
+          else
+            #commentList.comment-list
+              .comment-empty Chua co binh luan nao. Hay mo dau cuoc tro chuyen.
+
+          if commentsData && commentsData.pagination && commentsData.pagination.hasNextPage
+            .comments-pagination
+              button#commentLoadMore.comment-load-more-btn(
+                type="button"
+                data-next-page=(commentsData.pagination.page + 1)
+              ) Xem them binh luan
+          else
+            .comments-pagination
+              button#commentLoadMore.comment-load-more-btn(type="button" hidden) Xem them binh luan
+
+      .sticky-product-bar#stickyBar
+        .container
+          .sticky-bar-content
+            .sticky-info
+              .sticky-thumb
+                img#stickyImg(src=product.thumbnail alt=product.title)
+              .sticky-text
+                span.sticky-title#stickyTitle #{product.title}
+                .sticky-price-wrap
+                  span.sticky-price-new#stickyPriceNew
+                    if product.priceNew
+                      | #{product.priceNew.toLocaleString('vi-VN')}₫
+                    else
+                      | Liên hệ
+                  if product.discount && product.discount > 0
+                    span.sticky-price-old#stickyPriceOld #{product.price.toLocaleString('vi-VN')}₫
+
+            .sticky-actions
+              button.btn-promo-sticky Trả góp 0%
+              button.btn-buy-sticky(onclick="document.querySelector('.btn-buy-now').click()") Mua Ngay
+              button.btn-cart-sticky(onclick="document.querySelector('.btn-add-cart').click()")
+                i.fa-solid.fa-cart-plus
+
+  script.
+    window.__VARIANTS_DATA__ = !{JSON.stringify(variants || [])};
+    window.__COMMENTS_INITIAL__ = !{JSON.stringify(commentsData || { comments: [], pagination: { page: 1, limit: 10, totalRootComments: 0, totalPages: 1, hasNextPage: false, hasPrevPage: false } })};
+  script(src="/client/js/product-detail.js")
+  script(src="/client/js/product-comments.js")
+
+
