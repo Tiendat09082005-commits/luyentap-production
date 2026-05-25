@@ -1,6 +1,7 @@
 const conFig = require("../../config/system");
-const Role = require("../../models/roles.model");
-const roleService = require("../../services/admin/role.service")
+const roleService = require("../../services/admin/role.service");
+const flash = require("../../helpers/flash.helper");
+const ERROR_CODE = require("../../constants/error-code");
 
 // [GET] admin/roles
 module.exports.index = async (req, res) => {
@@ -16,33 +17,30 @@ module.exports.index = async (req, res) => {
     } catch (error) {
         console.error("GET ROLES ERROR:", error);
 
-        req.flash("thatbai", "Lỗi tải danh sách quyền");
+        flash.flashError(req, "Lỗi tải danh sách quyền");
         res.redirect("back");
     }
 };
-
-
 
 // [POST] admin/roles/create
 module.exports.createPost = async (req, res) => {
     try {
         await roleService.createRole(req.body);
 
-        req.flash("thanhcong", `Bạn đã thêm mới thành công nhóm quyền ${req.body.title}`);
+        flash.flashSuccess(req, `Bạn đã thêm mới thành công nhóm quyền ${req.body.title}`);
 
     } catch (error) {
         console.error("CREATE ROLE ERROR:", error);
 
-        if (error.message === "ROLE_DUPLICATE") {
-            req.flash("thatbai", "Nhóm quyền đã tồn tại");
+        if (error.code === ERROR_CODE.ROLE_DUPLICATE) {
+            flash.flashError(req, "Nhóm quyền đã tồn tại");
         } else {
-            req.flash("thatbai", `Bạn thêm nhóm quyền ${req.body.title} thất bại`);
+            flash.flashError(req, `Bạn thêm nhóm quyền ${req.body.title} thất bại`);
         }
     }
 
     res.redirect(`${conFig.prefixAdmin}/roles`);
-}
-
+};
 
 // [GET] admin/roles/permission
 module.exports.permission = async (req, res) => {
@@ -56,7 +54,7 @@ module.exports.permission = async (req, res) => {
     } catch (error) {
         console.error("GET ROLE PERMISSION ERROR:", error);
 
-        req.flash("thatbai", "Lỗi tải phân quyền");
+        flash.flashError(req, "Lỗi tải phân quyền");
         res.redirect("back");
     }
 };
@@ -66,12 +64,12 @@ module.exports.permissionPatch = async (req, res) => {
     try {
         await roleService.updatePermissions(req.body.permissions);
 
-        req.flash("thanhcong", "Cập nhật phân quyền thành công");
+        flash.flashSuccess(req, "Cập nhật phân quyền thành công");
 
     } catch (error) {
         console.error("UPDATE PERMISSION ERROR:", error);
 
-        req.flash("thatbai", "Cập nhật phân quyền thất bại");
+        flash.flashError(req, "Cập nhật phân quyền thất bại");
     }
 
     res.redirect(`${conFig.prefixAdmin}/roles/permission`);
@@ -91,17 +89,15 @@ module.exports.detail = async (req, res) => {
     } catch (error) {
         console.error("GET ROLE DETAIL ERROR:", error);
 
-        if (error.message === "ROLE_NOT_FOUND") {
-            req.flash("thatbai", "Không tìm thấy nhóm quyền");
+        if (error.code === ERROR_CODE.ROLE_NOT_FOUND) {
+            flash.flashError(req, "Không tìm thấy nhóm quyền");
         } else {
-            req.flash("thatbai", "Lỗi server");
+            flash.flashError(req, "Lỗi server");
         }
 
         res.redirect(`${conFig.prefixAdmin}/roles`);
     }
 };
-
-
 
 // [GET] admin/roles/edit/:id
 module.exports.edit = async (req, res) => {
@@ -117,16 +113,15 @@ module.exports.edit = async (req, res) => {
     } catch (error) {
         console.error("GET ROLE EDIT ERROR:", error);
 
-        if (error.message === "ROLE_NOT_FOUND") {
-            req.flash("thatbai", "Không tìm thấy nhóm quyền");
+        if (error.code === ERROR_CODE.ROLE_NOT_FOUND) {
+            flash.flashError(req, "Không tìm thấy nhóm quyền");
         } else {
-            req.flash("thatbai", "Lỗi server");
+            flash.flashError(req, "Lỗi server");
         }
 
         res.redirect(`${conFig.prefixAdmin}/roles`);
     }
 };
-
 
 // [PATCH] admin/roles/edit/:id
 module.exports.editPatch = async (req, res) => {
@@ -135,17 +130,17 @@ module.exports.editPatch = async (req, res) => {
 
         await roleService.updateRole(id, req.body);
 
-        req.flash("thanhcong", "Bạn đã cập nhật thành công !!");
+        flash.flashSuccess(req, "Bạn đã cập nhật thành công !!");
 
     } catch (error) {
         console.error("UPDATE ROLE ERROR:", error);
 
-        if (error.message === "ROLE_NOT_FOUND") {
-            req.flash("thatbai", "Không tìm thấy nhóm quyền");
-        } else if (error.message === "ROLE_DUPLICATE") {
-            req.flash("thatbai", "Tên nhóm quyền đã tồn tại");
+        if (error.code === ERROR_CODE.ROLE_NOT_FOUND) {
+            flash.flashError(req, "Không tìm thấy nhóm quyền");
+        } else if (error.code === ERROR_CODE.ROLE_DUPLICATE) {
+            flash.flashError(req, "Tên nhóm quyền đã tồn tại");
         } else {
-            req.flash("thatbai", "Đã xảy ra lỗi");
+            flash.flashError(req, "Đã xảy ra lỗi");
         }
     }
 
@@ -159,18 +154,18 @@ module.exports.delete = async (req, res) => {
 
         await roleService.deleteRole(id);
 
-        req.flash(
-            "thanhcong",
+        flash.flashSuccess(
+            req,
             "Xóa nhóm quyền thành công, đã chuyển vào thùng rác"
         );
 
     } catch (error) {
         console.error("DELETE ROLE ERROR:", error);
 
-        if (error.message === "ROLE_NOT_FOUND_OR_DELETED") {
-            req.flash("thatbai", "Không tìm thấy hoặc đã bị xóa");
+        if (error.code === ERROR_CODE.ROLE_NOT_FOUND_OR_DELETED) {
+            flash.flashError(req, "Không tìm thấy hoặc đã bị xóa");
         } else {
-            req.flash("thatbai", "Xóa nhóm quyền thất bại");
+            flash.flashError(req, "Xóa nhóm quyền thất bại");
         }
     }
 
