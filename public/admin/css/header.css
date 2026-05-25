@@ -1,60 +1,302 @@
+/* =====================================================
+   header.css — Header / Top Bar
+   Design System: TidaAdmin "The Clean Desk"
+   Theme: Light, professional, white surface
+   ===================================================== */
+
+/* ---- Global tokens used only in header ---- */
+:root {
+  --header-height:      64px;
+  --header-bg:          #FFFFFF;
+  --header-border:      #E5E7EB;
+  --header-text:        #111827;
+  --header-text-muted:  #6B7280;
+  --header-accent:      #3B82F6;
+  --header-accent-dark: #2563EB;
+  --header-danger:      #EF4444;
+  --header-danger-dark: #DC2626;
+}
+
+/* ---- Shell ---- */
 .header {
   position: fixed;
   top: 0; left: 0; right: 0;
-  height: 70px;
-  background: #1e1e1e;
-  border-bottom: 1px solid #2a2a2a;
+  height: var(--header-height);
+  background: var(--header-bg);
+
+  /* Đường viền mỏng mờ phân chia header với nội dung bên dưới */
+  border-bottom: 1px solid var(--header-border);
+
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
   z-index: 1000;
+
+  /* Ngăn nội dung tràn ra ngoài */
+  gap: 16px;
 }
 
+/* =====================================================
+   LOGO
+   ===================================================== */
 .header__logo a {
-  color: #fff;
-  font-size: 20px;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   text-decoration: none;
-  letter-spacing: -0.3px;
+  color: var(--header-text);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
 }
 
-.header__logo a:hover { opacity: 0.85; }
+.header__logo a:hover {
+  opacity: 0.75;
+  text-decoration: none;
+}
 
+/* Chấm màu xanh nhỏ trước logo — điểm nhấn duy nhất */
+.header__logo-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3B82F6;
+  flex-shrink: 0;
+}
+
+/* =====================================================
+   ACTIONS GROUP
+   ===================================================== */
 .header__actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-/* Đổi từ .header .btn → .header__btn để tránh Bootstrap */
+/* =====================================================
+   DIVIDER DỌC giữa các nhóm action
+   ===================================================== */
+.header__sep {
+  width: 1px;
+  height: 20px;
+  background: var(--header-border);
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
+/* =====================================================
+   BASE BUTTON
+   ===================================================== */
 .header__btn {
   display: inline-flex;
   align-items: center;
-  padding: 7px 16px;
-  border-radius: 8px;
+  justify-content: center;
+  gap: 6px;
+
+  padding: 7px 14px;
+  border-radius: 7px;
   font-size: 13px;
   font-weight: 500;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.2s;
+  line-height: 1.4;
   white-space: nowrap;
+  text-decoration: none;
+
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: transparent;
+
+  /* Transition ngắn, không phô trương */
+  transition: background 0.15s ease, border-color 0.15s ease,
+              color 0.15s ease, box-shadow 0.15s ease,
+              transform 0.1s ease;
+}
+
+.header__btn:active {
+  transform: scale(0.97);
+}
+
+.header__btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+/* =====================================================
+   USER CHIP — avatar initial + tên tài khoản
+   Màu: đen (ink) với border nhẹ, dễ đọc
+   ===================================================== */
+.header__btn--user {
+  background: #F3F4F6;
+  border-color: #E5E7EB;
+  color: #111827;               /* Đen — yêu cầu */
+  font-weight: 600;
+  padding: 6px 12px 6px 8px;
+}
+
+.header__btn--user:hover {
+  background: #E5E7EB;
+  border-color: #D1D5DB;
+  color: #111827;
+  text-decoration: none;
+}
+
+/* Avatar initial nhỏ bên trái */
+.header__avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #3B82F6;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+/* =====================================================
+   LOGOUT BUTTON — outline, text đen
+   ===================================================== */
+.header__btn--logout {
+  background: #FEF2F2;
+  border-color: #FECACA;
+  color: #B91C1C;               /* Đỏ đậm dễ đọc */
+  font-weight: 500;
+}
+
+.header__btn--logout:hover {
+  background: #FEE2E2;
+  border-color: #FCA5A5;
+  color: #991B1B;
+  text-decoration: none;
+}
+
+/* =====================================================
+   CLIENT LINK — ghost với icon
+   ===================================================== */
+.header__btn--client {
+  background: transparent;
+  border-color: #E5E7EB;
+  color: #374151;               /* Đen đủ tối */
+  font-weight: 500;
+}
+
+.header__btn--client:hover {
+  background: #F3F4F6;
+  border-color: #D1D5DB;
+  color: #111827;
+  text-decoration: none;
+}
+
+/* =====================================================
+   PRIMARY (còn dùng chỗ khác)
+   ===================================================== */
+.header__btn--primary {
+  background: #3B82F6;
+  border-color: #3B82F6;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.header__btn--primary:hover {
+  background: #2563EB;
+  border-color: #2563EB;
+  color: #ffffff;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+}
+
+/* =====================================================
+   NOTIFICATION — ghost icon button
+   ===================================================== */
+.header__btn--notif {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  background: transparent;
+  color: #4B5563;               /* Gray 600 */
+  font-size: 18px;
+}
+
+.header__btn--notif:hover {
+  background: #F3F4F6;
+  color: #111827;
+}
+
+.header__btn--notif i {
   line-height: 1;
 }
 
-.header__btn:hover { opacity: 0.85; }
-
-.header__btn--primary {
-  background: #4f7cff;
-  color: #fff;
+/* Red dot badge */
+.header__notif-badge {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  background: #EF4444;          /* Red 500 */
+  border: 1.5px solid #FFFFFF;  /* White border to pop */
+  border-radius: 50%;
 }
 
+/* =====================================================
+   DANGER (legacy support)
+   ===================================================== */
 .header__btn--danger {
-  background: #e53935;
-  color: #fff;
+  background: #FEF2F2;
+  border-color: #FECACA;
+  color: #B91C1C;
 }
 
+.header__btn--danger:hover {
+  background: #FEE2E2;
+  border-color: #FCA5A5;
+  color: #991B1B;
+  text-decoration: none;
+}
+
+/* =====================================================
+   OUTLINE (legacy support)
+   ===================================================== */
+.header__btn--outline {
+  background: #FFFFFF;
+  border-color: #E5E7EB;
+  color: #374151;
+}
+
+.header__btn--outline:hover {
+  background: #F3F4F6;
+  color: #111827;
+  text-decoration: none;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
 @media (max-width: 640px) {
-  .header { padding: 0 16px; }
+  .header {
+    padding: 0 16px;
+    gap: 8px;
+  }
+
+  /* Ẩn label chữ, chỉ giữ icon + avatar trên mobile */
+  .header__btn-label {
+    display: none;
+  }
+
+  .header__btn {
+    padding: 7px 10px;
+  }
+
+  .header__sep {
+    display: none;
+  }
 }

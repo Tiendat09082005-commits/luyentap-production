@@ -1,75 +1,65 @@
-const chatService = require("../../services/client/chat.service");
+const Conversation = require("../../models/conversation.model");
 
-// [GET] /chat
-module.exports.index = async (req, res) => {
+module.exports.getConversation = async (req, res) => {
   try {
-    // Đảm bảo conversation được tạo sẵn
-    const userId = req.user._id;
-    const conversation = await chatService.getOrCreateConversation(userId);
-    
-    res.render("client/pages/chat/index", {
-      pageTitle: "Hỗ trợ khách hàng",
-      conversationId: conversation._id
-    });
-  } catch (error) {
-    console.error("Chat Index Error:", error);
-    res.redirect("back");
-  }
-};
+    const userId = req.user?._id || req.user?.id;
 
-//[POST] /chat/start
-module.exports.Start = async (req, res) => {
-  try {
-    const userId = req.user._id;
-    const conversation = await chatService.getOrCreateConversation(userId);
-
-    res.status(200).json({
-      success: true,
-      data: {
-        conversation_id: conversation._id
-      }
-    });
-  } catch (error) {
-    console.error("Chat Start Error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Lỗi hệ thống khi khởi tạo trò chuyện"
-    });
-  }
-};
-
-
-// [POST/GET] /chat/message
-module.exports.getMessage = async (req, res) => {
-  try {
-    const conversationId = req.body.conversationId || req.query.conversationId;
-    const userId = req.user._id;
-    
-    const options = {
-      page: parseInt(req.query.page) || 1,
-      limit: parseInt(req.query.limit) || 20
-    };
-
-    const result = await chatService.getMessages(conversationId, userId, options);
-
-    res.status(200).json({
-      success: true,
-      data: result.messages,
-      pagination: result.pagination
-    });
-  } catch (error) {
-    console.error("Get Messages Error:", error);
-    
-    if (error.status) {
-      return res.status(error.status).json({
+    if (!userId) {
+      return res.status(401).json({
         success: false,
-        message: error.message
+        message: "Authentication required",
       });
     }
 
-    res.status(500).json({
+    const conversation = await Conversation.findOneAndUpdate(
+      { userId },
+      {
+        $setOnInsert: {
+          userId,
+          status: "open",
+          unreadCount: 0,
+          lastMessageAt: new Date(),
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+      }
+    ).lean();
+
+    // FIX timeout: set session.clientUser để socket middleware nhận diện được user.
+    // Socket đọc session.clientUser._id trong getSocketActor() —
+    // nếu không set thì actor = null → mọi socket event bị reject 401 → client timeout.
+    const serializedUser = {
+      _id: String(req.user._id || req.user.id),
+      fullName: req.user.fullName || "",
+      email: req.user.email || "",
+      avatar: req.user.avatar || "",
+      tokenUser: req.user.tokenUser || "",
+    };
+
+    const existing = req.session.clientUser;
+    if (!existing || existing._id !== serializedUser._id) {
+      req.session.clientUser = serializedUser;
+    }
+
+    return res.json({
+      success: true,
+      conversation: {
+        id: conversation._id.toString(),
+        userId: conversation.userId.toString(),
+        status: conversation.status,
+        unreadCount: conversation.unreadCount || 0,
+        lastMessage: conversation.lastMessage || null,
+        lastMessageAt: conversation.lastMessageAt,
+      },
+    });
+  } catch (error) {
+    console.error("[ClientChat] getConversation failed:", error.message);
+    return res.status(500).json({
       success: false,
-      message: "Lỗi hệ thống khi lấy tin nhắn"
+      message: "Khong the khoi tao chat",
     });
   }
 };

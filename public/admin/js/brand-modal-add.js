@@ -48,14 +48,14 @@
     if (!file) return;
 
     if (file.size > 2 * 1024 * 1024) {
-      alert('Ảnh quá lớn. Vui lòng chọn ảnh dưới 2 MB.');
+      Swal.fire({ icon: 'warning', text: 'Ảnh quá lớn. Vui lòng chọn ảnh dưới 2 MB.' });
       e.target.value = '';
       return;
     }
 
     var allowedTypes = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'];
     if (!allowedTypes.includes(file.type)) {
-      alert('Định dạng không hỗ trợ. Vui lòng chọn PNG, JPG, WEBP hoặc SVG.');
+      Swal.fire({ icon: 'warning', text: 'Định dạng không hỗ trợ. Vui lòng chọn PNG, JPG, WEBP hoặc SVG.' });
       e.target.value = '';
       return;
     }

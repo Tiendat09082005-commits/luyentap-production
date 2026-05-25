@@ -5,9 +5,22 @@ block css
 
 block main
   .order-management
-    h1.page-title
-      i.fas.fa-shopping-cart
-      | Quản Lý Đơn Hàng
+    h1.page-title(style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; margin-bottom: 24px;")
+      span(style="display: inline-flex; align-items: center; gap: 10px;")
+        i.fas.fa-shopping-cart
+        if customerName
+          | Đơn Hàng của: #{customerName}
+        else
+          | Quản Lý Đơn Hàng
+      if customerName
+        a.btn-back-users(
+          href="/admin/accounts/user"
+          style="font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; color: #6C3FF4; text-decoration: none; padding: 8px 16px; background: rgba(108, 63, 244, 0.08); border-radius: 8px; border: 1px solid rgba(108, 63, 244, 0.15); transition: all 0.2s;"
+          onmouseover="this.style.background='rgba(108, 63, 244, 0.15)'; this.style.transform='translateX(-2px)';"
+          onmouseout="this.style.background='rgba(108, 63, 244, 0.08)'; this.style.transform='none';"
+        )
+          i.fas.fa-arrow-left
+          | Quay lại Quản lý người dùng
 
     //- Bộ lọc và tìm kiếm
     .filter-section

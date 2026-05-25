@@ -1,12 +1,17 @@
-const express = require('express'); // gọi express vào
-const router = express.Router(); // dùng phương thức tạo router trong express 
-const chatController = require("../../controllers/client/chat.controller") ; 
+const express = require("express");
 const authMiddleware = require("../../middleware/client/auth.middleware");
-const chatValidate = require("../../validate/client/chat.validate");
+const chatUploadMiddleware = require("../../middleware/client/chat-upload.middleware");
+const chatController = require("../../controllers/client/chat.controller");
 
-router.get('/' , authMiddleware.requireAuth, chatController.index);
-router.post('/start' , authMiddleware.requireAuth, chatController.Start);
-router.post('/message' , authMiddleware.requireAuth, chatValidate.getMessages, chatController.getMessage);
+const router = express.Router();
 
+router.get("/conversation", authMiddleware.requireAuth, chatController.getConversation);
 
-module.exports = router; // exports router home ra
+router.post(
+  "/upload",
+  authMiddleware.requireAuth,
+  chatUploadMiddleware.handleMulterUpload,
+  chatUploadMiddleware.uploadChatFile
+);
+
+module.exports = router;

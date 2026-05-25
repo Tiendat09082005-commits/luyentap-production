@@ -6,14 +6,14 @@
 /* ---- CSS variables scoped trong .sider ---- */
 .sider {
   --sd-width:       206px;
-  --sd-bg:          #1e1e1e;
-  --sd-border:      #2a2a2a;
-  --sd-text:        #dddddd;
-  --sd-text-active: #ffffff;
-  --sd-muted:       #888888;
-  --sd-accent:      #4f7cff;
-  --sd-hover-bg:    #2a2a2a;
-  --sd-active-bg:   rgba(79, 124, 255, 0.12);
+  --sd-bg:          #FFFFFF;
+  --sd-border:      #E5E7EB;
+  --sd-text:        #374151;
+  --sd-text-active: #111827;
+  --sd-muted:       #9CA3AF;
+  --sd-accent:      #3B82F6;
+  --sd-hover-bg:    #F3F4F6;
+  --sd-active-bg:   #EFF6FF;
 
   position: fixed;
   top: 70px;          /* đúng bằng .header height */
@@ -36,7 +36,7 @@
 
   /* Ẩn scrollbar nhưng vẫn scroll được */
   scrollbar-width: thin;
-  scrollbar-color: var(--sd-border) transparent;
+  scrollbar-color: #D1D5DB transparent;
 }
 
 .sider::-webkit-scrollbar       { width: 4px; }
@@ -173,6 +173,6 @@
   /* Thêm class .sider--open qua JS để mở sider trên mobile */
   .sider.sider--open {
     transform: translateX(0);
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
   }
 }

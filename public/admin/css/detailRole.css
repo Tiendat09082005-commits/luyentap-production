@@ -14,7 +14,7 @@
 
 /* ---- Card wrapper ---- */
 .role-card {
-  background: #161719;
+  background: #FFFFFF;
   border: 0.5px solid #2a2a2e;
   border-radius: 16px;
   overflow: hidden;
@@ -89,7 +89,7 @@
   font-weight: 500;
   font-family: 'Inter', monospace;
   color: #9e9de0;
-  background: #18172a;
+  background: #EFF6FF;
   border: 0.5px solid #2b2950;
   border-radius: 6px;
   padding: 5px 12px;
@@ -100,7 +100,7 @@
   font-size: 13px;
   font-weight: 400;
   color: #8a4040;
-  background: #1a0f0f;
+  background: #FEF2F2;
   border: 0.5px solid #3d1a1a;
   border-radius: 8px;
   padding: .6rem 1rem;
@@ -168,7 +168,7 @@
 
 .role-badge--deleted {
   color: #c45252;
-  background: #1a0d0d;
+  background: #FEF2F2;
   border: 0.5px solid #4a2020;
 }
 
@@ -204,17 +204,17 @@
 }
 
 .role-btn--back:hover {
-  background: #1a1a1e;
+  background: #F3F4F6;
   color: #ccc;
 }
 
 .role-btn--edit {
   color: #d4a84b;
   border-color: #3d2e12;
-  background: #1a1508;
+  background: #FFFBEB;
 }
 
-.role-btn--edit:hover { background: #221c08; }
+.role-btn--edit:hover { background: #FEF3C7; }
 
 /* ---- Responsive ---- */
 @media (max-width: 600px) {

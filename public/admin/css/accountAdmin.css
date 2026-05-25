@@ -9,18 +9,26 @@
    DARK THEME VARIABLES
    ===================================================== */
 .account-management {
-  --ac-bg:        #111318;
-  --ac-surface:   #151820;
-  --ac-surface2:  #12172b;
-  --ac-surface3:  #1a2240;
-  --ac-border:    rgba(79, 124, 255, 0.25);
-  --ac-border2:   rgba(79, 124, 255, 0.15);
-  --ac-text:      #e8eaf2;
-  --ac-muted:     #6b7394;
-  --ac-accent:    #4f7cff;
-  --ac-green:     #22c55e;
-  --ac-red:       #ef4444;
+  --ac-bg:        #F8F9FB;
+  --ac-surface:   #FFFFFF;
+  --ac-surface2:  #FFFFFF;
+  --ac-surface3:  #F3F4F6;
+  --ac-border:    #D1D5DB;
+  --ac-border2:   #E5E7EB;
+  --ac-text:      #111827;
+  --ac-muted:     #64748B;
+  --ac-accent:    #3B82F6;
+  --ac-green:     #22C55E;
+  --ac-red:       #EF4444;
+  --ac-yellow:    #F59E0B;
   --ac-radius:    12px;
+
+  /* Map to global pagination variables */
+  --color-bg-card: #FFFFFF;
+  --color-border:  #D1D5DB;
+  --color-text-secondary: #64748B;
+  --color-primary: #3B82F6;
+  --color-primary-light: rgba(59, 130, 246, 0.1);
 
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   padding: 24px 28px 28px;
@@ -62,7 +70,7 @@
 
 .account-management .btn-add {
   padding: 9px 20px;
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  background: #3B82F6;
   color: white;
   border: none;
   border-radius: 8px;
@@ -79,7 +87,7 @@
 
 .account-management .btn-add:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
   color: white;
 }
 
@@ -95,7 +103,7 @@
   border: 1px solid var(--ac-border);
   border-radius: var(--ac-radius);
   overflow: hidden;
-  box-shadow: 0 0 24px rgba(79, 124, 255, 0.08);
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
   margin-bottom: 20px;
 }
 
@@ -109,7 +117,7 @@
 
 /* ---- Header ---- */
 .account-management .account-table thead {
-  background: #0e1224;
+  background: #F3F4F6;
 }
 
 .account-management .account-table th {
@@ -148,10 +156,10 @@
 /* ---- Cells ---- */
 .account-management .account-table td {
   padding: 14px 16px;
-  font-size: 13px;
+  font-size: 13.5px;
   vertical-align: middle;
   text-align: center;
-  border-right: 1px solid var(--ac-border2);
+  border: 1px solid var(--ac-border2) !important;
   color: var(--ac-text);
 }
 
@@ -168,7 +176,7 @@
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--ac-border);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
   transition: transform 0.2s ease, border-color 0.2s ease;
   display: block;
   margin: 0 auto;
@@ -209,9 +217,9 @@
 .account-management .role-badge {
   display: inline-block;
   padding: 4px 10px;
-  background: rgba(79, 124, 255, 0.15);
+  background: rgba(59, 130, 246, 0.08);
   color: var(--ac-accent);
-  border: 1px solid rgba(79, 124, 255, 0.3);
+  border: 1px solid rgba(59, 130, 246, 0.15);
   border-radius: 6px;
   font-size: 11px;
   font-weight: 700;
@@ -238,24 +246,24 @@
 }
 
 .account-management .status-badge.active {
-  background: rgba(34, 197, 94, 0.15);
+  background: #F0FDF4;
   color: var(--ac-green);
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  border: 1px solid rgba(59, 130, 246, 0.15);
 }
 
 .account-management .status-badge.active:hover {
-  background: rgba(34, 197, 94, 0.25);
+  background: #DCFCE7;
   transform: translateY(-1px);
 }
 
 .account-management .status-badge.inactive {
-  background: rgba(239, 68, 68, 0.15);
+  background: #FEF2F2;
   color: var(--ac-red);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .account-management .status-badge.inactive:hover {
-  background: rgba(239, 68, 68, 0.25);
+  background: #FEE2E2;
   transform: translateY(-1px);
 }
 
@@ -271,60 +279,63 @@
 }
 
 .account-management .btn-action {
-  height: 34px;
-  padding: 0 12px;
-  border: none;
-  border-radius: 7px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 12.5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  white-space: nowrap;
-  gap: 5px;
+  flex-shrink: 0;
+  border: 1px solid var(--ac-border2);
+  background: transparent;
+  color: var(--ac-muted);
+  padding: 0;
 }
 
 .account-management .btn-action i {
-  font-size: 12px;
-}
-
-.account-management .btn-detail {
-  background: rgba(79, 124, 255, 0.15);
-  color: var(--ac-accent);
-  border: 1px solid rgba(79, 124, 255, 0.3);
+  font-size: 13px;
 }
 
 .account-management .btn-detail:hover {
-  background: rgba(79, 124, 255, 0.25);
+  background: rgba(59, 130, 246, 0.1);
   color: var(--ac-accent);
-  transform: translateY(-1px);
-}
-
-.account-management .btn-edit {
-  background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-color: var(--ac-accent);
 }
 
 .account-management .btn-edit:hover {
-  background: rgba(245, 158, 11, 0.25);
-  color: #f59e0b;
-  transform: translateY(-1px);
-}
-
-.account-management .btn-delete {
-  background: rgba(239, 68, 68, 0.15);
-  color: var(--ac-red);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--ac-yellow);
+  border-color: var(--ac-yellow);
 }
 
 .account-management .btn-delete:hover {
-  background: rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.1);
   color: var(--ac-red);
-  transform: translateY(-1px);
+  border-color: var(--ac-red);
+}
+
+.account-management .btn-status.active {
+  color: var(--ac-green);
+  border-color: rgba(34, 197, 94, 0.2);
+  background: rgba(34, 197, 94, 0.05);
+}
+.account-management .btn-status.active:hover {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: var(--ac-green);
+}
+
+.account-management .btn-status.inactive {
+  color: var(--ac-red);
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.05);
+}
+.account-management .btn-status.inactive:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: var(--ac-red);
 }
 
 /* =====================================================

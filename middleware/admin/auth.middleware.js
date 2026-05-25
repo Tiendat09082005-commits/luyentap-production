@@ -72,3 +72,17 @@ module.exports.checkPermission = (permission) => {
     return next();
   };
 };
+
+module.exports.checkAnyPermission = (permissions = []) => {
+  return (req, res, next) => {
+    const permissionSet = res.locals.permissionSet;
+    const hasPermission = permissions.some((permission) => permissionSet?.has(permission));
+
+    if (!hasPermission) {
+      req.flash("error", "Ban khong co quyen thuc hien hanh dong nay");
+      return res.redirect(DASHBOARD_PATH);
+    }
+
+    return next();
+  };
+};

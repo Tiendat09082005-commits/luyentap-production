@@ -1,39 +1,77 @@
 const mongoose = require("mongoose");
 
-const messageSchema = new mongoose.Schema({
+const messageSchema = new mongoose.Schema(
+  {
+    conversationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Conversation",
+      required: true,
+      index: true,
+    },
 
-  conversation_id: {
-    type: String,
-    required: true
+    senderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      index: true,
+    },
+
+    senderType: {
+      type: String,
+      enum: ["user", "admin"],
+      required: true,
+    },
+
+    type: {
+      type: String,
+      enum: ["text", "image", "file", "emoji"],
+      default: "text",
+    },
+
+    content: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    fileUrl: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    fileName: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    fileSize: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    status: {
+      type: String,
+      enum: ["sending", "sent", "seen"],
+      default: "sent",
+    },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
   },
-  sender_id: {
-    type: String,
-    required: true
-  },
-  sender_role: {
-    type: String,
-    enum: ["user", "admin"],
-    default: "user"
-  },
-  content: {
-    type: String
-  },
-  images: {
-    type: Array,
-    default: []
-  },
-  deletedBy: {
-    type: Array, // [user_id]
-    default: []
-  },
-  deletedForAll: {
-    type: Boolean,
-    default: false
-  },
-  is_read: {
-    type: Boolean,
-    default: false
+  {
+    timestamps: true,
   }
-}, { timestamps: true });
+);
 
-module.exports = mongoose.model("Message", messageSchema);
+messageSchema.index({ conversationId: 1, createdAt: -1 });
+messageSchema.index({ conversationId: 1, isDeleted: 1, createdAt: -1 });
+messageSchema.index({ senderId: 1, senderType: 1, createdAt: -1 });
+
+const Message = mongoose.model("Message", messageSchema, "messages");
+
+module.exports = Message;

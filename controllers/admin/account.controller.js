@@ -35,6 +35,7 @@ module.exports.create = async (req, res) => {
             roles
         });
     } catch (error) {
+        console.error("Lỗi khi tải trang tạo tài khoản:", error);
         next(error);
     }
 }
@@ -45,7 +46,7 @@ module.exports.createPost = async (req, res) => {
         const emailExits = await Account.findOne({ email: req.body.email, deleted: false }).select("_id").lean();
         if (emailExits) {
             req.flash("thatbai", "Email đã tồn tại !!")
-            res.redirect(`${conFig.prefixAdmin}/accounts`);
+            res.redirect(`back`);
         } else {
             req.body.password = await bcrypt.hash(req.body.password, saltRounds);
             const record = new Account(req.body);
@@ -55,8 +56,9 @@ module.exports.createPost = async (req, res) => {
             res.redirect(`${conFig.prefixAdmin}/accounts`);
         }
     } catch (error) {
+        console.error("Lỗi khi tạo tài khoản:", error);
         req.flash("thatbai", "Đã xảy ra lỗi !!!");
-        res.redirect(`${conFig.prefixAdmin}/accounts`);
+        res.redirect("back");
     }
 }
 

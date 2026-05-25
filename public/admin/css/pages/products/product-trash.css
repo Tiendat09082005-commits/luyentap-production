@@ -7,26 +7,29 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 :root {
-  --bg:            #0e0e10;
-  --bg-2:          #131315;
-  --bg-3:          #18181b;
-  --bg-4:          #1e1e22;
-  --bg-5:          #26262c;
-  --line:          #2a2a30;
-  --line-2:        #34343c;
-  --white:         #ececee;
-  --white-2:       #9898a6;
-  --white-3:       #55555f;
+  --bg:            #F8F9FB;
+  --bg-2:          #FFFFFF;
+  --bg-3:          #F3F4F6;
+  --bg-4:          #E5E7EB;
+  --bg-5:          #F3F4F6;
+  --line:          #E5E7EB;
+  --line-2:        #3B82F6;
+  --white:         #111827;
+  --white-2:       #6B7280;
+  --white-3:       #9CA3AF;
   --green:         #22c55e;
-  --green-bg:      rgba(34,197,94,0.08);
-  --green-border:  rgba(34,197,94,0.18);
+  --green-bg:      #F0FDF4;
+  --green-border:  rgba(34,197,94,0.3);
   --red:           #ef4444;
-  --red-bg:        rgba(239,68,68,0.08);
-  --red-border:    rgba(239,68,68,0.18);
-  --r:             3px;
-  --r-sm:          2px;
+  --red-bg:        #FEF2F2;
+  --red-border:    rgba(239,68,68,0.3);
+  --r:             8px;
+  --r-sm:          6px;
   --t:             0.13s ease;
-  font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+  --accent:        #3B82F6;
+  --accent-hover:  #2563EB;
+  --white-real:    #FFFFFF;
+  font-family: 'Inter', -apple-system, sans-serif;
 }
 
 /* ============================================================
@@ -108,16 +111,16 @@
   box-shadow: none !important;
 }
 .products-page .btn-outline-success:hover {
-  background: var(--bg-4) !important;
+  background: var(--bg-3) !important;
   border-color: var(--line-2) !important;
   color: var(--white) !important;
   box-shadow: none !important;
 }
 .products-page .btn-outline-success.active,
 .products-page .btn-outline-success:focus {
-  background: var(--white) !important;
-  border-color: var(--white) !important;
-  color: var(--bg) !important;
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: var(--white-real) !important;
   font-weight: 500 !important;
   box-shadow: none !important;
 }
@@ -182,9 +185,9 @@
   font-size: 13px !important;
   font-weight: 500 !important;
   font-family: 'IBM Plex Sans', sans-serif !important;
-  background: var(--white) !important;
-  border: 1px solid var(--white) !important;
-  color: var(--bg) !important;
+  background: var(--accent) !important;
+  border: 1px solid var(--accent) !important;
+  color: var(--white-real) !important;
   white-space: nowrap !important;
   box-shadow: none !important;
   width: auto !important;
@@ -192,8 +195,8 @@
 }
 .products-page #form-search .input-group .btn-success:hover,
 .products-page #form-search .btn-success:hover {
-  background: var(--white-2) !important;
-  border-color: var(--white-2) !important;
+  background: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
 }
 
 #clearBtn {
@@ -246,21 +249,21 @@
   width: auto !important;
   height: 34px !important;
   padding: 0 18px !important;
-  background: var(--white) !important;
-  border: 1px solid var(--white) !important;
+  background: var(--accent) !important;
+  border: 1px solid var(--accent) !important;
   border-radius: var(--r) !important;
-  color: var(--bg) !important;
+  color: var(--white-real) !important;
   font-size: 13px !important;
   font-weight: 500 !important;
-  font-family: 'IBM Plex Sans', sans-serif !important;
+  font-family: 'Inter', -apple-system, sans-serif !important;
   cursor: pointer !important;
   transition: all var(--t) !important;
   white-space: nowrap !important;
   box-shadow: none !important;
 }
 .products-page .col-8 form[form-change-multi] button[type="submit"]:hover {
-  background: var(--white-2) !important;
-  border-color: var(--white-2) !important;
+  background: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
 }
 
 /* ============================================================
@@ -335,7 +338,7 @@
 .products-page .table input[type="checkbox"] {
   width: 14px !important;
   height: 14px !important;
-  accent-color: var(--white) !important;
+  accent-color: var(--accent) !important;
   cursor: pointer !important;
 }
 
@@ -560,9 +563,9 @@
 .products-page .pagination .page-item.active .page-link,
 .products-page .pagination li.active > a,
 .products-page .pagination li.active > span {
-  background: var(--white) !important;
-  border-color: var(--white) !important;
-  color: var(--bg) !important;
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: var(--white-real) !important;
   font-weight: 600 !important;
 }
 .products-page .pagination .page-item.disabled .page-link,

@@ -1,28 +1,53 @@
 header.header
   .header__logo
-    a(href='/admin/dashboard') TIDA ADMIN
+    a(href='/admin/dashboard')
+      span.header__logo-dot
+      | TIDA ADMIN
 
   .header__actions
+    //- Thông báo — ghost icon button với badge đỏ nhỏ
+    a(
+      href=`#`
+      class="header__btn header__btn--notif"
+      title="Thông báo"
+    )
+      i.ri-notification-3-line(aria-hidden="true")
+      span.header__notif-badge
 
+    //- User account chip — avatar initial + full name, text đen
     a(
       href=`${prefixAdmin}/my-account`
-      class="header__btn header__btn--primary"
-    ) #{user.fullName}
+      class="header__btn header__btn--user"
+      title="Tài khoản của bạn"
+    )
+      span.header__avatar= user.fullName ? user.fullName.charAt(0).toUpperCase() : 'A'
+      span.header__btn-label= user.fullName
+
+    //- Dấu phân cách mỏng
+    span.header__sep
+
+    //- Link sang trang client — ghost outline
+    a(
+      href=`http://localhost:2701/`
+      target="_blank"
+      rel="noopener"
+      class="header__btn header__btn--client"
+      title="Mở trang khách hàng"
+    )
+      i.ri-external-link-line(aria-hidden="true")
+      span.header__btn-label Trang Client
+
+    //- Đăng xuất — danger wash, text đỏ đậm dễ nhận
     form(
       action=`${prefixAdmin}/auth/logout`
       method="POST"
-      style="display: inline-block"
+      style="display:inline-flex;align-items:center;"
     )
       input(type="hidden" name="_csrf" value=csrfToken)
       button(
         type="submit"
-        class="header__btn header__btn--danger"
-      ) Đăng xuất
-    //- a(
-      href=`${prefixAdmin}/auth/logout`
-      class="header__btn header__btn--danger"
-    //- ) ÄÄƒng xuáº¥t
-    a(
-      href=`http://localhost:2701/`
-      class="header__btn header__btn--danger"
-    ) Trang Client
+        class="header__btn header__btn--logout"
+        title="Đăng xuất khỏi hệ thống"
+      )
+        i.ri-logout-box-r-line(aria-hidden="true")
+        span.header__btn-label Đăng xuất

@@ -53,7 +53,7 @@ a, a:hover, a:focus, a:active, a:visited {
   gap: 40px;
   width: max-content;
   white-space: nowrap;
-  animation: marquee-scroll 30s linear infinite;
+  animation: marquee-scroll var(--marquee-speed, 60s) linear infinite;
 }
 
 .marquee-track:hover {

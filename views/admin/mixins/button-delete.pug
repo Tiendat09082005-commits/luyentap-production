@@ -1,14 +1,16 @@
 mixin button-delete(item,url)
     button(
-            class="btn btn-danger btn-sm ml-1"
+            class="btn-action btn-delete"
             button-delete
             data-id = item._id
-        ) Xóa
-        //- form delete item 
-        form(
-            action = "",
-            method = "POST",
-            id = "form-delete-item",
-            data-path = prefixAdmin + `/${url}/delete`
+            title="Xóa"
         )
-        //- end form delete item 
+            i.fas.fa-trash
+    //- form delete item 
+    form(
+        action = "",
+        method = "POST",
+        id = "form-delete-item",
+        data-path = prefixAdmin + `/${url}/delete`
+    )
+    //- end form delete item

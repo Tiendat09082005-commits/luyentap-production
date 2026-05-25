@@ -5,7 +5,7 @@ document.getElementById("forgotForm").addEventListener("submit", function (e) {
 
   var email = document.getElementById("email").value.trim();
   if (!email) {
-    alert("Vui lòng nhập email");
+    Swal.fire({ icon: 'warning', text: 'Vui lòng nhập email' });
     return;
   }
 
@@ -35,7 +35,7 @@ document.getElementById("forgotForm").addEventListener("submit", function (e) {
     .then(function (res) { return res.json(); })
     .then(function (data) {
       if (!data.success) {
-        alert(data.message);
+        Swal.fire({ icon: 'error', text: data.message });
         goToEmailStep();
         if (otpStatus) otpStatus.textContent = "";
         return;
@@ -54,7 +54,7 @@ document.getElementById("forgotForm").addEventListener("submit", function (e) {
     })
     .catch(function (error) {
       console.error(error);
-      alert("Có lỗi xảy ra, vui lòng thử lại");
+      Swal.fire({ icon: 'error', text: 'Có lỗi xảy ra, vui lòng thử lại' });
       goToEmailStep();
       if (otpStatus) otpStatus.textContent = "";
     });
@@ -201,7 +201,7 @@ document.getElementById("btnResend").addEventListener("click", function () {
     .then(function (res) { return res.json(); })
     .then(function (data) {
       if (!data.success) {
-        alert(data.message || "Gửi lại OTP thất bại");
+        Swal.fire({ icon: 'error', text: data.message || "Gửi lại OTP thất bại" });
         if (otpStatus) otpStatus.textContent = "";
         return;
       }
@@ -215,7 +215,7 @@ document.getElementById("btnResend").addEventListener("click", function () {
     })
     .catch(function (error) {
       console.error(error);
-      alert("Có lỗi xảy ra, vui lòng thử lại");
+      Swal.fire({ icon: 'error', text: 'Có lỗi xảy ra, vui lòng thử lại' });
       if (otpStatus) otpStatus.textContent = "";
     });
 });
@@ -257,19 +257,19 @@ document.getElementById("otpForm").addEventListener("submit", function (e) {
 
   // --- Validate phía client ---
   if (otp.length !== 6) {
-    alert("Vui lòng nhập đủ 6 số OTP");
+    Swal.fire({ icon: 'warning', text: 'Vui lòng nhập đủ 6 số OTP' });
     otpBoxes[0].focus();
     return;
   }
 
   if (newPassword.length < 8) {
-    alert("Mật khẩu mới phải có ít nhất 8 ký tự");
+    Swal.fire({ icon: 'warning', text: 'Mật khẩu mới phải có ít nhất 8 ký tự' });
     document.getElementById("newPassword").focus();
     return;
   }
 
   if (newPassword !== confirmPassword) {
-    alert("Mật khẩu xác nhận không khớp");
+    Swal.fire({ icon: 'warning', text: 'Mật khẩu xác nhận không khớp' });
     document.getElementById("confirmPassword").focus();
     return;
   }
@@ -293,19 +293,24 @@ document.getElementById("otpForm").addEventListener("submit", function (e) {
     .then(function (res) { return res.json(); })
     .then(function (data) {
       if (!data.success) {
-        alert(data.message || "Đặt lại mật khẩu thất bại");
+        Swal.fire({ icon: 'error', text: data.message || "Đặt lại mật khẩu thất bại" });
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalHTML;
         return;
       }
 
       // Thành công → redirect về trang login
-      alert(data.message || "Đặt lại mật khẩu thành công!");
-      window.location.href = "/user/login";
+      Swal.fire({
+        icon: 'success',
+        title: 'Thành công',
+        text: data.message || 'Đặt lại mật khẩu thành công!'
+      }).then(function () {
+        window.location.href = "/user/login";
+      });
     })
     .catch(function (error) {
       console.error(error);
-      alert("Có lỗi xảy ra, vui lòng thử lại");
+      Swal.fire({ icon: 'error', text: 'Có lỗi xảy ra, vui lòng thử lại' });
       submitBtn.disabled = false;
       submitBtn.innerHTML = originalHTML;
     });

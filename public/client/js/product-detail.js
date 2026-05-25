@@ -224,8 +224,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
 async function toggleWishlist(btn) {
   if (btn.dataset.loggedIn !== "true") {
-    alert("Vui lòng đăng nhập để thực hiện tính năng này!");
-    window.location.href = "/user/login";
+    Swal.fire({
+      icon: 'question',
+      title: 'Yêu cầu đăng nhập',
+      text: 'Vui lòng đăng nhập để thêm sản phẩm vào danh sách yêu thích!',
+      showCancelButton: true,
+      confirmButtonText: 'Đăng nhập ngay',
+      cancelButtonText: 'Để sau',
+      confirmButtonColor: '#3B82F6',
+      cancelButtonColor: '#FFFFFF'
+    }).then(function (result) {
+      if (result.isConfirmed) {
+        window.location.href = "/user/login";
+      }
+    });
     return;
   }
 
@@ -237,7 +249,7 @@ async function toggleWishlist(btn) {
     });
 
     const result = await response.json();
-    if (result.code === 200) {
+    if (result.success) {
       btn.classList.toggle('active');
       const icon = btn.querySelector('svg');
       if (btn.classList.contains('active')) {
@@ -385,7 +397,7 @@ async function handleCartAction(isBuyNow = false, triggerButton = null) {
     });
 
     var result = await response.json();
-    if (result.code === 200) {
+    if (result.success) {
       if (isBuyNow) {
         window.location.href = '/cart';
         return;

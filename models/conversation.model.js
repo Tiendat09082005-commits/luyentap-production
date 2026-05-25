@@ -1,41 +1,81 @@
 const mongoose = require("mongoose");
 
-const conversationSchema = new mongoose.Schema({
-
-  user_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true
-  },
-
-  participants: [
-    {
+const conversationSchema = new mongoose.Schema(
+  {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
-    }
-  ],
+      ref: "User",
+      required: true,
+      unique: true,
+    },
 
-  lastMessage: {
-    content: String,
-    sender_role: String,
-    createdAt: Date
-  },
+    guestInfo: {
+      name: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      phone: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+    },
 
-  last_message: String,
-  last_time: Date,
-  unread_admin: {
-    type: Number,
-    default: 0
+    status: {
+      type: String,
+      enum: ["open", "closed"],
+      default: "open",
+      index: true,
+    },
+
+    lastMessage: {
+      content: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      sentAt: {
+        type: Date,
+        default: null,
+      },
+      senderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        default: null,
+      },
+    },
+
+    lastMessageAt: {
+      type: Date,
+      default: Date.now,
+    },
+
+    unreadCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    assignedAdmin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+      default: null,
+    },
+
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
-  unread_user: {
-    type: Number,
-    default: 0
-  },
-  deleted: {
-    type: Boolean,
-    default: false
+  {
+    timestamps: true,
   }
+);
 
-}, { timestamps: true });
+conversationSchema.index({ status: 1, updatedAt: -1 });
+conversationSchema.index({ assignedAdmin: 1, status: 1 });
+conversationSchema.index({ lastMessageAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 30 });
 
-module.exports = mongoose.model("Conversation", conversationSchema);
+const Conversation = mongoose.model("Conversation", conversationSchema, "conversations");
+
+module.exports = Conversation;

@@ -4,6 +4,7 @@ const ForgotPassword = require("../../models/forgotPassword.model");
 const bcrypt = require("bcrypt");
 const generateHelper = require("../../helpers/generate");
 const sendMailHelper = require("../../helpers/sendMail");
+const { withActiveUserStatus } = require("../../helpers/active-user-query.helper");
 
 const SALT_ROUNDS = 10;
 
@@ -37,10 +38,7 @@ class AuthService {
    * Login user and handle cart merge
    */
   async login(email, password, guestCartId = null) {
-    const user = await User.findOne({
-      email: email,
-      deleted: false,
-    });
+    const user = await User.findOne(withActiveUserStatus({ email }));
 
     if (!user) {
       throw new Error("Email hoặc mật khẩu không khớp");

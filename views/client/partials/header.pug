@@ -1,25 +1,29 @@
 include ../mixins/nav-categories.pug
 
+- var ss = siteSettings || {}
+
 header.site-header
   .header-top
     .container
-      .header-top-marquee
-        .marquee-track
-          span Miễn phí vận chuyển cho đơn hàng từ 500.000đ
-          span •
-          span Giảm thêm 5% khi thanh toán online
-          span •
-          span Bảo hành chính hãng 12-24 tháng
-          span •
-          span Miễn phí vận chuyển cho đơn hàng từ 500.000đ
-          span •
-          span Giảm thêm 5% khi thanh toán online
-          span •
-          span Bảo hành chính hãng 12-24 tháng
-          span •
+      if ss.marqueeEnabled
+        .header-top-marquee(style=`--marquee-speed: ${ss.marqueeSpeed || 60}s`)
+          .marquee-track
+            if ss.marqueeText
+              - var segments = ss.marqueeText.split('|').map(function(s) { return s.trim() }).filter(Boolean)
+              each seg in segments
+                span= seg
+                span •
+              each seg in segments
+                span= seg
+                span •
+            else
+              span Chào mừng bạn đến với #{ss.siteName || 'Tida'}
+              span •
+              span Chào mừng bạn đến với #{ss.siteName || 'Tida'}
+              span •
       .header-top-right
         if user
-          a(href=`/user/detail/${user.id}#orders`) Tra cứu đơn hàng
+          a(href=`/user/detail/${user._id || user.id}#orders`) Tra cứu đơn hàng
         else
           a(href="/user/login") Tra cứu đơn hàng
         span.divider |
@@ -27,7 +31,11 @@ header.site-header
 
   .header-main
     .container
-      a.logo(href="/") Tida
+      if ss.logoUrl
+        a.logo(href="/")
+          img.logo-img(src=ss.logoUrl alt=ss.siteName || 'Logo' style="height:36px;")
+      else
+        a.logo(href="/")= ss.siteName || 'Tida'
 
       .location-picker
         svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
@@ -46,7 +54,7 @@ header.site-header
 
       .header-actions
         if user
-          a.action-btn(href=`/user/detail/${user.id}`)
+          a.action-btn(href=`/user/detail/${user._id || user.id}`)
             svg(xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor")
               path(stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z")
             span #{user.fullName.split(' ').pop()}

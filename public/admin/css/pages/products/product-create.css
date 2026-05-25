@@ -5,30 +5,30 @@
 
 /* -------- CSS VARIABLES -------- */
 :root {
-  --pc-bg: #0f1117;
-  --pc-surface: #161b26;
-  --pc-surface-2: #1c2333;
-  --pc-surface-3: #232c3d;
-  --pc-border: #2a3347;
-  --pc-border-light: #1f2a3c;
-  --pc-accent: #3b7aff;
-  --pc-accent-hover: #5490ff;
-  --pc-accent-dim: rgba(59, 122, 255, 0.12);
-  --pc-success: #22c55e;
-  --pc-success-dim: rgba(34, 197, 94, 0.12);
-  --pc-warning: #f59e0b;
-  --pc-danger: #ef4444;
-  --pc-text-primary: #e8edf5;
-  --pc-text-secondary: #8896aa;
-  --pc-text-muted: #56647a;
-  --pc-text-placeholder: #4a5568;
-  --pc-input-bg: #111722;
-  --pc-input-bg-focus: #131924;
+  --pc-bg: #F8F9FB;
+  --pc-surface: #FFFFFF;
+  --pc-surface-2: #F3F4F6;
+  --pc-surface-3: #E5E7EB;
+  --pc-border: #E5E7EB;
+  --pc-border-light: #F3F4F6;
+  --pc-accent: #3B82F6;
+  --pc-accent-hover: #2563EB;
+  --pc-accent-dim: #EFF6FF;
+  --pc-success: #22C55E;
+  --pc-success-dim: #F0FDF4;
+  --pc-warning: #F59E0B;
+  --pc-danger: #EF4444;
+  --pc-text-primary: #111827;
+  --pc-text-secondary: #6B7280;
+  --pc-text-muted: #9CA3AF;
+  --pc-text-placeholder: #D1D5DB;
+  --pc-input-bg: #FFFFFF;
+  --pc-input-bg-focus: #FFFFFF;
   --pc-radius: 8px;
-  --pc-radius-sm: 5px;
+  --pc-radius-sm: 6px;
   --pc-radius-lg: 12px;
-  --pc-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
-  --pc-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --pc-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --pc-shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
   --pc-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --pc-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
   --sidebar-w: 296px;
@@ -1603,7 +1603,7 @@
   right: 8px;
   width: 28px;
   height: 28px;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.16);
   backdrop-filter: blur(4px);
   border: none;
   border-radius: 6px;
@@ -1721,7 +1721,7 @@
   right: 4px;
   width: 22px;
   height: 22px;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.16);
   backdrop-filter: blur(4px);
   border: none;
   border-radius: 4px;
@@ -2209,7 +2209,7 @@
 /* ── Inline Editor (nổi lên khi click row) ───────────────────── */
 .pc-variant-inline-editor {
   position: relative;
-  background: #1e2432;
+  background: #F3F4F6;
   border: 1px solid rgba(59, 130, 246, 0.4);
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(59, 130, 246, 0.15);

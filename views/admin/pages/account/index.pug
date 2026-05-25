@@ -26,6 +26,13 @@ block main
       //- Bảng danh sách
       .account-table-wrapper
         table.account-table(checkbox-multi)
+          colgroup
+            col(style="width: 60px")
+            col(style="width: 90px")
+            col(style="width: 200px")
+            col(style="width: 180px")
+            col(style="width: 250px")
+            col(style="width: 180px")
           thead
             tr
               th STT
@@ -33,7 +40,6 @@ block main
               th Họ tên
               th Phân quyền
               th Email
-              th Trạng thái
               th Hành động
 
           tbody
@@ -60,27 +66,6 @@ block main
                       = item.email
 
                   td
-                    if roles.permissions.includes("account_edit")
-                      if item.status == "active"
-                        a.status-badge.active(
-                          href="javascript:;"
-                          button-change-status
-                          data-status="active"
-                          data-id=item._id
-                        )
-                          i.fas.fa-check-circle
-                          | Hoạt động
-                      else
-                        a.status-badge.inactive(
-                          href="javascript:;"
-                          button-change-status
-                          data-status="inactive"
-                          data-id=item._id
-                        )
-                          i.fas.fa-ban
-                          | Dừng hoạt động
-
-                  td
                     .action-buttons
                       if roles.permissions.includes("account_view")
                         a.btn-action.btn-detail(
@@ -88,7 +73,6 @@ block main
                           title="Chi tiết"
                         )
                           i.fas.fa-eye
-                          | Chi tiết
 
                       if roles.permissions.includes("account_edit")
                         a.btn-action.btn-edit(
@@ -96,7 +80,26 @@ block main
                           title="Sửa"
                         )
                           i.fas.fa-pen
-                          | Sửa
+
+                        //- Nút đổi trạng thái tích hợp vào nhóm hành động
+                        if item.status == "active"
+                          a.btn-action.btn-status.active(
+                            href="javascript:;"
+                            button-change-status
+                            data-status="active"
+                            data-id=item._id
+                            title="Đang hoạt động - Nhấn để dừng"
+                          )
+                            i.fas.fa-sync-alt
+                        else
+                          a.btn-action.btn-status.inactive(
+                            href="javascript:;"
+                            button-change-status
+                            data-status="inactive"
+                            data-id=item._id
+                            title="Đang dừng - Nhấn để kích hoạt"
+                          )
+                            i.fas.fa-sync-alt
 
                       if roles.permissions.includes("account_delete")
                         +button-delete(item, "accounts")

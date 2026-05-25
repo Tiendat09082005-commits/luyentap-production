@@ -69,7 +69,7 @@
     var file = e.target.files && e.target.files[0];
     if (!file) return;
     if (file.size > 2 * 1024 * 1024) {
-      alert('Ảnh quá lớn. Vui lòng chọn ảnh dưới 2 MB.');
+      Swal.fire({ icon: 'warning', text: 'Ảnh quá lớn. Vui lòng chọn ảnh dưới 2 MB.' });
       e.target.value = '';
       return;
     }

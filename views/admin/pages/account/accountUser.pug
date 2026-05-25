@@ -46,6 +46,14 @@ block main
     //- Bảng danh sách người dùng
     .user-table-wrapper
       table.user-table
+        colgroup
+          col(style="width: 60px")
+          col(style="width: auto")
+          col(style="width: 250px")
+          col(style="width: 150px")
+          col(style="width: 200px")
+          col(style="width: 120px")
+          col(style="width: 180px")
         thead
           tr
             th STT
@@ -53,7 +61,6 @@ block main
             th Email
             th Số điện thoại
             th Token User
-            th Trạng thái
             th Ngày tạo
             th Thao tác
 
@@ -77,21 +84,7 @@ block main
                     = user.phone || 'Chưa cập nhật'
 
                 td
-                  span.user-token= user.tokenUser ? user.tokenUser.substring(0, 20) + '...' : 'N/A'
-
-                td
-                  if user.deleted
-                    span.status-badge.deleted
-                      i.fas.fa-ban
-                      | Đã xóa
-                  else if user.status === "inactive"
-                    span.status-badge.inactive
-                      i.fas.fa-user-lock
-                      | Bị khóa
-                  else
-                    span.status-badge.active
-                      i.fas.fa-check-circle
-                      | Hoạt động
+                  span.user-token= user.tokenUser ? user.tokenUser.substring(0, 15) + '...' : 'N/A'
 
                 td
                   .date-cell
@@ -109,7 +102,7 @@ block main
                     )
                       i.fas.fa-shopping-cart
 
-                    //- Chuyển trạng thái
+                    //- Chuyển trạng thái / Khôi phục
                     if user.deleted
                       form(method="POST" action=`/admin/accounts/user/restore/${user._id}?_method=PATCH` style="display: inline;")
                         input(type="hidden" name="_csrf" value=csrfToken)
@@ -124,8 +117,8 @@ block main
                           onsubmit=`return confirm('Bạn có chắc chắn muốn mở khóa tài khoản ${user.fullName}?')`
                         )
                           input(type="hidden" name="_csrf" value=csrfToken)
-                          button.btn-action.btn-restore(type="submit" title="Mở khóa tài khoản")
-                            i.fas.fa-unlock
+                          button.btn-action.btn-status.inactive(type="submit" title="Tài khoản bị khóa - Nhấn để mở")
+                            i.fas.fa-lock
                       else
                         form(
                           method="POST"
@@ -134,19 +127,11 @@ block main
                           onsubmit=`return confirm('Bạn có chắc chắn muốn khóa tài khoản ${user.fullName}?')`
                         )
                           input(type="hidden" name="_csrf" value=csrfToken)
-                          button.btn-action.btn-lock(type="submit" title="Khóa tài khoản")
-                            i.fas.fa-lock
+                          button.btn-action.btn-status.active(type="submit" title="Tài khoản hoạt động - Nhấn để khóa")
+                            i.fas.fa-unlock
 
                     //- Xóa tài khoản
-                    form(
-                      method="POST"
-                      action=`/admin/accounts/user/delete/${user._id}?_method=DELETE`
-                      style="display: inline;"
-                      onsubmit=`return confirm('Bạn có chắc chắn muốn xóa tài khoản ${user.fullName}?')`
-                    )
-                      input(type="hidden" name="_csrf" value=csrfToken)
-                      button.btn-action.btn-delete(type="submit" title="Xóa tài khoản")
-                        i.fas.fa-trash
+                    +button-delete(user, "accounts/user")
 
           else
             tr

@@ -1,8 +1,7 @@
 const Brand = require("../../models/brand.model");
+const { escapeRegex } = require("../../helpers/brand.helper");
 
-const escapeRegex = (text) => {
-    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-};
+
 
 const getBrands = async (query) => {
     const find = {

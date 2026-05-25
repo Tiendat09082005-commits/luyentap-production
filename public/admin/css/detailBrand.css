@@ -19,8 +19,8 @@
   --txt-muted:     #454d68;
   --radius-md: 14px;
   --radius-lg: 20px;
-  --shadow-card: 0 8px 40px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.05) inset;
-  --shadow-logo: 0 12px 32px rgba(0,0,0,0.5);
+  --shadow-card: 0 8px 40px rgba(0, 0, 0, 0.08), 0 1px 0 rgba(255,255,255,0.05) inset;
+  --shadow-logo: 0 12px 32px rgba(0, 0, 0, 0.1);
   --font-main: 'DM Sans', sans-serif;
   --font-mono: 'DM Mono', monospace;
   --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
@@ -161,7 +161,7 @@
   width: 148px;
   height: 148px;
   border-radius: var(--radius-md);
-  background: #252a3d;
+  background: #F3F4F6;
   border: 1px solid rgba(255,255,255,0.08);
   box-shadow: var(--shadow-logo);
   display: flex;
@@ -173,7 +173,7 @@
 
 .logo-frame:hover {
   border-color: rgba(91,141,238,0.3);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 0 3px rgba(91,141,238,0.1);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.16), 0 0 0 3px rgba(91,141,238,0.1);
 }
 
 .brand-logo {

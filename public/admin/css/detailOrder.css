@@ -13,19 +13,19 @@
    DARK THEME VARIABLES
    ===================================================== */
 .order-detail-page {
-  --od-surface:   #151820;
-  --od-surface2:  #12172b;
-  --od-surface3:  #1a2240;
-  --od-border:    rgba(79, 124, 255, 0.25);
-  --od-border2:   rgba(79, 124, 255, 0.15);
-  --od-text:      #e8eaf2;
-  --od-muted:     #6b7394;
-  --od-accent:    #4f7cff;
-  --od-green:     #22c55e;
-  --od-red:       #ef4444;
-  --od-yellow:    #f59e0b;
-  --od-purple:    #a78bfa;
-  --od-cyan:      #00d4aa;
+  --od-surface:  #F8F9FB;
+  --od-surface2: #FFFFFF;
+  --od-surface3: #F9FAFB;
+  --od-border:    #E5E7EB;
+  --od-border2:   #F3F4F6;
+  --od-text:      #111827;
+  --od-muted:     #64748B;
+  --od-accent:    #3B82F6;
+  --od-green:     #22C55E;
+  --od-red:       #EF4444;
+  --od-yellow:    #F59E0B;
+  --od-purple:    #8B5CF6;
+  --od-cyan:      #0891B2;
   --od-radius:    12px;
 
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -102,7 +102,7 @@
   font-weight: 700;
   color: var(--od-accent);
   background: rgba(79, 124, 255, 0.1);
-  border: 1px solid rgba(79, 124, 255, 0.25);
+  border: 1px solid rgba(59, 130, 246, 0.12);
   padding: 6px 14px;
   border-radius: 8px;
   letter-spacing: 0.5px;
@@ -127,9 +127,9 @@
 }
 
 .order-detail-page .status--đã-xác-nhận {
-  background: rgba(79, 124, 255, 0.15);
+  background: rgba(59, 130, 246, 0.08);
   color: var(--od-accent);
-  border: 1px solid rgba(79, 124, 255, 0.35);
+  border: 1px solid rgba(59, 130, 246, 0.15);
 }
 
 .order-detail-page .status--đang-giao {
@@ -218,7 +218,7 @@
   align-items: center;
   gap: 10px;
   padding: 14px 18px;
-  background: #0e1224;
+  background: #F3F4F6;
   border-bottom: 1px solid var(--od-border);
 }
 
@@ -248,7 +248,7 @@
   align-items: flex-start;
   gap: 8px;
   padding: 9px 0;
-  border-bottom: 1px solid rgba(79, 124, 255, 0.08);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.06);
 }
 
 .order-detail-page .info-row:last-child {
@@ -302,7 +302,7 @@
 }
 
 .order-detail-page .product-table thead tr {
-  background: #0e1224;
+  background: #F3F4F6;
 }
 
 .order-detail-page .product-table th {

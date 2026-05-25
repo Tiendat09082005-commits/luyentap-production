@@ -63,10 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         return;
                     }
 
-                    alert("Xóa sản phẩm thất bại");
+                    Swal.fire({ icon: 'error', text: 'Xóa sản phẩm thất bại' });
                 } catch (error) {
                     console.error("Delete cart item error:", error);
-                    alert("Lỗi hệ thống");
+                    Swal.fire({ icon: 'error', text: 'Lỗi hệ thống' });
                 } finally {
                     removeBtn.style.opacity = "1";
                     removeBtn.disabled = false;
@@ -110,11 +110,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     cartItem.setAttribute("data-item-total", data.itemTotalPrice);
                     updateTotals();
                 } else {
-                    alert(data.message || "Cập nhật thất bại");
+                    Swal.fire({ icon: 'error', text: data.message || "Cập nhật thất bại" });
                 }
             } catch (error) {
                 console.error("Update qty error:", error);
-                alert("Lỗi hệ thống");
+                Swal.fire({ icon: 'error', text: "Lỗi hệ thống" });
             } finally {
                 btn.style.opacity = "1";
                 btn.disabled = false;

@@ -25,6 +25,12 @@ router.patch("/user/change-status/:status/:id" , authMiddleware.checkPermission(
 
 router.delete("/user/delete/:id" , authMiddleware.checkPermission("account_delete"),accountMiddleware.validateDeleteUserMiddleware, controller.deleteUser);
 
+const systemConfig = require("../../config/system");
+
 router.patch("/user/restore/:id" , authMiddleware.checkPermission("account_edit"), accountMiddleware.validateRestoreUserMiddleware , controller.restoreUser);
+
+router.get("/user/orders/:userId", authMiddleware.checkPermission("account_view"), (req, res) => {
+  res.redirect(`${systemConfig.prefixAdmin}/order?userId=${req.params.userId}`);
+});
 
 module.exports = router;

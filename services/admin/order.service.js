@@ -13,8 +13,15 @@ const VALID_STATUS = [
 ];
 
 //  build query sạch
-const buildQuery = ({ keyword, status, date }) => {
+const buildQuery = ({ keyword, status, date, userId }) => {
   const find = { deleted: false };
+
+  if (userId) {
+    const mongoose = require("mongoose");
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      find.user_id = userId;
+    }
+  }
 
   if (keyword) {
     const safeKeyword = keyword.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

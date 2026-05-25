@@ -12,6 +12,7 @@ const authRoute = require("./auth.route");
 const myAccountRoute = require("./my-account.route");
 const orderRoute = require("./order.route");
 const messageRoute = require("./message.route");
+
 const settingRoute = require("./setting.route");
 const brandRoute = require("./brand.route");
 const attributeRoute = require("./attribute.route");
@@ -37,7 +38,8 @@ router.use("/roles", roleRoute);
 router.use("/accounts", accountRoute);
 router.use("/my-account", myAccountRoute);
 router.use("/order", orderRoute);
-router.use("/message", messageRoute);
+router.use("/messages", messageRoute);
+
 router.use("/setting", settingRoute);
 router.use("/brands", brandRoute);
 router.use("/attribute", attributeRoute);

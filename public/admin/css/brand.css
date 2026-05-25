@@ -4,21 +4,21 @@
 
 /* ---- CSS Variables ---- */
 :root {
-  --brand-accent:        #3b82f6;
-  --brand-accent-hover:  #2563eb;
+  --brand-accent:        #3B82F6;
+  --brand-accent-hover:  #2563EB;
   --brand-accent-muted:  rgba(59,130,246,.15);
   --brand-accent-ring:   rgba(59,130,246,.25);
 
-  --surface-0:   #111318;
-  --surface-1:   #1a1d24;
-  --surface-2:   #20242d;
-  --surface-3:   #272b35;
-  --surface-4:   #2e3340;
+  --surface-0:   #F8F9FB;
+  --surface-1:   #FFFFFF;
+  --surface-2:   #F8F9FB;
+  --surface-3:   #F3F4F6;
+  --surface-4:   #E5E7EB;
 
-  --text-primary:     #e8eaf2;
-  --text-secondary:   #9ba3b8;
-  --text-muted:       #5c6478;
-  --text-placeholder: #4a5266;
+  --text-primary:     #111827;
+  --text-secondary:   #6B7280;
+  --text-muted:       #9CA3AF;
+  --text-placeholder: #D1D5DB;
 
   --success:        #22c55e;
   --success-muted:  rgba(34,197,94,.12);
@@ -27,11 +27,11 @@
   --warning:        #f59e0b;
   --warning-muted:  rgba(245,158,11,.12);
 
-  --shadow-xs:  0 1px 3px rgba(0,0,0,.4);
-  --shadow-sm:  0 2px 6px rgba(0,0,0,.45);
-  --shadow-md:  0 4px 12px rgba(0,0,0,.5);
-  --shadow-lg:  0 8px 24px rgba(0,0,0,.55);
-  --shadow-xl:  0 16px 40px rgba(0,0,0,.6);
+  --shadow-xs:  0 1px 2px rgba(0,0,0,.05);
+  --shadow-sm:  0 1px 3px rgba(0,0,0,.06);
+  --shadow-md:  0 4px 12px rgba(0,0,0,.08);
+  --shadow-lg:  0 8px 24px rgba(0,0,0,.1);
+  --shadow-xl:  0 16px 40px rgba(0,0,0,.16);
 
   --radius-sm:  6px;
   --radius-md:  10px;
@@ -233,15 +233,15 @@
   table-layout: fixed;
 }
 
-/* ── Tỷ lệ cột — tổng ~100%, STT và Logo rất nhỏ ── */
-.brand-table colgroup col:nth-child(1) { width: 48px;  }   /* STT */
-.brand-table colgroup col:nth-child(2) { width: 56px;  }   /* Logo */
-.brand-table colgroup col:nth-child(3) { width: 15%;   }   /* Tên */
-.brand-table colgroup col:nth-child(4) { width: 12%;   }   /* Slug */
+/* ── Tỷ lệ cột — Layout cố định cho các cột meta, co giãn cho mô tả ── */
+.brand-table colgroup col:nth-child(1) { width: 60px;  }   /* STT */
+.brand-table colgroup col:nth-child(2) { width: 90px;  }   /* Logo */
+.brand-table colgroup col:nth-child(3) { width: 200px; }   /* Tên */
+.brand-table colgroup col:nth-child(4) { width: 160px; }   /* Slug */
 .brand-table colgroup col:nth-child(5) { width: auto;  }   /* Mô tả — co giãn */
-.brand-table colgroup col:nth-child(6) { width: 140px; }   /* Trạng thái */
-.brand-table colgroup col:nth-child(7) { width: 96px;  }   /* Ngày tạo */
-.brand-table colgroup col:nth-child(8) { width: 116px; }   /* Hành động */
+.brand-table colgroup col:nth-child(6) { width: 160px; }   /* Trạng thái */
+.brand-table colgroup col:nth-child(7) { width: 120px; }   /* Ngày tạo */
+.brand-table colgroup col:nth-child(8) { width: 150px; }   /* Hành động */
 
 /* Header */
 .brand-table thead {
@@ -274,7 +274,7 @@
 
 /* Cells — mặc định căn giữa */
 .brand-table td {
-  padding: 11px 12px;
+  padding: 14px 12px;
   vertical-align: middle;
   color: var(--text-secondary);
   text-align: center;
@@ -760,7 +760,7 @@
 
 /* Brand action buttons override: avoid clipping in fixed table layout */
 .brand-table colgroup col:nth-child(8) {
-  width: 156px;
+  width: 150px;
 }
 
 .brand-table td:nth-child(8) {
@@ -768,8 +768,8 @@
 }
 
 .action-group {
-  gap: 6px;
-  min-width: 136px;
+  gap: 8px;
+  min-width: 130px;
 }
 
 .action-btn {

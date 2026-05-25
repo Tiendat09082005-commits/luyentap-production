@@ -68,7 +68,7 @@ const getFeaturedProducts = async () => {
 
     {
       $lookup: {
-        from: "productvariants",
+        from: "product_variants",
         localField: "_id",
         foreignField: "product_id",
         as: "variants",

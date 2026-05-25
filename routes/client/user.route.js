@@ -36,6 +36,12 @@ router.get(
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 30,
     });
+    if (req.session && req.user?._id) {
+      req.session.clientUser = {
+        _id: req.user._id.toString(),
+        role: "user",
+      };
+    }
 
     res.redirect("/");
   }

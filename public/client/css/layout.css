@@ -126,7 +126,8 @@ main {
     transition: opacity 0.2s, transform 0.2s;
 }
 
-/* ===== KHUNG CHAT ===== */
+
+
 .chat-box {
     position: fixed;
     bottom: 80px;

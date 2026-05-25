@@ -115,31 +115,42 @@ document.querySelectorAll('.action-btn--edit').forEach(btn => {
 
 // ── DELETE ──
 document.querySelectorAll('.action-btn--delete').forEach(btn => {
-  btn.addEventListener('click', async () => {
+  btn.addEventListener('click', () => {
     const row   = btn.closest('tr');
     const slug  = row.querySelector('.attr-slug').textContent.trim();
     const title = row.querySelector('.attr-title').textContent.trim();
 
-    if (!confirm(`Bạn có chắc muốn xóa thuộc tính "${title}" không?`)) return;
+    Swal.fire({
+      icon: 'warning',
+      title: 'Xác nhận xóa',
+      text: `Bạn có chắc muốn xóa thuộc tính "${title}" không?`,
+      showCancelButton: true,
+      confirmButtonText: 'Đồng ý xóa',
+      cancelButtonText: 'Hủy',
+      confirmButtonColor: '#EF4444',
+      cancelButtonColor: '#FFFFFF'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await fetch(`/admin/attribute/delete/${slug}`, {
+            method: 'DELETE',
+            headers: window.withCsrfHeaders({ 'Content-Type': 'application/json' })
+          });
 
-    try {
-      const res = await fetch(`/admin/attribute/delete/${slug}`, {
-        method: 'DELETE',
-        headers: window.withCsrfHeaders({ 'Content-Type': 'application/json' })
-      });
-
-      if (res.ok) {
-        row.style.transition = 'opacity 0.25s ease';
-        row.style.opacity    = '0';
-        setTimeout(() => row.remove(), 250);
-      } else {
-        const err = await res.json();
-        alert(err.message || 'Xóa thất bại.');
+          if (res.ok) {
+            row.style.transition = 'opacity 0.25s ease';
+            row.style.opacity    = '0';
+            setTimeout(() => row.remove(), 250);
+          } else {
+            const err = await res.json();
+            Swal.fire({ icon: 'error', text: err.message || 'Xóa thất bại.' });
+          }
+        } catch (err) {
+          console.error(err);
+          Swal.fire({ icon: 'error', text: 'Không thể kết nối server.' });
+        }
       }
-    } catch (err) {
-      console.error(err);
-      alert('Không thể kết nối server.');
-    }
+    });
   });
 });
 
@@ -173,11 +184,11 @@ document.getElementById('attributeForm').addEventListener('submit', async e => {
       window.location.reload();
     } else {
       const err = await res.json();
-      alert(err.message || 'Có lỗi xảy ra.');
+      Swal.fire({ icon: 'error', text: err.message || 'Có lỗi xảy ra.' });
     }
   } catch (err) {
     console.error(err);
-    alert('Không thể kết nối server.');
+    Swal.fire({ icon: 'error', text: 'Không thể kết nối server.' });
   }
 });
 

@@ -1,5 +1,6 @@
 const authService = require("../../services/client/auth.service");
 const userService = require("../../services/client/user.service");
+const { deleteCachedUserByToken } = require("../../middleware/client/auth.middleware");
 
 // COOKIE OPTIONS
 const COOKIE_OPTIONS = {
@@ -8,6 +9,14 @@ const COOKIE_OPTIONS = {
   sameSite: "lax",
   maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
 };
+
+function setClientSession(req, user) {
+  if (!req.session || !user?._id) return;
+  req.session.clientUser = {
+    _id: user._id.toString(),
+    role: "user",
+  };
+}
 
 // [GET] /user/register
 module.exports.register = async (req, res) => {
@@ -20,6 +29,7 @@ module.exports.registerPost = async (req, res) => {
     const user = await authService.register(req.body);
     
     res.cookie("tokenUser", user.tokenUser, COOKIE_OPTIONS);
+    setClientSession(req, user);
     req.flash("thanhcong", "Bạn đã đăng kí tài khoản thành công");
     res.redirect("/");
   } catch (error) {
@@ -42,6 +52,7 @@ module.exports.loginPost = async (req, res) => {
     const user = await authService.login(email, password, cartId);
 
     res.cookie("tokenUser", user.tokenUser, COOKIE_OPTIONS);
+    setClientSession(req, user);
     res.clearCookie("cartId");
     
     req.flash("thanhcong", "Đăng nhập thành công");
@@ -54,14 +65,18 @@ module.exports.loginPost = async (req, res) => {
 
 // [GET] /user/logout
 module.exports.logout = async (req, res) => {
+  await deleteCachedUserByToken(req.cookies.tokenUser);
   res.clearCookie("tokenUser");
+  if (req.session?.clientUser) {
+    delete req.session.clientUser;
+  }
   res.redirect("/");
 };
 
 // [GET] /user/detail/:id
 module.exports.detail = async (req, res) => {
   try {
-    const { user, orders } = await userService.getUserDetail(req.params.id);
+    const { user, orders } = await userService.getUserDetail(req.user._id);
 
     res.render("client/pages/user/detail", {
       user,

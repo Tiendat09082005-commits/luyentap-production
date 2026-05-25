@@ -14,7 +14,7 @@ block main
         h1.settings-header__title Cài đặt hệ thống
         p.settings-header__subtitle Quản lý thông tin & giao diện hiển thị cho khách hàng
 
-    form.settings-form(action=`${prefixAdmin}/setting` method="POST" enctype="multipart/form-data")
+    form.settings-form(action=`${prefixAdmin}/setting?_csrf=${csrfToken}` method="POST" enctype="multipart/form-data")
       input(type="hidden" name="_csrf" value=csrfToken)
       input(type="hidden" name="removeHeroImage" id="removeHeroImage" value="false")
 

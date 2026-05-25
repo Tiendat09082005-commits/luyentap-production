@@ -188,10 +188,10 @@ if(btnFavoriteProduct){
       })
         .then(res => res.json())
         .then(data => {
-            if(data == "removed"){
+            if (data.type === "removed") {
                btn.classList.remove("active");
-            }else{
-               btn.classList.add("active") 
+            } else {
+               btn.classList.add("active");
             }
         })
     })
@@ -223,7 +223,7 @@ window.addEventListener("pageshow", function(event) {
       fetch("/cart/count")
         .then(res => res.json())
         .then(data => {
-          if (data.code === 200) {
+          if (data.success) {
             cartBadgeEl.textContent = data.count;
           }
         })

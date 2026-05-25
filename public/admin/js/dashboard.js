@@ -51,10 +51,10 @@
     var stepX = labels.length > 1 ? graphWidth / (labels.length - 1) : graphWidth;
 
     ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = "#151820";
+    ctx.fillStyle = "#FFFFFF";
     ctx.fillRect(0, 0, width, height);
 
-    ctx.strokeStyle = "rgba(255,255,255,0.06)";
+    ctx.strokeStyle = "rgba(0,0,0,0.05)";
     ctx.lineWidth = 1;
     for (var i = 0; i <= 4; i += 1) {
       var y = top + (graphHeight / 4) * i;
@@ -64,7 +64,7 @@
       ctx.stroke();
     }
 
-    ctx.fillStyle = "#6b7394";
+    ctx.fillStyle = "#94a3b8";
     ctx.font = "11px sans-serif";
     ctx.textAlign = "right";
     for (var j = 0; j <= 4; j += 1) {
@@ -105,7 +105,7 @@
     drawSeries(revenue, "#4f7cff", "#4f7cff");
 
     ctx.textAlign = "center";
-    ctx.fillStyle = "#6b7394";
+    ctx.fillStyle = "#94a3b8";
     labels.forEach(function(label, index) {
       var x = left + stepX * index;
       ctx.fillText(label, x, height - 10);
@@ -130,11 +130,11 @@
     var startAngle = -Math.PI / 2;
 
     ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = "#151820";
+    ctx.fillStyle = "#FFFFFF";
     ctx.fillRect(0, 0, width, height);
 
     if (!total) {
-      ctx.fillStyle = "#6b7394";
+      ctx.fillStyle = "#94a3b8";
       ctx.font = "14px sans-serif";
       ctx.textAlign = "center";
       ctx.fillText("Chưa có dữ liệu", centerX, centerY);
@@ -156,11 +156,11 @@
       startAngle = endAngle;
     });
 
-    ctx.fillStyle = "#e8eaf2";
+    ctx.fillStyle = "#1e293b";
     ctx.font = "700 24px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(total.toLocaleString("vi-VN"), centerX, centerY - 2);
-    ctx.fillStyle = "#6b7394";
+    ctx.fillStyle = "#64748b";
     ctx.font = "12px sans-serif";
     ctx.fillText("đơn hàng", centerX, centerY + 18);
   }

@@ -1582,14 +1582,14 @@
 
     galleryZone.addEventListener("click", function () {
       if (images.length >= 20) {
-        alert("Đã đạt giới hạn 20 ảnh");
+        Swal.fire({ icon: 'warning', text: 'Đã đạt giới hạn 20 ảnh' });
         return;
       }
       galleryInput.click();
     });
     galleryAdd.addEventListener("click", function () {
       if (images.length >= 20) {
-        alert("Đã đạt giới hạn 20 ảnh");
+        Swal.fire({ icon: 'warning', text: 'Đã đạt giới hạn 20 ảnh' });
         return;
       }
       galleryInput.click();
@@ -1599,7 +1599,7 @@
       var files = Array.from(e.target.files);
       var remaining = 20 - images.length;
       if (remaining <= 0) {
-        alert("Đã đạt giới hạn 20 ảnh");
+        Swal.fire({ icon: 'warning', text: 'Đã đạt giới hạn 20 ảnh' });
         return;
       }
       files.slice(0, remaining).forEach(function (file) {
@@ -1781,7 +1781,7 @@
         e.preventDefault();
         title.focus();
         title.classList.add("pc-input--error");
-        alert("Vui lòng nhập tên sản phẩm");
+        Swal.fire({ icon: 'warning', text: 'Vui lòng nhập tên sản phẩm' });
         return;
       }
 
@@ -1790,7 +1790,7 @@
       if (brandId && !brandId.value) {
         e.preventDefault();
         brandId.focus();
-        alert("Vui lòng chọn thương hiệu");
+        Swal.fire({ icon: 'warning', text: 'Vui lòng chọn thương hiệu' });
         return;
       }
     });

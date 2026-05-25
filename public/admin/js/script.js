@@ -251,18 +251,32 @@ function updateStatusOrder(orderId, status, buttonElement) {
           "pending",
           "confirmed",
           "shipping",
+    body: JSON.stringify({
+      orderId: orderId,
+      status: status,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        buttonElement.innerText = status;
+
+        buttonElement.classList.remove(
+          "pending",
+          "confirmed",
+          "shipping",
           "delivered",
           "cancelled",
         );
 
         buttonElement.classList.add(statusClassMap[status]);
       } else {
-        alert("Cập nhật thất bại");
+        Swal.fire({ icon: 'error', text: "Cập nhật thất bại" });
       }
     })
     .catch((err) => {
       console.error(err);
-      alert("Có lỗi xảy ra");
+      Swal.fire({ icon: 'error', text: "Có lỗi xảy ra" });
     })
     .finally(() => {
       buttonElement.disabled = false;
@@ -275,40 +289,30 @@ if (btnStatusUpdates.length > 0) {
     btn.addEventListener("click", () => {
       const orderId = btn.getAttribute("data-id");
       const status = btn.getAttribute("status-update");
-      if (confirm(`Bạn có chắc muốn chuyển trạng thái đơn hàng thành "${status}"?`)) {
-        btn.disabled = true;
+      
+      Swal.fire({
+        icon: 'question',
+        title: 'Xác nhận chuyển trạng thái',
+        text: `Bạn có chắc muốn chuyển trạng thái đơn hàng thành "${status}"?`,
+        showCancelButton: true,
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Hủy',
+        confirmButtonColor: '#3B82F6',
+        cancelButtonColor: '#FFFFFF'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          btn.disabled = true;
 
-        fetch(`/admin/order/update-status`, {
-          method: "POST",
-          headers: window.withCsrfHeaders({
-            "Content-Type": "application/json",
-          }),
-          body: JSON.stringify({
-            orderId: orderId,
-            status: status,
-          }),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.success) {
-              window.location.reload();
-            } else {
-              alert("Cập nhật thất bại");
-              btn.disabled = false;
-            }
+          fetch(`/admin/order/update-status`, {
+            method: "POST",
+            headers: window.withCsrfHeaders({
+              "Content-Type": "application/json",
+            }),
+            body: JSON.stringify({
+              orderId: orderId,
+              status: status,
+            }),
           })
-          .catch((err) => {
-            console.error(err);
-            alert("Có lỗi xảy ra");
-            btn.disabled = false;
-          });
-      }
-    });
-  });
-}
-
-// end thay đổi trạng thái đơn hàng
-
 //  xóa đơn hàng
 const buttonDeleteOrder = document.querySelectorAll(".buttonDeleteOrder");
 
@@ -423,7 +427,6 @@ if (inputSearchOrder) {
 
 // tìm kiếm in order
 const buttonSearchOrder = document.querySelector("#btnSearchOrder");
-// console.log(buttonSearchOrder);
 if (buttonSearchOrder) {
   buttonSearchOrder.addEventListener("click", () => {
     const keyword = document
@@ -440,6 +443,10 @@ if (buttonSearchOrder) {
     if (status) params.append("status", status);
     if (date) params.append("date", date);
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get("userId");
+    if (userId) params.append("userId", userId);
+
     window.location.href = `/admin/order?${params.toString()}`;
   });
 }
@@ -447,12 +454,10 @@ if (buttonSearchOrder) {
 
 // xem chi tiết order bên admin
 const buttonDetailOrder = document.querySelectorAll("#detailOrderAdmin");
-// console.log(buttonDetailOrder);
 if (buttonDetailOrder) {
   buttonDetailOrder.forEach((button) => {
     button.addEventListener("click", () => {
       const id = button.dataset.id;
-      // console.log(id);
       const url = `/admin/order/detail?order_id=${id}`;
       window.location.href = url;
     });

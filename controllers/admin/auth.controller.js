@@ -88,6 +88,8 @@ module.exports.loginPost = async (req, res) => {
 
 // [POST] admin/auth/logout
 module.exports.logout = async (req, res) => {
+  const sessionCookieName = req.session?.cookie?.name || "connect.sid";
+
   try {
     await new Promise((resolve, reject) => {
       req.session.destroy((err) => {
@@ -100,7 +102,7 @@ module.exports.logout = async (req, res) => {
     console.error("Logout error:", error);
   }
 
-  res.clearCookie(req.session?.cookie?.name || "connect.sid");
+  res.clearCookie(sessionCookieName);
 
   return res.redirect(LOGIN_PATH);
 };

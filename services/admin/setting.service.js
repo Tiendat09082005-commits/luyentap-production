@@ -102,8 +102,53 @@ async function updateSettings(payload) {
   };
 }
 
+const SEED_DEFAULTS = {
+  singletonKey: "site",
+  siteName: "Tida",
+  siteSlogan: "Hệ thống mua sắm hiện đại và chuyên nghiệp",
+  metaDescription:
+    "Tida - Mua sắm trực tuyến với giá tốt nhất. Miễn phí vận chuyển toàn quốc.",
+  faviconUrl: "",
+  logoUrl: "",
+  marqueeText:
+    "Miễn phí vận chuyển cho đơn hàng từ 500.000đ | Giảm thêm 5% khi thanh toán online | Bảo hành chính hãng 12-24 tháng",
+  marqueeSpeed: 60,
+  marqueeEnabled: true,
+  heroHeading: "iPhone 15 Series",
+  heroSubheading:
+    "Trải nghiệm công nghệ đỉnh cao với camera 48MP và chip A17 Pro mạnh mẽ nhất.",
+  heroCtaText: "Mua ngay",
+  heroCtaLink: "/products",
+  heroImageUrl: "",
+  address: "Hà Nội, Việt Nam",
+  phone: "0969175166",
+  email: "tiendatnguyendanh@gmail.com",
+  googleMapEmbed: "",
+  workingHours: "T2 - T6: 8:00 - 17:00",
+  socialFacebook: "https://web.facebook.com/atnguyen.656678",
+  socialInstagram: "",
+  socialZalo: "",
+  socialTikTok: "",
+  socialYouTube: "",
+  onlinePaymentTimeoutMinutes: 15,
+};
+
+async function ensureDefaultSettings() {
+  const existing = await Setting.findOne({ singletonKey: "site" }).lean();
+  if (existing) {
+    console.log("[Settings] Document already exists — skipping seed.");
+    return existing;
+  }
+
+  const created = await Setting.create(SEED_DEFAULTS);
+  console.log("[Settings] Seeded default settings into database.");
+  return created;
+}
+
 module.exports = {
   DEFAULT_SETTINGS,
+  SEED_DEFAULTS,
   getSettings,
   updateSettings,
+  ensureDefaultSettings,
 };

@@ -14,20 +14,31 @@ const invalidateOrderSearchCache = async () => {
 //[GET] /admin/order
 module.exports.index = async (req, res) => {
   try {
-    const { keyword, status, date } = req.query;
+    const { keyword, status, date, userId } = req.query;
 
     const pagination = paginationHelper(req.query, 0);
 
     const { orders, total } = await orderService.getOrders(
-      { keyword, status, date },
+      { keyword, status, date, userId },
       pagination,
     );
 
     pagination.totalItems = total;
 
+    let customerName = "";
+    if (userId) {
+      const User = require("../../models/user.model");
+      const user = await User.findById(userId).select("fullName").lean();
+      if (user) {
+        customerName = user.fullName;
+      }
+    }
+
     res.render("admin/pages/order/index", {
       orders,
       pagination,
+      userId,
+      customerName,
     });
   } catch (error) {
     console.error(error);
