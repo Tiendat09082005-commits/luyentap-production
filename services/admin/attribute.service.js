@@ -1,143 +1,103 @@
-const Attribute = require("../../models/attribute.model.js");
+const {
+  escapeRegex,
+  normalizeAttributeData,
+} = require("../../helpers/attribute.helper");
+const AttributeReponsitory = require("../../repositories/admin/attribute.reponsitory");
+const AppError = require("../../utils/AppError");
+const ERROR_CODE = require("../../constants/error-code");
 
 const getAttributes = async (query) => {
-    const find = {
-        deleted: false
-    };
+  const find = {
+    deleted: false,
+  };
 
-    // filter status
-    if (query.status) {
-        find.status = query.status;
-    }
+  const status = query.status || "";
+  const keyword = (query.keyword || "").trim();
 
-    // search nhẹ (nếu có)
-    if (query.keyword) {
-        find.title = {
-            $regex: query.keyword.trim(),
-            $options: "i"
-        };
-    }
+  // filter status
+  if (status === "active" || status === "inactive") {
+    find.status = status;
+  }
 
-    const attributes = await Attribute.find(find)
-        .select("title slug code status values") 
-        .sort({ createdAt: -1 }) // tận dụng index
-        .lean();
+  // search an toàn
+  if (keyword) {
+    const safeKeyword = escapeRegex(keyword);
 
-    return attributes;
+    find.$or = [
+      { title: { $regex: safeKeyword, $options: "i" } },
+      { slug: { $regex: safeKeyword, $options: "i" } },
+      { code: { $regex: safeKeyword, $options: "i" } },
+    ];
+  }
+
+  const attributes = await AttributeReponsitory.find(find);
+
+  return attributes;
 };
 
-
 const createAttribute = async (data) => {
-    try {
-        const attributeData = {};
+  try {
+    const attributeData = normalizeAttributeData(data);
 
-        // whitelist field
-        attributeData.title = data.title.trim();
-        attributeData.code = data.code.trim().toUpperCase();
-
-        if (data.status) {
-            attributeData.status = data.status;
-        }
-
-        // xử lý values
-        if (data.values) {
-            attributeData.values = [
-                ...new Set(
-                    data.values
-                        .split(",")
-                        .map(v => v.trim())
-                        .filter(Boolean)
-                )
-            ];
-        }
-
-        const record = await Attribute.create(attributeData);
-
-        return record;
-
-    } catch (error) {
-        if (error.code === 11000) {
-            const field = Object.keys(error.keyValue)[0];
-            throw new Error(`DUPLICATE_${field.toUpperCase()}`);
-        }
-
-        throw error;
+    if (!attributeData.status) {
+      attributeData.status = "active";
     }
+
+    const record = await AttributeReponsitory.create(attributeData);
+
+    return record;
+  } catch (error) {
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0];
+      if (field === "slug") {
+        throw new AppError(409, ERROR_CODE.ATTRIBUTE_DUPLICATE_SLUG);
+      } else if (field === "code") {
+        throw new AppError(409, ERROR_CODE.ATTRIBUTE_DUPLICATE_CODE);
+      }
+    }
+
+    throw error;
+  }
 };
 
 const deleteAttribute = async (slug) => {
-    const result = await Attribute.updateOne(
-        { slug, deleted: false }, 
-        {
-            deleted: true,
-            deletedAt: new Date()
-        }
-    );
+  const result = await AttributeReponsitory.softDelete({ slug });
 
-    if (result.matchedCount === 0) {
-        throw new Error("ATTRIBUTE_NOT_FOUND_OR_DELETED");
-    }
+  if (result.matchedCount === 0) {
+    throw new AppError(404, ERROR_CODE.ATTRIBUTE_NOT_FOUND_OR_DELETED);
+  }
 
-    return true;
+  return true;
 };
 
 const updateAttribute = async (slug, data) => {
-    try {
-        const updateData = {};
+  try {
+    const updateData = normalizeAttributeData(data);
 
-        // whitelist + normalize
-        if (data.title) {
-            updateData.title = data.title.trim();
-        }
+    const updated = await AttributeReponsitory.update({ slug }, updateData);
 
-        if (data.code) {
-            updateData.code = data.code.trim().toUpperCase();
-        }
-
-        if (data.status) {
-            updateData.status = data.status;
-        }
-
-        if (data.values) {
-            updateData.values = [
-                ...new Set(
-                    data.values
-                        .split(",")
-                        .map(v => v.trim())
-                        .filter(Boolean)
-                )
-            ];
-        }
-
-        const updated = await Attribute.findOneAndUpdate(
-            { slug, deleted: false },
-            updateData,
-            {
-                new: true,
-                runValidators: true
-            }
-        );
-
-        if (!updated) {
-            throw new Error("ATTRIBUTE_NOT_FOUND");
-        }
-
-        return updated;
-
-    } catch (error) {
-        if (error.code === 11000) {
-            const field = Object.keys(error.keyValue)[0];
-            throw new Error(`DUPLICATE_${field.toUpperCase()}`);
-        }
-
-        throw error;
+    if (!updated) {
+      throw new AppError(404, ERROR_CODE.ATTRIBUTE_NOT_FOUND);
     }
+
+    return updated;
+  } catch (error) {
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0];
+      if (field === "slug") {
+        throw new AppError(409, ERROR_CODE.ATTRIBUTE_DUPLICATE_SLUG);
+      } else if (field === "code") {
+        throw new AppError(409, ERROR_CODE.ATTRIBUTE_DUPLICATE_CODE);
+      }
+    }
+
+    throw error;
+  }
 };
 
-
 module.exports = {
-    getAttributes,
-    createAttribute,
-    deleteAttribute,
-    updateAttribute
+  getAttributes,
+  createAttribute,
+  deleteAttribute,
+  updateAttribute,
 };

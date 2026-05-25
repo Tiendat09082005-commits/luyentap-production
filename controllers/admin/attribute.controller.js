@@ -1,5 +1,7 @@
-const Attribute = require("../../models/attribute.model");
+const systemConfig = require("../../config/system");
 const attributeService = require("../../services/admin/attribute.service");
+const flash = require("../../helpers/flash.helper");
+const ERROR_CODE = require("../../constants/error-code");
 
 // [GET] admin/attribute/
 module.exports.index = async (req, res) => {
@@ -11,10 +13,10 @@ module.exports.index = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
+        console.error("GET ATTRIBUTE ERROR:", error);
 
-        req.flash("thatbai", "Đã xảy ra lỗi");
-        res.redirect("back");
+        flash.flashError(req, "Đã xảy ra lỗi");
+        return res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
     }
 };
 
@@ -23,6 +25,7 @@ module.exports.create = async (req, res) => {
     try {
         const record = await attributeService.createAttribute(req.body);
 
+        flash.flashSuccess(req, "Thêm thuộc tính thành công");
         return res.status(201).json({
             success: true,
             message: "Thêm thuộc tính thành công",
@@ -32,22 +35,21 @@ module.exports.create = async (req, res) => {
     } catch (error) {
         console.error("CREATE ATTRIBUTE ERROR:", error);
 
-        if (error.message.startsWith("DUPLICATE_")) {
-            const field = error.message.replace("DUPLICATE_", "").toLowerCase();
-
-            return res.status(400).json({
-                success: false,
-                message: `${field} đã tồn tại`
-            });
+        let message = "Lỗi server khi thêm thuộc tính";
+        if (error.code === ERROR_CODE.ATTRIBUTE_DUPLICATE_SLUG) {
+            message = "Thuộc tính đã tồn tại (slug bị trùng)";
+        } else if (error.code === ERROR_CODE.ATTRIBUTE_DUPLICATE_CODE) {
+            message = "Mã thuộc tính đã bị trùng";
         }
 
-        return res.status(500).json({
+        flash.flashError(req, message);
+
+        return res.status(error.statusCode || 500).json({
             success: false,
-            message: "Lỗi server khi thêm thuộc tính"
+            message
         });
     }
 };
-
 
 // [DELETE] admin/attribute/delete/:slug
 module.exports.delete = async (req, res) => {
@@ -56,6 +58,7 @@ module.exports.delete = async (req, res) => {
 
         await attributeService.deleteAttribute(slug);
 
+        flash.flashSuccess(req, "Xóa thuộc tính thành công");
         return res.status(200).json({
             success: true,
             message: "Xóa thuộc tính thành công"
@@ -64,16 +67,16 @@ module.exports.delete = async (req, res) => {
     } catch (error) {
         console.error("DELETE ATTRIBUTE ERROR:", error);
 
-        if (error.message === "ATTRIBUTE_NOT_FOUND_OR_DELETED") {
-            return res.status(404).json({
-                success: false,
-                message: "Không tìm thấy thuộc tính hoặc đã bị xóa"
-            });
+        let message = "Lỗi server";
+        if (error.code === ERROR_CODE.ATTRIBUTE_NOT_FOUND_OR_DELETED) {
+            message = "Không tìm thấy hoặc đã bị xóa";
         }
 
-        return res.status(500).json({
+        flash.flashError(req, message);
+
+        return res.status(error.statusCode || 500).json({
             success: false,
-            message: "Lỗi server"
+            message
         });
     }
 };
@@ -85,6 +88,7 @@ module.exports.edit = async (req, res) => {
 
         await attributeService.updateAttribute(slug, req.body);
 
+        flash.flashSuccess(req, "Cập nhật thành công");
         return res.json({
             success: true,
             message: "Cập nhật thành công"
@@ -93,25 +97,20 @@ module.exports.edit = async (req, res) => {
     } catch (error) {
         console.error("UPDATE ATTRIBUTE ERROR:", error);
 
-        if (error.message === "ATTRIBUTE_NOT_FOUND") {
-            return res.status(404).json({
-                success: false,
-                message: "Không tìm thấy thuộc tính"
-            });
+        let message = "Lỗi server";
+        if (error.code === ERROR_CODE.ATTRIBUTE_NOT_FOUND) {
+            message = "Không tìm thấy thuộc tính";
+        } else if (error.code === ERROR_CODE.ATTRIBUTE_DUPLICATE_SLUG) {
+            message = "Tên thuộc tính bị trùng";
+        } else if (error.code === ERROR_CODE.ATTRIBUTE_DUPLICATE_CODE) {
+            message = "Mã thuộc tính bị trùng";
         }
 
-        if (error.message.startsWith("DUPLICATE_")) {
-            const field = error.message.replace("DUPLICATE_", "").toLowerCase();
+        flash.flashError(req, message);
 
-            return res.status(400).json({
-                success: false,
-                message: `${field} đã tồn tại`
-            });
-        }
-
-        return res.status(500).json({
+        return res.status(error.statusCode || 500).json({
             success: false,
-            message: "Lỗi server"
+            message
         });
     }
 };
