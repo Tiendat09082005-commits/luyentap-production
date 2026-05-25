@@ -21,7 +21,7 @@ router.get("/detail/:id" , authMiddleware.checkPermission("account_view"),accoun
 
 router.get("/user" , authMiddleware.checkPermission("account_view"),accountMiddleware.validateAccountUserMiddleware, controller.accountUser);
 
-router.patch("/user/change-status/:status/:id" , authMiddleware.checkPermission("account_edit"),accountMiddleware.validateAccountUserMiddleware, controller.changeStatusUser);
+router.patch("/user/change-status/:status/:id" , authMiddleware.checkPermission("account_edit"),accountMiddleware.validateChangeStatusUserMiddleware, controller.changeStatusUser);
 
 router.delete("/user/delete/:id" , authMiddleware.checkPermission("account_delete"),accountMiddleware.validateDeleteUserMiddleware, controller.deleteUser);
 
