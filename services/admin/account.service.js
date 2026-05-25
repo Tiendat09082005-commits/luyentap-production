@@ -1,28 +1,20 @@
 const mongoose = require("mongoose");
 const paginationHelper = require("../../helpers/pagination");
-const Account = require("../../models/accounts.model");
-const Role = require("../../models/roles.model");
-const bcrypt = require("bcrypt");
-const SALT_ROUNDS = process.env.SALT_ROUNDS || 10;
-const User = require("../../models/user.model");
+const AccountReponsitory = require("../../repositories/admin/account.reponsitory");
+const UserReponsitory = require("../../repositories/admin/user.reponsitory");
+const RoleReponsitory = require("../../repositories/admin/role.reponsitory");
+const { normalizeAccountData } = require("../../helpers/account.helper");
 const searchHelper = require("../../helpers/search");
+const AppError = require("../../utils/AppError");
+const ERROR_CODE = require("../../constants/error-code");
 
 const getAccounts = async (query) => {
     const find = { deleted: false };
 
-    const total = await Account.countDocuments(find);
+    const total = await AccountReponsitory.countDocuments(find);
     const pagination = paginationHelper(query, total);
 
-    const records = await Account.find(find)
-        .select("-password -token")
-        .limit(pagination.limit)
-        .skip(pagination.skip)
-        .populate({
-            path: "role_id",
-            select: "title",
-            match: { deleted: false }
-        })
-        .lean();
+    const records = await AccountReponsitory.findPaginated(find, pagination, "-password -token");
 
     return {
         records,
@@ -32,22 +24,12 @@ const getAccounts = async (query) => {
 
 const createAccount = async (data) => {
     try {
-        const { email, password, fullName, avatar } = data;
-
-        const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-
-        const record = await Account.create({
-            email,
-            password: hashedPassword,
-            fullName,
-            avatar
-        });
-
+        const accountData = await normalizeAccountData(data);
+        const record = await AccountReponsitory.create(accountData);
         return record;
-
     } catch (error) {
         if (error.code === 11000) {
-            throw new Error("EMAIL_EXISTS");
+            throw new AppError(409, ERROR_CODE.ACCOUNT_DUPLICATE_EMAIL);
         }
 
         throw error;
@@ -56,18 +38,16 @@ const createAccount = async (data) => {
 
 const getAccountEditData = async (id) => {
     const [record, roles] = await Promise.all([
-        Account.findOne({
+        AccountReponsitory.findOne({
             _id: id,
             deleted: false
-        })
-        .select("-password -token")
-        .lean(),
+        }, "-password -token"),
 
-        Role.find({ deleted: false }).select("title").lean()
+        RoleReponsitory.find({ deleted: false }, "title")
     ]);
 
     if (!record) {
-        throw new Error("ACCOUNT_NOT_FOUND");
+        throw new AppError(404, ERROR_CODE.ACCOUNT_NOT_FOUND);
     }
 
     return {
@@ -76,41 +56,24 @@ const getAccountEditData = async (id) => {
     };
 };
 
-
-
 const updateAccount = async (id, data) => {
     try {
-        const updateData = {};
+        const updateData = await normalizeAccountData(data);
 
-        // whitelist field
-        if (data.email) updateData.email = data.email;
-        if (data.fullName) updateData.fullName = data.fullName;
-        if (data.role_id) updateData.role_id = data.role_id;
-
-        // password
-        if (data.password) {
-            updateData.password = await bcrypt.hash(data.password, SALT_ROUNDS);
-        }
-
-        // avatar
-        if (data.avatar) {
-            updateData.avatar = data.avatar;
-        }
-
-        const result = await Account.updateOne(
+        const result = await AccountReponsitory.updateOne(
             { _id: id, deleted: false },
             updateData
         );
 
         if (result.matchedCount === 0) {
-            throw new Error("ACCOUNT_NOT_FOUND");
+            throw new AppError(404, ERROR_CODE.ACCOUNT_NOT_FOUND);
         }
 
         return true;
 
     } catch (error) {
         if (error.code === 11000) {
-            throw new Error("EMAIL_EXISTS");
+            throw new AppError(409, ERROR_CODE.ACCOUNT_DUPLICATE_EMAIL);
         }
 
         throw error;
@@ -118,45 +81,41 @@ const updateAccount = async (id, data) => {
 };
 
 const getAccountDetail = async (id) => {
-    // validate ObjectId ngay tại service (double safety)
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        throw new Error("INVALID_ID");
+        throw new AppError(400, ERROR_CODE.ACCOUNT_INVALID_ID);
     }
 
-    const record = await Account.findOne({
+    const record = await AccountReponsitory.findOne({
         _id: id,
         deleted: false
-    })
-    .select("-token -password")
-    .populate("role_id", "title")
-    .lean();
+    }, "-token -password");
 
     if (!record) {
-        throw new Error("NOT_FOUND");
+        throw new AppError(404, ERROR_CODE.ACCOUNT_NOT_FOUND);
+    }
+
+    if (record.role_id) {
+        const role = await RoleReponsitory.findOne({ _id: record.role_id, deleted: false }, "title");
+        record.role_id = role || null;
     }
 
     return record;
 };
 
-
-
 const getAccountUsers = async (query) => {
     const find = {};
 
-    //  filter status + deleted
     if (query.status === "deleted") {
         find.deleted = true;
     } else {
         find.deleted = false;
         if (query.status === "active") {
-            // Khớp với logic bên Pug: không bị khóa và không xóa thì coi là hoạt động
             find.status = { $ne: "inactive" };
         } else if (query.status === "inactive") {
             find.status = "inactive";
         }
     }
 
-    //  search
     const search = searchHelper(query);
     if (search.regex) {
         find.$or = [
@@ -165,19 +124,14 @@ const getAccountUsers = async (query) => {
         ];
     }
 
-    //  đếm tổng 
-    const total = await User.countDocuments(find);
-
-    //  build pagination
+    const total = await UserReponsitory.countDocuments(find);
     const pagination = paginationHelper(query, total);
 
-    //  query list
-    const listUser = await User.find(find)
-        .select("fullName email status avatar phone tokenUser createdAt deleted") // chỉ lấy field cần
-        .sort({ createdAt: -1 }) // dùng index createdAt
-        .limit(pagination.limit)
-        .skip(pagination.skip)
-        .lean();
+    const listUser = await UserReponsitory.findPaginated(
+        find,
+        pagination,
+        "fullName email status avatar phone tokenUser createdAt deleted"
+    );
 
     return {
         listUser,
@@ -187,23 +141,21 @@ const getAccountUsers = async (query) => {
     };
 };
 
-
 const changeStatusUser = async (id, status) => {
-    const result = await User.updateOne(
+    const result = await UserReponsitory.updateOne(
         { _id: id, deleted: false },
         { status }
     );
 
     if (result.matchedCount === 0) {
-        throw new Error("USER_NOT_FOUND");
+        throw new AppError(404, ERROR_CODE.USER_NOT_FOUND);
     }
 
     return true;
 };
 
-
 const deleteUser = async (id) => {
-    const result = await User.updateOne(
+    const result = await UserReponsitory.updateOne(
         { _id: id, deleted: false },
         {
             deleted: true,
@@ -212,14 +164,14 @@ const deleteUser = async (id) => {
     );
 
     if (result.matchedCount === 0) {
-        throw new Error("USER_NOT_FOUND_OR_DELETED");
+        throw new AppError(404, ERROR_CODE.USER_NOT_FOUND_OR_DELETED);
     }
 
     return true;
 };
 
 const restoreUser = async (id) => {
-    const result = await User.updateOne(
+    const result = await UserReponsitory.updateOne(
         { _id: id, deleted: true }, 
         {
             deleted: false,
@@ -228,11 +180,11 @@ const restoreUser = async (id) => {
     );
 
     if (result.matchedCount === 0) {
-        throw new Error("USER_NOT_FOUND_OR_NOT_DELETED");
+        throw new AppError(404, ERROR_CODE.USER_NOT_FOUND_OR_NOT_DELETED);
     }
 
     return true;
-}
+};
 
 module.exports = {
     getAccounts,

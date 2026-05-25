@@ -1,14 +1,10 @@
-const Account = require("../../models/accounts.model");
 const conFig = require("../../config/system");
-const Role = require("../../models/roles.model");
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
-const User = require("../../models/user.model");
 const cacheService = require("../../services/cache.service");
 const accountService = require("../../services/admin/account.service");
 const roleService = require("../../services/admin/role.service");
 const filterStatusHelper = require("../../helpers/filterStatus");
-const searchHelper = require("../../helpers/search");
+const flash = require("../../helpers/flash.helper");
+const ERROR_CODE = require("../../constants/error-code");
 
 const invalidateAccountSearchCache = async () => {
     await Promise.all([
@@ -16,6 +12,7 @@ const invalidateAccountSearchCache = async () => {
         cacheService.invalidateSearchModel("User")
     ]);
 };
+
 // [GET] admin/accounts/
 module.exports.index = async (req, res, next) => {
     try {
@@ -26,9 +23,8 @@ module.exports.index = async (req, res, next) => {
     }
 };
 
-
 // [GET] admin/accounts/create
-module.exports.create = async (req, res) => {
+module.exports.create = async (req, res, next) => {
     try {
         const roles = await roleService.getTitleRole();
         res.render("admin/pages/account/create", {
@@ -38,29 +34,25 @@ module.exports.create = async (req, res) => {
         console.error("Lỗi khi tải trang tạo tài khoản:", error);
         next(error);
     }
-}
+};
 
 // [POST] admin/accounts/create
 module.exports.createPost = async (req, res) => {
     try {
-        const emailExits = await Account.findOne({ email: req.body.email, deleted: false }).select("_id").lean();
-        if (emailExits) {
-            req.flash("thatbai", "Email đã tồn tại !!")
-            res.redirect(`back`);
-        } else {
-            req.body.password = await bcrypt.hash(req.body.password, saltRounds);
-            const record = new Account(req.body);
-            await record.save();
-            await invalidateAccountSearchCache();
-            req.flash("thanhcong", "Đã tạo thành công 1 tài khoản mới")
-            res.redirect(`${conFig.prefixAdmin}/accounts`);
-        }
+        await accountService.createAccount(req.body);
+        await invalidateAccountSearchCache();
+        flash.flashSuccess(req, "Đã tạo thành công 1 tài khoản mới");
+        res.redirect(`${conFig.prefixAdmin}/accounts`);
     } catch (error) {
         console.error("Lỗi khi tạo tài khoản:", error);
-        req.flash("thatbai", "Đã xảy ra lỗi !!!");
+        if (error.code === ERROR_CODE.ACCOUNT_DUPLICATE_EMAIL) {
+            flash.flashError(req, "Email đã tồn tại !!");
+        } else {
+            flash.flashError(req, "Đã xảy ra lỗi !!!");
+        }
         res.redirect("back");
     }
-}
+};
 
 // [GET] admin/accounts/edit/:id
 module.exports.edit = async (req, res) => {
@@ -75,10 +67,10 @@ module.exports.edit = async (req, res) => {
         });
 
     } catch (error) {
-        if (error.message === "ACCOUNT_NOT_FOUND") {
-            req.flash("thatbai", "Không tìm thấy tài khoản");
+        if (error.code === ERROR_CODE.ACCOUNT_NOT_FOUND) {
+            flash.flashError(req, "Không tìm thấy tài khoản");
         } else {
-            req.flash("thatbai", "Đã xảy ra lỗi");
+            flash.flashError(req, "Đã xảy ra lỗi");
         }
 
         res.redirect(`${conFig.prefixAdmin}/accounts`);
@@ -89,38 +81,23 @@ module.exports.edit = async (req, res) => {
 module.exports.editPatch = async (req, res) => {
     try {
         const id = req.params.id;
-        const emailExits = await Account.findOne({
-            _id: { $ne: id },
-            email: req.body.email,
-            deleted: false
-        }).select("_id").lean();
-
-        if (emailExits) {
-            req.flash("thatbai", "Đã tồn tại email này, sửa tài khoản thất bại");
-            return res.redirect("back");
-        }
-
-        if (req.body.password) {
-            req.body.password = await bcrypt.hash(req.body.password, saltRounds);
-        } else {
-            delete req.body.password;
-        }
-
-        if (!req.body.avatar) {
-            delete req.body.avatar;
-        }
-
-        await Account.updateOne({ _id: id }, req.body);
+        await accountService.updateAccount(id, req.body);
         await invalidateAccountSearchCache();
-        req.flash('thanhcong', "Bạn đã chỉnh sửa tài khoản thành công");
+        flash.flashSuccess(req, "Bạn đã chỉnh sửa tài khoản thành công");
         res.redirect(`${conFig.prefixAdmin}/accounts`);
 
     } catch (error) {
         console.error(error);
-        req.flash("thatbai", "Đã xảy ra lỗi");
+        if (error.code === ERROR_CODE.ACCOUNT_DUPLICATE_EMAIL) {
+            flash.flashError(req, "Đã tồn tại email này, sửa tài khoản thất bại");
+        } else if (error.code === ERROR_CODE.ACCOUNT_NOT_FOUND) {
+            flash.flashError(req, "Không tìm thấy tài khoản");
+        } else {
+            flash.flashError(req, "Đã xảy ra lỗi");
+        }
         res.redirect("back");
     }
-}
+};
 
 // [GET] admin/accounts/detail/:id
 module.exports.detail = async (req, res) => {
@@ -136,12 +113,12 @@ module.exports.detail = async (req, res) => {
     } catch (error) {
         console.error(error);
 
-        if (error.message === "NOT_FOUND") {
-            req.flash("thatbai", "Tài khoản không tồn tại");
-        } else if (error.message === "INVALID_ID") {
-            req.flash("thatbai", "ID không hợp lệ");
+        if (error.code === ERROR_CODE.ACCOUNT_NOT_FOUND) {
+            flash.flashError(req, "Tài khoản không tồn tại");
+        } else if (error.code === ERROR_CODE.ACCOUNT_INVALID_ID) {
+            flash.flashError(req, "ID không hợp lệ");
         } else {
-            req.flash("thatbai", "Lấy dữ liệu thất bại");
+            flash.flashError(req, "Lấy dữ liệu thất bại");
         }
 
         return res.redirect(`${conFig.prefixAdmin}/accounts`);
@@ -165,7 +142,7 @@ module.exports.accountUser = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        req.flash("thatbai", "Đã xảy ra lỗi");
+        flash.flashError(req, "Đã xảy ra lỗi");
         res.redirect("back");
     }
 };
@@ -179,13 +156,13 @@ module.exports.changeStatusUser = async (req, res) => {
 
         await invalidateAccountSearchCache();
 
-        req.flash("thanhcong", "Cập nhật trạng thái người dùng thành công");
+        flash.flashSuccess(req, "Cập nhật trạng thái người dùng thành công");
 
     } catch (error) {
-        if (error.message === "USER_NOT_FOUND") {
-            req.flash("thatbai", "Không tìm thấy người dùng");
+        if (error.code === ERROR_CODE.USER_NOT_FOUND) {
+            flash.flashError(req, "Không tìm thấy người dùng");
         } else {
-            req.flash("thatbai", "Cập nhật trạng thái thất bại");
+            flash.flashError(req, "Cập nhật trạng thái thất bại");
         }
     }
 
@@ -201,13 +178,13 @@ module.exports.deleteUser = async (req, res) => {
 
         await invalidateAccountSearchCache();
 
-        req.flash("thanhcong", "Xóa người dùng thành công");
+        flash.flashSuccess(req, "Xóa người dùng thành công");
 
     } catch (error) {
-        if (error.message === "USER_NOT_FOUND_OR_DELETED") {
-            req.flash("thatbai", "Người dùng không tồn tại hoặc đã bị xóa");
+        if (error.code === ERROR_CODE.USER_NOT_FOUND_OR_DELETED) {
+            flash.flashError(req, "Người dùng không tồn tại hoặc đã bị xóa");
         } else {
-            req.flash("thatbai", "Xóa người dùng thất bại");
+            flash.flashError(req, "Xóa người dùng thất bại");
         }
     }
 
@@ -223,13 +200,13 @@ module.exports.restoreUser = async (req, res) => {
 
         await invalidateAccountSearchCache();
 
-        req.flash("thanhcong", "Khôi phục người dùng thành công");
+        flash.flashSuccess(req, "Khôi phục người dùng thành công");
 
     } catch (error) {
-        if (error.message === "USER_NOT_FOUND_OR_NOT_DELETED") {
-            req.flash("thatbai", "Người dùng không tồn tại hoặc chưa bị xóa");
+        if (error.code === ERROR_CODE.USER_NOT_FOUND_OR_NOT_DELETED) {
+            flash.flashError(req, "Người dùng không tồn tại hoặc chưa bị xóa");
         } else {
-            req.flash("thatbai", "Khôi phục người dùng thất bại");
+            flash.flashError(req, "Khôi phục người dùng thất bại");
         }
     }
 
