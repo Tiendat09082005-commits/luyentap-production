@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const controller = require("../../controllers/admin/brand.controller");
 const multer = require('multer');
-// const storageMulter = require("../../helpers/storageMulter");
 
 const upload = multer();
 const uploadCloud = require("../../middleware/admin/uploadImage.middleware");

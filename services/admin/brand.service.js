@@ -1,172 +1,120 @@
-const Brand = require("../../models/brand.model");
-const { escapeRegex } = require("../../helpers/brand.helper");
-
-
+const {
+  escapeRegex,
+  normalizeBrandData,
+} = require("../../helpers/brand.helper");
+const BrandReponsitory = require("../../repositories/admin/brand.reponsitory");
+const AppError = require("../../utils/AppError");
+const ERROR_CODE = require("../../constants/error-code");
 
 const getBrands = async (query) => {
-    const find = {
-        deleted: false
-    };
+  const find = {
+    deleted: false,
+  };
 
-    const status = query.status || "";
-    const keyword = (query.keyword || "").trim();
+  const status = query.status || "";
+  const keyword = (query.keyword || "").trim();
 
-    // filter status
-    if (status === "active" || status === "inactive") {
-        find.status = status;
-    }
+  // filter status
+  if (status === "active" || status === "inactive") {
+    find.status = status;
+  }
 
-    // search an toàn
-    if (keyword) {
-        const safeKeyword = escapeRegex(keyword);
+  // search an toàn
+  if (keyword) {
+    const safeKeyword = escapeRegex(keyword);
 
-        find.$or = [
-            { title: { $regex: safeKeyword, $options: "i" } },
-            { slug: { $regex: safeKeyword, $options: "i" } },
-            { description: { $regex: safeKeyword, $options: "i" } }
-        ];
-    }
+    find.$or = [
+      { title: { $regex: safeKeyword, $options: "i" } },
+      { slug: { $regex: safeKeyword, $options: "i" } },
+      { description: { $regex: safeKeyword, $options: "i" } },
+    ];
+  }
 
-    const brands = await Brand.find(find)
-        .select("title slug logo status createdAt") 
-        .sort({ createdAt: -1 })
-        .lean();
+  const brands = await BrandReponsitory.find(find);
 
-    return {
-        brands,
-        keyword,
-        status
-    };
+  return {
+    brands,
+    keyword,
+    status,
+  };
 };
-
-
 
 const createBrand = async (data) => {
-    try {
-        const brandData = {};
+  try {
+    const brandData = normalizeBrandData(data);
 
-        // whitelist + normalize
-        brandData.title = data.title.trim();
-
-        if (data.description) {
-            brandData.description = data.description.trim();
-        }
-
-        if (data.logo) {
-            brandData.logo = data.logo.trim();
-        }
-
-        brandData.status = data.status || "active";
-
-        const record = await Brand.create(brandData);
-
-        return record;
-
-    } catch (error) {
-        if (error.code === 11000) {
-            throw new Error("DUPLICATE_SLUG");
-        }
-
-        throw error;
+    if (!brandData.status) {
+      brandData.status = "active";
     }
+
+    const record = await BrandReponsitory.create(brandData);
+
+    return record;
+  } catch (error) {
+    if (error.code === 11000) {
+      throw new AppError(409, ERROR_CODE.BRAND_DUPLICATE_SLUG);
+    }
+
+    throw error;
+  }
 };
 
-
 const getBrandDetail = async (id) => {
-    const brand = await Brand.findOne({
-        _id: id,
-        deleted: false
-    })
-    .select("title slug logo description status createdAt") // ⚡ tránh lấy thừa
-    .lean();
+  const brand = await BrandReponsitory.findOne({ _id: id, deleted: false });
+  
 
-    if (!brand) {
-        throw new Error("BRAND_NOT_FOUND");
-    }
+  if (!brand) {
+    throw new AppError(404, ERROR_CODE.BRAND_NOT_FOUND);
+  }
 
-    return brand;
+  return brand;
 };
 
 const changeStatusBrand = async (id, status) => {
-    const result = await Brand.updateOne(
-        { _id: id, deleted: false },
-        { status }
-    );
+  const result = await BrandReponsitory.updateStatus(id, status);
 
-    if (result.matchedCount === 0) {
-        throw new Error("BRAND_NOT_FOUND");
-    }
+  if (result.matchedCount === 0) {
+    throw new AppError(404, ERROR_CODE.BRAND_NOT_FOUND);
+  }
 
-    return true;
-}
-
-const updateBrand = async (id, data) => {
-    try {
-        const updateData = {};
-
-        // whitelist + normalize
-        if (data.title !== undefined) {
-            updateData.title = data.title.trim();
-        }
-
-        if (data.description !== undefined) {
-            updateData.description = data.description.trim();
-        }
-
-        if (data.status) {
-            updateData.status = data.status;
-        }
-
-        if (data.logo) {
-            updateData.logo = data.logo.trim();
-        }
-
-        const brand = await Brand.findOneAndUpdate(
-            { _id: id, deleted: false },
-            updateData,
-            {
-                new: true,
-                runValidators: true
-            }
-        );
-
-        if (!brand) {
-            throw new Error("BRAND_NOT_FOUND");
-        }
-
-        return brand;
-
-    } catch (error) {
-        if (error.code === 11000) {
-            throw new Error("DUPLICATE_SLUG");
-        }
-
-        throw error;
-    }
+  return true;
 };
 
+const updateBrand = async (id, data) => {
+  try {
+    const updateData = normalizeBrandData(data);
 
-const deleteBrand = async (id) => {
-    const result = await Brand.updateOne(
-        { _id: id, deleted: false },
-        {
-            deleted: true,
-            deletedAt: new Date()
-        }
-    );
+    const brand = await BrandReponsitory.update(id, updateData);
 
-    if (result.matchedCount === 0) {
-        throw new Error("BRAND_NOT_FOUND_OR_DELETED");
+    if (!brand) {
+      throw new AppError(404, ERROR_CODE.BRAND_NOT_FOUND);
     }
 
-    return true;
+    return brand;
+  } catch (error) {
+    if (error.code === 11000) {
+      throw new AppError(409, ERROR_CODE.BRAND_DUPLICATE_SLUG);
+    }
+
+    throw error;
+  }
+};
+
+const deleteBrand = async (id) => {
+  const result = await BrandReponsitory.softDelete(id);
+
+  if (result.matchedCount === 0) {
+    throw new AppError(404, ERROR_CODE.BRAND_NOT_FOUND_OR_DELETED);
+  }
+
+  return true;
 };
 
 module.exports = {
-    getBrands,
-    createBrand,
-    getBrandDetail,
-    changeStatusBrand,
-    updateBrand,
-    deleteBrand
+  getBrands,
+  createBrand,
+  getBrandDetail,
+  changeStatusBrand,
+  updateBrand,
+  deleteBrand,
 };

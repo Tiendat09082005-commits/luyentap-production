@@ -1,0 +1,16 @@
+module.exports = {
+    BRAND_NOT_FOUND:
+        "BRAND_NOT_FOUND",
+
+    BRAND_DUPLICATE_SLUG:
+        "BRAND_DUPLICATE_SLUG",
+
+    BRAND_DELETED:
+        "BRAND_DELETED",
+
+    INTERNAL_SERVER_ERROR:
+        "INTERNAL_SERVER_ERROR",
+        
+    BRAND_NOT_FOUND_OR_DELETED:
+        "BRAND_NOT_FOUND_OR_DELETED"
+};
