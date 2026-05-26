@@ -5,6 +5,7 @@ const paginationHelper = require("../../helpers/pagination");
 const { buildCategoryBrandMap } = require("../../helpers/productui.helper");
 const { validateStatus, validateChangeMultiInput } = require("../../validate/admin/product.validate");
 const productService = require("../../services/admin/product.service");
+const flash = require("../../helpers/flash.helper");
 
 // ─── [GET] /admin/products 
 
@@ -36,7 +37,7 @@ module.exports.index = async (req, res) => {
     });
   } catch (error) {
     console.error("INDEX ERROR:", error);
-    req.flash("error", "Đã có lỗi xảy ra");
+    flash.flashError(req, "Đã có lỗi xảy ra");
     res.redirect(req.get("Referer") || `${conFig.prefixAdmin}/products`);
   }
 };
@@ -48,7 +49,7 @@ module.exports.changeStatus = async (req, res) => {
 
   const check = validateStatus(status);
   if (!check.valid) {
-    req.flash("error", check.message);
+    flash.flashError(req, check.message);
     return res.redirect(req.get("Referer"));
   }
 
@@ -61,7 +62,7 @@ module.exports.changeStatus = async (req, res) => {
 module.exports.changeMulti = async (req, res) => {
   const check = validateChangeMultiInput(req.body);
   if (!check.valid) {
-    req.flash("error", check.message);
+    flash.flashError(req, check.message);
     return res.redirect(req.get("Referer") || `${conFig.prefixAdmin}/products`);
   }
 
@@ -76,7 +77,7 @@ module.exports.changeMulti = async (req, res) => {
     "change-position": "Đã cập nhật vị trí các sản phẩm",
     "delete-all": "Đã xóa các sản phẩm thành công",
   };
-  req.flash("thanhcong", messages[type]);
+  flash.flashSuccess(req, messages[type]);
   res.redirect(req.get("referer"));
 };
 
@@ -103,7 +104,7 @@ module.exports.create = async (req, res) => {
     });
   } catch (error) {
     console.error("CREATE GET ERROR:", error);
-    req.flash("error", "Đã có lỗi xảy ra");
+    flash.flashError(req, "Đã có lỗi xảy ra");
     res.redirect(`${conFig.prefixAdmin}/products`);
   }
 };
@@ -114,11 +115,11 @@ module.exports.createPost = async (req, res) => {
   const result = await productService.createProduct(req.body);
 
   if (!result.success) {
-    req.flash("error", result.error);
+    flash.flashError(req, result.error);
     return res.redirect(req.get("Referer"));
   }
 
-  req.flash("thanhcong", "Tạo sản phẩm thành công");
+  flash.flashSuccess(req, "Tạo sản phẩm thành công");
   res.redirect(req.get("Referer"));
 };
 
@@ -130,7 +131,7 @@ module.exports.edit = async (req, res) => {
     const product = await productService.getProductForEdit(id);
 
     if (!product) {
-      req.flash("error", "Sản phẩm không tồn tại");
+      flash.flashError(req, "Sản phẩm không tồn tại");
       return res.redirect(`${conFig.prefixAdmin}/products`);
     }
 
@@ -152,7 +153,7 @@ module.exports.edit = async (req, res) => {
     });
   } catch (error) {
     console.error("EDIT GET ERROR:", error);
-    req.flash("error", "Đã có lỗi xảy ra");
+    flash.flashError(req, "Đã có lỗi xảy ra");
     res.redirect(`${conFig.prefixAdmin}/products`);
   }
 };
@@ -163,11 +164,11 @@ module.exports.editPatch = async (req, res) => {
   const result = await productService.updateProduct(req.params.id, req.body);
 
   if (!result.success) {
-    req.flash("error", result.error);
+    flash.flashError(req, result.error);
     return res.redirect(req.get("Referer"));
   }
 
-  req.flash("thanhcong", "Cập nhật sản phẩm thành công");
+  flash.flashSuccess(req, "Cập nhật sản phẩm thành công");
   res.redirect(`${conFig.prefixAdmin}/products`);
 };
 
@@ -178,14 +179,14 @@ module.exports.detail = async (req, res) => {
     const { product, variants } = await productService.getProductDetail(req.params.id);
 
     if (!product) {
-      req.flash("error", "Sản phẩm không tồn tại");
+      flash.flashError(req, "Sản phẩm không tồn tại");
       return res.redirect(`${conFig.prefixAdmin}/products`);
     }
 
     res.render("admin/pages/products/detail.pug", { product, variants });
   } catch (error) {
     console.error("DETAIL ERROR:", error);
-    req.flash("error", "Đã có lỗi xảy ra");
+    flash.flashError(req, "Đã có lỗi xảy ra");
     res.redirect(`${conFig.prefixAdmin}/products`);
   }
 };
@@ -214,7 +215,7 @@ module.exports.trash = async (req, res) => {
     });
   } catch (error) {
     console.error("TRASH ERROR:", error);
-    req.flash("error", "Đã có lỗi xảy ra");
+    flash.flashError(req, "Đã có lỗi xảy ra");
     res.redirect(`${conFig.prefixAdmin}/products`);
   }
 };
@@ -224,10 +225,10 @@ module.exports.trash = async (req, res) => {
 module.exports.restore = async (req, res) => {
   try {
     await productService.restoreProduct(req.params.id);
-    req.flash("thanhcong", "Khôi phục sản phẩm thành công");
+    flash.flashSuccess(req, "Khôi phục sản phẩm thành công");
   } catch (error) {
     console.error("RESTORE ERROR:", error);
-    req.flash("error", "Đã có lỗi xảy ra khi khôi phục");
+    flash.flashError(req, "Đã có lỗi xảy ra khi khôi phục");
   }
   res.redirect(req.get("Referer") || `${conFig.prefixAdmin}/products/trash`);
 };
@@ -237,10 +238,10 @@ module.exports.restore = async (req, res) => {
 module.exports.hardDelete = async (req, res) => {
   try {
     await productService.hardDeleteProduct(req.params.id);
-    req.flash("thanhcong", "Đã xóa vĩnh viễn sản phẩm");
+    flash.flashSuccess(req, "Đã xóa vĩnh viễn sản phẩm");
   } catch (error) {
     console.error("HARD DELETE ERROR:", error);
-    req.flash("error", "Đã có lỗi xảy ra khi xóa vĩnh viễn");
+    flash.flashError(req, "Đã có lỗi xảy ra khi xóa vĩnh viễn");
   }
   res.redirect(req.get("Referer") || `${conFig.prefixAdmin}/products/trash`);
 };

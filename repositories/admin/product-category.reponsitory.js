@@ -10,6 +10,12 @@ class ProductCategoryRepository {
       .lean();
   }
 
+  async findByIds(ids, selectFields = "") {
+    const query = ProductCategory.find({ _id: { $in: ids }, deleted: false });
+    if (selectFields) query.select(selectFields);
+    return query.lean();
+  }
+
   /**
    * Kiểm tra trùng lặp slug
    */
