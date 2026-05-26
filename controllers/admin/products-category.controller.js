@@ -1,7 +1,9 @@
-const ProductCategory = require("../../models/products-category.model");
 const treeHelper = require("../../helpers/tree");
 const { CATEGORY_ICON_PRESETS, DEFAULT_CATEGORY_ICON } = require("../../config/category-icons");
 const categoryService = require("../../services/admin/product-category.service");
+const flash = require("../../helpers/flash.helper");
+const AppError = require("../../utils/AppError");
+const ERROR_CODE = require("../../constants/error-code");
 
 
 // [GET] admin/products-category
@@ -18,7 +20,8 @@ module.exports.index = async (req, res) => {
       defaultCategoryIcon: DEFAULT_CATEGORY_ICON, // Issue 15 Fix
     });
   } catch (error) {
-    console.error(error);
+    console.error("GET PRODUCTS-CATEGORY INDEX ERROR:", error);
+    flash.flashError(req, "Đã xảy ra lỗi khi tải danh mục sản phẩm");
     res.redirect("/admin/dashboard");
   }
 };
@@ -28,19 +31,22 @@ module.exports.createPost = async (req, res) => {
   try {
     const result = await categoryService.createCategory(req.body);
 
-    if (result.error) {
-      return res.status(result.error.status).json(result.error.payload);
-    }
-
     return res.status(201).json({
       success: true,
       data: result.data,
+      message: "Tạo danh mục thành công",
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
+    console.error("CREATE CATEGORY ERROR:", error);
+
+    const statusCode = error.statusCode || error.status || 500;
+    const message = error.message || "Lỗi server";
+    const code = error.code || ERROR_CODE.INTERNAL_SERVER_ERROR;
+
+    return res.status(statusCode).json({
       success: false,
-      message: "Loi server",
+      message,
+      code,
     });
   }
 };
@@ -53,20 +59,22 @@ module.exports.editPatch = async (req, res) => {
       req.body
     );
 
-    if (result.error) {
-      return res.status(result.error.status).json(result.error.payload);
-    }
-
     return res.json({
       success: true,
       data: result.data,
-      message: "Cap nhat thanh cong",
+      message: "Cập nhật thành công",
     });
   } catch (error) {
-    console.error("Loi cap nhat danh muc:", error);
-    return res.status(500).json({
+    console.error("UPDATE CATEGORY ERROR:", error);
+
+    const statusCode = error.statusCode || error.status || 500;
+    const message = error.message || "Lỗi server khi cập nhật danh mục";
+    const code = error.code || ERROR_CODE.INTERNAL_SERVER_ERROR;
+
+    return res.status(statusCode).json({
       success: false,
-      message: "Loi server khi cap nhat danh muc",
+      message,
+      code,
     });
   }
 };
@@ -76,18 +84,21 @@ module.exports.delete = async (req, res) => {
   try {
     const result = await categoryService.deleteCategory(req.params.id);
 
-    if (result.error) {
-      return res.status(result.error.status).json(result.error.payload);
-    }
-
     return res.json({
       success: true,
-      message: "Xoa thanh cong",
+      message: "Xóa thành công",
     });
   } catch (error) {
-    return res.status(500).json({
+    console.error("DELETE CATEGORY ERROR:", error);
+
+    const statusCode = error.statusCode || error.status || 500;
+    const message = error.message || "Lỗi server";
+    const code = error.code || ERROR_CODE.INTERNAL_SERVER_ERROR;
+
+    return res.status(statusCode).json({
       success: false,
-      message: "Loi server",
+      message,
+      code,
     });
   }
 };

@@ -1,12 +1,8 @@
-const ProductCategory = require("../models/products-category.model");
+const productCategoryRepository = require("../repositories/admin/product-category.reponsitory");
 const { normalizeCategoryIcon } = require("../config/category-icons");
 
 async function buildCategoryMeta() {
-  const categories = await ProductCategory.find({
-    deleted: false,
-  })
-    .sort({ position: "asc" })
-    .lean();
+  const categories = await productCategoryRepository.findAllActive();
 
   const categoryMap = {};
 

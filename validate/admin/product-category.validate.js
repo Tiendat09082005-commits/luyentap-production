@@ -1,18 +1,14 @@
-const ProductCategory = require("../../models/products-category.model");
 const { buildCategoryMeta } = require("../../helpers/product-category.meta");
 const { buildLevelResolver } = require("../../helpers/product-category.level");
 const { normalizeText } = require("../../helpers/product-category.normalize");
+const AppError = require("../../utils/AppError");
+const ERROR_CODE = require("../../constants/error-code");
 
 async function validateCategoryPayload({ id = "", title, parentId }) {
   const normalizedTitle = normalizeText(title);
 
   if (!normalizedTitle) {
-    return {
-      error: {
-        status: 400,
-        payload: { success: false, message: "Thieu title" },
-      },
-    };
+    throw new AppError(400, ERROR_CODE.CATEGORY_MISSING_TITLE, "Tên danh mục không được để trống");
   }
 
   const { categoryMap } = await buildCategoryMeta();
@@ -24,12 +20,7 @@ async function validateCategoryPayload({ id = "", title, parentId }) {
   if (parentId) {
     const parent = categoryMap[String(parentId)];
     if (!parent) {
-      return {
-        error: {
-          status: 400,
-          payload: { success: false, message: "Danh muc cha khong hop le" },
-        },
-      };
+      throw new AppError(400, ERROR_CODE.CATEGORY_INVALID_PARENT, "Danh mục cha không hợp lệ");
     }
 
     // Issue 9 Fix: kiểm tra circular dependency
@@ -39,15 +30,7 @@ async function validateCategoryPayload({ id = "", title, parentId }) {
 
       // parentId không được là chính id đang edit
       if (String(parentId) === idStr) {
-        return {
-          error: {
-            status: 400,
-            payload: {
-              success: false,
-              message: "Danh muc khong the la cha cua chinh no",
-            },
-          },
-        };
+        throw new AppError(400, ERROR_CODE.CATEGORY_CIRCULAR_DEPENDENCY, "Danh mục không thể là cha của chính nó");
       }
 
       // BFS: tìm tất cả hậu duệ của category đang edit
@@ -68,30 +51,14 @@ async function validateCategoryPayload({ id = "", title, parentId }) {
       }
 
       if (descendants.has(String(parentId))) {
-        return {
-          error: {
-            status: 400,
-            payload: {
-              success: false,
-              message: "Khong the dat danh muc cha la mot danh muc con cua no",
-            },
-          },
-        };
+        throw new AppError(400, ERROR_CODE.CATEGORY_CIRCULAR_DEPENDENCY, "Không thể đặt danh mục cha là một danh mục con của nó");
       }
     }
 
     level = resolveLevel(parent) + 1;
 
     if (level > 3) {
-      return {
-        error: {
-          status: 400,
-          payload: {
-            success: false,
-            message: "Chi ho tro toi da 3 cap danh muc",
-          },
-        },
-      };
+      throw new AppError(400, ERROR_CODE.CATEGORY_EXCEED_LEVEL_LIMIT, "Chỉ hỗ trợ tối đa 3 cấp danh mục");
     }
   }
 

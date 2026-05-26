@@ -1,4 +1,4 @@
-const ProductCategory = require("../../models/products-category.model");
+const productCategoryRepository = require("../../repositories/admin/product-category.reponsitory");
 const { buildCategoryMeta } = require("../../helpers/product-category.meta");
 const { buildLevelResolver } = require("../../helpers/product-category.level");
 const {
@@ -7,6 +7,8 @@ const {
 } = require("../../config/category-icons");
 const { normalizeText } = require("../../helpers/product-category.normalize");
 const { validateCategoryPayload } = require("../../validate/admin/product-category.validate");
+const AppError = require("../../utils/AppError");
+const ERROR_CODE = require("../../constants/error-code");
 
 
 async function getCategoryTreeWithStats(treeHelper) {
@@ -53,49 +55,26 @@ async function createCategory(payload) {
     parentId: parent_id,
   });
 
-  if (validation.error) return validation;
-
   const isRootCategory = validation.level === 1;
   const nextThumbnail = normalizeText(thumbnail);
 
   // business rule
   if (!isRootCategory && !nextThumbnail) {
-    return {
-      error: {
-        status: 400,
-        payload: {
-          success: false,
-          message: "Danh muc cap 2-3 bat buoc co anh",
-        },
-      },
-    };
+    throw new AppError(400, ERROR_CODE.CATEGORY_REQUIRED_IMAGE, "Danh mục cấp 2-3 bắt buộc có ảnh");
   }
 
   // Issue 6 Fix: kiểm tra slug trùng trước khi tạo
   const normalizedSlug = normalizeText(slug);
   if (normalizedSlug) {
-    const slugExists = await ProductCategory.exists({
-      slug: normalizedSlug,
-      deleted: false,
-    });
+    const slugExists = await productCategoryRepository.existsBySlug(normalizedSlug);
 
     if (slugExists) {
-      return {
-        error: {
-          status: 400,
-          payload: { success: false, message: "Slug nay da ton tai, vui long chon slug khac" },
-        },
-      };
+      throw new AppError(400, ERROR_CODE.CATEGORY_DUPLICATE_SLUG, "Slug này đã tồn tại, vui lòng chọn slug khác");
     }
   }
 
   // Issue 10 Fix: tự động tính position = max trong cùng scope parent + 1
-  const siblingPositions = await ProductCategory.find({
-    parent_id: parent_id || null,
-    deleted: false,
-  })
-    .select("position")
-    .lean();
+  const siblingPositions = await productCategoryRepository.findSiblingPositions(parent_id);
 
   const maxPosition = siblingPositions.reduce(
     (max, cat) => Math.max(max, cat.position || 0),
@@ -103,7 +82,7 @@ async function createCategory(payload) {
   );
   const nextPosition = maxPosition + 1;
 
-  const newCategory = await ProductCategory.create({
+  const newCategory = await productCategoryRepository.create({
     title: validation.normalizedTitle,
     slug: normalizedSlug || slug,
     parent_id: parent_id || null,
@@ -124,23 +103,13 @@ async function createCategory(payload) {
 
 async function updateCategory(id, payload) {
   if (!id) {
-    return {
-      error: {
-        status: 400,
-        payload: { success: false, message: "Thieu id danh muc" },
-      },
-    };
+    throw new AppError(400, ERROR_CODE.CATEGORY_MISSING_ID, "Thiếu id danh mục");
   }
 
-  const existing = await ProductCategory.findById(id).lean();
+  const existing = await productCategoryRepository.findById(id);
 
   if (!existing) {
-    return {
-      error: {
-        status: 404,
-        payload: { success: false, message: "Khong tim thay danh muc" },
-      },
-    };
+    throw new AppError(404, ERROR_CODE.CATEGORY_NOT_FOUND, "Không tìm thấy danh mục");
   }
 
   const {
@@ -159,8 +128,6 @@ async function updateCategory(id, payload) {
     parentId: parent_id,
   });
 
-  if (validation.error) return validation;
-
   const isRoot = validation.level === 1;
 
   // xử lý thumbnail (clean hơn)
@@ -173,15 +140,7 @@ async function updateCategory(id, payload) {
     .find(Boolean);
 
   if (!isRoot && !nextThumbnail) {
-    return {
-      error: {
-        status: 400,
-        payload: {
-          success: false,
-          message: "Danh muc cap 2-3 bat buoc co anh",
-        },
-      },
-    };
+    throw new AppError(400, ERROR_CODE.CATEGORY_REQUIRED_IMAGE, "Danh mục cấp 2-3 bắt buộc có ảnh");
   }
 
   // xử lý icon rõ ràng hơn
@@ -195,19 +154,10 @@ async function updateCategory(id, payload) {
   // Issue 7 Fix: kiểm tra slug trùng khi update (loại trừ chính nó)
   const normalizedSlug = normalizeText(slug);
   if (normalizedSlug) {
-    const slugExists = await ProductCategory.exists({
-      slug: normalizedSlug,
-      deleted: false,
-      _id: { $ne: id },
-    });
+    const slugExists = await productCategoryRepository.existsBySlug(normalizedSlug, id);
 
     if (slugExists) {
-      return {
-        error: {
-          status: 400,
-          payload: { success: false, message: "Slug nay da ton tai, vui long chon slug khac" },
-        },
-      };
+      throw new AppError(400, ERROR_CODE.CATEGORY_DUPLICATE_SLUG, "Slug này đã tồn tại, vui lòng chọn slug khác");
     }
   }
 
@@ -220,11 +170,7 @@ async function updateCategory(id, payload) {
     thumbnail: isRoot ? "" : nextThumbnail,
   };
 
-  const updated = await ProductCategory.findByIdAndUpdate(
-    id,
-    updateData,
-    { new: true }
-  );
+  const updated = await productCategoryRepository.update(id, updateData);
 
   return {
     data: updated,
@@ -233,52 +179,25 @@ async function updateCategory(id, payload) {
 
 async function deleteCategory(id) {
   if (!id) {
-    return {
-      error: {
-        status: 400,
-        payload: { success: false, message: "Thieu id danh muc" },
-      },
-    };
+    throw new AppError(400, ERROR_CODE.CATEGORY_MISSING_ID, "Thiếu id danh mục");
   }
 
   // check tồn tại
-  const existing = await ProductCategory.findOne({
-    _id: id,
-    deleted: false,
-  }).lean();
+  const existing = await productCategoryRepository.findOneActive(id);
 
   if (!existing) {
-    return {
-      error: {
-        status: 404,
-        payload: { success: false, message: "Khong tim thay danh muc" },
-      },
-    };
+    throw new AppError(404, ERROR_CODE.CATEGORY_NOT_FOUND, "Không tìm thấy danh mục");
   }
 
   //  check có category con không
-  const hasChild = await ProductCategory.exists({
-    parent_id: id,
-    deleted: false,
-  });
+  const hasChild = await productCategoryRepository.hasChildren(id);
 
   if (hasChild) {
-    return {
-      error: {
-        status: 400,
-        payload: {
-          success: false,
-          message: "Khong the xoa danh muc co danh muc con",
-        },
-      },
-    };
+    throw new AppError(400, ERROR_CODE.CATEGORY_HAS_CHILDREN, "Không thể xóa danh mục có danh mục con");
   }
 
   //  soft delete
-  await ProductCategory.updateOne(
-    { _id: id },
-    { deleted: true }
-  );
+  await productCategoryRepository.softDelete(id);
 
   return {
     data: true,
