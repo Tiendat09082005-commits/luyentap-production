@@ -1,6 +1,7 @@
 const authService = require("../../services/client/auth.service");
 const userService = require("../../services/client/user.service");
 const { deleteCachedUserByToken } = require("../../middleware/client/auth.middleware");
+const flash = require("../../helpers/flash.helper");
 
 // COOKIE OPTIONS
 const COOKIE_OPTIONS = {
@@ -30,10 +31,10 @@ module.exports.registerPost = async (req, res) => {
     
     res.cookie("tokenUser", user.tokenUser, COOKIE_OPTIONS);
     setClientSession(req, user);
-    req.flash("thanhcong", "Bạn đã đăng kí tài khoản thành công");
+    flash.flashSuccess(req, "Bạn đã đăng kí tài khoản thành công");
     res.redirect("/");
   } catch (error) {
-    req.flash("thatbai", error.message);
+    flash.flashError(req, error.message);
     res.redirect("back");
   }
 };
@@ -55,10 +56,10 @@ module.exports.loginPost = async (req, res) => {
     setClientSession(req, user);
     res.clearCookie("cartId");
     
-    req.flash("thanhcong", "Đăng nhập thành công");
+    flash.flashSuccess(req, "Đăng nhập thành công");
     res.redirect("/");
   } catch (error) {
-    req.flash("thatbai", error.message);
+    flash.flashError(req, error.message);
     res.redirect("back");
   }
 };
@@ -84,6 +85,7 @@ module.exports.detail = async (req, res) => {
     });
   } catch (error) {
     console.error("USER DETAIL ERROR:", error);
+    flash.flashError(req, "Có lỗi xảy ra khi tải thông tin người dùng");
     res.redirect("/");
   }
 };
@@ -135,10 +137,10 @@ module.exports.editPost = async (req, res) => {
 
     await userService.updateProfile(userId, updateData, currentPassword);
 
-    req.flash("thanhcong", "Cập nhật thông tin cá nhân thành công");
+    flash.flashSuccess(req, "Cập nhật thông tin cá nhân thành công");
     res.redirect(`/user/detail/${userId}`);
   } catch (error) {
-    req.flash("thatbai", error.message);
+    flash.flashError(req, error.message);
     res.redirect("back");
   }
 };

@@ -1,5 +1,5 @@
-const User = require("../../models/user.model");
-const Order = require("../../models/order.model");
+const userRepo = require("../../repositories/client/user.reponsitory");
+const orderRepo = require("../../repositories/client/order.reponsitory");
 const bcrypt = require("bcrypt");
 
 class UserService {
@@ -8,8 +8,8 @@ class UserService {
    */
   async getUserDetail(userId) {
     const [user, rawOrders] = await Promise.all([
-      User.findOne({ _id: userId, deleted: false }).select("-password -tokenUser").lean(),
-      Order.find({ user_id: userId, deleted: false }).sort({ createdAt: -1 }).lean(),
+      userRepo.findByIdActive(userId),
+      orderRepo.findByUserIdActive(userId),
     ]);
 
     if (!user) {
@@ -46,7 +46,7 @@ class UserService {
    * Update user profile
    */
   async updateProfile(userId, updateData, currentPassword) {
-    const user = await User.findById(userId);
+    const user = await userRepo.findById(userId);
     if (!user) {
       throw new Error("Người dùng không tồn tại");
     }
@@ -59,7 +59,7 @@ class UserService {
     // Filter out password from updateData to prevent accidental updates
     const { password, tokenUser, ...safeUpdateData } = updateData;
 
-    await User.updateOne({ _id: userId }, safeUpdateData);
+    await userRepo.updateById(userId, safeUpdateData);
     return true;
   }
 }
