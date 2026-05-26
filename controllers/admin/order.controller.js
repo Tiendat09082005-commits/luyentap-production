@@ -6,6 +6,7 @@ const { SearchHelper } = require("../../helpers/searchHelper");
 const cacheService = require("../../services/cache.service");
 const searchConfigs = require("../../config/search.config");
 const orderService = require("../../services/admin/order.service");
+const flash = require("../../helpers/flash.helper");
 
 const invalidateOrderSearchCache = async () => {
   await cacheService.invalidateSearchModel("Order");
@@ -41,8 +42,9 @@ module.exports.index = async (req, res) => {
       customerName,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+    console.error("ORDER INDEX ERROR:", error);
+    flash.flashError(req, "Có lỗi xảy ra khi tải danh sách đơn hàng");
+    return res.redirect("back");
   }
 };
 
@@ -69,9 +71,14 @@ module.exports.updateStatus = async (req, res) => {
   } catch (error) {
     console.error("Update status error:", error);
 
-    return res.status(400).json({
+    const statusCode = error.statusCode || error.status || 500;
+    const message = error.message || "Update status failed";
+    const code = error.code || "INTERNAL_SERVER_ERROR";
+
+    return res.status(statusCode).json({
       success: false,
-      message: error.message || "Update status failed",
+      message,
+      code,
     });
   }
 };
@@ -92,16 +99,14 @@ module.exports.deleteItem = async (req, res) => {
   } catch (error) {
     console.error("DELETE ORDER ERROR:", error);
 
-    if (error.message === "ORDER_NOT_FOUND") {
-      return res.status(404).json({
-        success: false,
-        message: "Không tìm thấy đơn hàng",
-      });
-    }
+    const statusCode = error.statusCode || error.status || 500;
+    const message = error.message || "Xóa đơn hàng thất bại";
+    const code = error.code || "INTERNAL_SERVER_ERROR";
 
-    return res.status(500).json({
+    return res.status(statusCode).json({
       success: false,
-      message: "Delete item failed",
+      message,
+      code,
     });
   }
 };
@@ -119,9 +124,14 @@ module.exports.Suggest = async (req, res) => {
   } catch (error) {
     console.error("Suggest error:", error);
 
-    return res.status(500).json({
+    const statusCode = error.statusCode || error.status || 500;
+    const message = error.message || "Lỗi tải danh sách gợi ý";
+    const code = error.code || "INTERNAL_SERVER_ERROR";
+
+    return res.status(statusCode).json({
       success: false,
-      message: "Server error",
+      message,
+      code,
     });
   }
 };
@@ -132,15 +142,13 @@ module.exports.detail = async (req, res) => {
 
     const order = await orderService.getOrderDetail(orderId);
 
-    if (!order) {
-      req.flash("error", "Không tìm thấy đơn hàng");
-      return res.redirect("back");
-    }
-
     return res.render("admin/pages/order/detail", { order });
 
   } catch (error) {
     console.error("ORDER DETAIL ERROR:", error);
+    
+    flash.flashError(req, error.message || "Không tìm thấy đơn hàng");
+    
     return res.redirect("back");
   }
 };

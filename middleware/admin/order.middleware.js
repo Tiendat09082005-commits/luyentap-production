@@ -33,11 +33,13 @@ const validateSuggestMiddleware = (req, res, next) => {
 };
 
 
+const flash = require("../../helpers/flash.helper");
+
 const validateGetOrderDetailMiddleware = (req, res, next) => {
   const errors = validateGetOrderDetail(req.query) || [];
 
   if (errors.length > 0) {
-    req.flash("error", errors[0]);
+    flash.flashError(req, errors[0]);
     return res.redirect("back");
   }
 

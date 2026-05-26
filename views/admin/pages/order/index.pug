@@ -121,31 +121,31 @@ block main
                         ul.status-dropdown-menu
                           if order.status === 'chờ xác nhận'
                             li
-                              a.status-dropdown-item(href="#" data-status="đã xác nhận")
+                              a.status-dropdown-item(href="javascript:void(0);" data-status="đã xác nhận")
                                 span.status-dot.confirmed
                                 | Đã xác nhận
                             li
-                              a.status-dropdown-item.danger(href="#" data-status="đã hủy")
+                              a.status-dropdown-item.danger(href="javascript:void(0);" data-status="đã hủy")
                                 span.status-dot.cancelled
                                 | Đã hủy
                           
                           if order.status === 'đã xác nhận'
                             li
-                              a.status-dropdown-item(href="#" data-status="đang giao")
+                              a.status-dropdown-item(href="javascript:void(0);" data-status="đang giao")
                                 span.status-dot.shipping
                                 | Đang giao
                             li
-                              a.status-dropdown-item.danger(href="#" data-status="đã hủy")
+                              a.status-dropdown-item.danger(href="javascript:void(0);" data-status="đã hủy")
                                 span.status-dot.cancelled
                                 | Đã hủy
 
                           if order.status === 'đang giao'
                             li
-                              a.status-dropdown-item(href="#" data-status="đã giao")
+                              a.status-dropdown-item(href="javascript:void(0);" data-status="đã giao")
                                 span.status-dot.delivered
                                 | Đã giao
                             li
-                              a.status-dropdown-item.danger(href="#" data-status="đã hủy")
+                              a.status-dropdown-item.danger(href="javascript:void(0);" data-status="đã hủy")
                                 span.status-dot.cancelled
                                 | Đã hủy
                   else
@@ -162,10 +162,8 @@ block main
                     if(roles.permissions.includes("orders_view"))
                       button.btn-action.btn-view(
                         type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#detailModal"
                         id="detailOrderAdmin"
-                        data-id = order._id
+                        data-id=order._id
                         title="Xem chi tiết"
                       )
                         i.fas.fa-eye
@@ -187,18 +185,5 @@ block main
     //- Phân trang
     +pagination(pagination)
 
-    //- Modal chi tiết đơn hàng
-    #detailModal.modal.fade(tabindex="-1")
-      .modal-dialog.modal-lg
-        .modal-content
-          .modal-header
-            h5.modal-title Chi Tiết Đơn Hàng
-            button.btn-close(type="button" data-bs-dismiss="modal")
-          .modal-body
-            #orderDetailContent
-              .text-center.py-5
-                .spinner-border(role="status")
-                span.ms-2 Đang tải...
-          .modal-footer
-            button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Đóng
+
 

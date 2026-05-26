@@ -190,6 +190,7 @@ if (uploadImage) {
       uploadImagePreview.src = "";
       uploadImagePreview.style.display = "none";
     }
+
   });
   uploadImageRemove.addEventListener("click", () => {
     // Xoá preview và reset input
@@ -242,46 +243,36 @@ function updateStatusOrder(orderId, status, buttonElement) {
       status: status,
     }),
   })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.success) {
-        buttonElement.innerText = status;
-
-        buttonElement.classList.remove(
-          "pending",
-          "confirmed",
-          "shipping",
-    body: JSON.stringify({
-      orderId: orderId,
-      status: status,
-    }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.success) {
-        buttonElement.innerText = status;
-
-        buttonElement.classList.remove(
-          "pending",
-          "confirmed",
-          "shipping",
-          "delivered",
-          "cancelled",
-        );
-
-        buttonElement.classList.add(statusClassMap[status]);
-      } else {
-        Swal.fire({ icon: 'error', text: "Cập nhật thất bại" });
+    .then(async (res) => {
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Cập nhật thất bại");
       }
+      return data;
+    })
+    .then((data) => {
+      buttonElement.innerText = status;
+
+      buttonElement.classList.remove(
+        "pending",
+        "confirmed",
+        "shipping",
+        "delivered",
+        "cancelled"
+      );
+
+      buttonElement.classList.add(statusClassMap[status]);
+      Swal.fire({ icon: 'success', text: data.message || "Cập nhật thành công", timer: 1500 });
     })
     .catch((err) => {
       console.error(err);
-      Swal.fire({ icon: 'error', text: "Có lỗi xảy ra" });
+      Swal.fire({ icon: 'error', text: err.message || "Có lỗi xảy ra" });
     })
     .finally(() => {
       buttonElement.disabled = false;
     });
 }
+
 // Thay đổi trạng thái đơn hàng (từ trang chi tiết)
 const btnStatusUpdates = document.querySelectorAll("[status-update]");
 if (btnStatusUpdates.length > 0) {
@@ -313,14 +304,41 @@ if (btnStatusUpdates.length > 0) {
               status: status,
             }),
           })
-//  xóa đơn hàng
-const buttonDeleteOrder = document.querySelectorAll(".buttonDeleteOrder");
+            .then(async (res) => {
+              const data = await res.json();
+              if (!res.ok || !data.success) {
+                throw new Error(data.message || "Cập nhật thất bại");
+              }
+              return data;
+            })
+            .then((data) => {
+              Swal.fire({
+                icon: 'success',
+                text: data.message || "Cập nhật thành công",
+                timer: 1500
+              }).then(() => {
+                location.reload();
+              });
+            })
+            .catch((err) => {
+              console.error(err);
+              Swal.fire({ icon: 'error', text: err.message || "Có lỗi xảy ra" });
+            })
+            .finally(() => {
+              btn.disabled = false;
+            });
+        }
+      });
+    });
+  });
+}
 
+// Xóa đơn hàng
+const buttonDeleteOrder = document.querySelectorAll(".buttonDeleteOrder");
 if (buttonDeleteOrder.length > 0) {
   buttonDeleteOrder.forEach((button) => {
     button.addEventListener("click", function () {
       const id = this.dataset.id;
-
       if (confirm("Bạn có chắc muốn xoá đơn hàng này không?")) {
         deletedOrder(id);
       }

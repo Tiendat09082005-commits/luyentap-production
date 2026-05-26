@@ -1,8 +1,11 @@
-const Order = require("../../models/order.model");
-const Product = require("../../models/products.model");
+const orderRepo = require("../../repositories/admin/order.reponsitory");
+const productRepo = require("../../repositories/admin/product.reponsitory");
 const { SearchHelper } = require("../../helpers/searchHelper");
 const searchConfigs = require("../../config/search.config");
 const { priceNew } = require("../../helpers/priceNew");
+const { buildQuery } = require("../../helpers/order.helper");
+const AppError = require("../../utils/AppError");
+const ERROR_CODE = require("../../constants/error-code");
 
 const VALID_STATUS = [
   "chờ xác nhận",
@@ -12,59 +15,13 @@ const VALID_STATUS = [
   "đã hủy",
 ];
 
-//  build query sạch
-const buildQuery = ({ keyword, status, date, userId }) => {
-  const find = { deleted: false };
-
-  if (userId) {
-    const mongoose = require("mongoose");
-    if (mongoose.Types.ObjectId.isValid(userId)) {
-      find.user_id = userId;
-    }
-  }
-
-  if (keyword) {
-    const safeKeyword = keyword.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(safeKeyword, "i");
-
-    find.$or = [
-      { orderCode: regex },
-      { "userInfo.fullName": regex },
-      { "userInfo.phone": regex },
-    ];
-  }
-
-  if (status && VALID_STATUS.includes(status)) {
-    find.status = status;
-  }
-
-  if (date) {
-    const parsed = new Date(date);
-    if (!isNaN(parsed)) {
-      const start = new Date(parsed);
-      start.setHours(0, 0, 0, 0);
-
-      const end = new Date(parsed);
-      end.setHours(23, 59, 59, 999);
-
-      find.createdAt = { $gte: start, $lte: end };
-    }
-  }
-
-  return find;
-};
-
 //  get orders
 const getOrders = async (query, pagination) => {
   const find = buildQuery(query);
 
-  const total = await Order.countDocuments(find);
+  const total = await orderRepo.countOrders(find);
 
-  const orders = await Order.find(find)
-    .skip(pagination.skip)
-    .limit(pagination.limit)
-    .sort({ createdAt: -1 })
-    .lean();
+  const orders = await orderRepo.findOrders(find, pagination.skip, pagination.limit);
 
   // 🔥 batch product fetch
   const allProductIds = [
@@ -73,9 +30,7 @@ const getOrders = async (query, pagination) => {
     ),
   ];
 
-  const products = await Product.find({ _id: { $in: allProductIds } })
-    .select("title")
-    .lean();
+  const products = await productRepo.findProductsByIds(allProductIds, "title");
 
   const productMap = Object.fromEntries(
     products.map((p) => [p._id.toString(), p.title]),
@@ -95,50 +50,45 @@ const getOrders = async (query, pagination) => {
 //  update status có validate
 const updateOrderStatus = async (orderId, status) => {
   const trimmedStatus = status ? status.trim() : "";
-  console.log(`[OrderService] Updating Order ${orderId} to status: "${trimmedStatus}"`);
 
   if (!VALID_STATUS.includes(trimmedStatus)) {
-    console.error(`[OrderService] Invalid status provided: "${trimmedStatus}". Valid:`, VALID_STATUS);
-    throw new Error(`Trạng thái "${trimmedStatus}" không hợp lệ`);
+    throw new AppError(400, ERROR_CODE.ORDER_INVALID_STATUS, `Trạng thái "${trimmedStatus}" không hợp lệ`);
   }
 
   const mongoose = require("mongoose");
   if (!mongoose.Types.ObjectId.isValid(orderId)) {
-    throw new Error("ID đơn hàng không hợp lệ");
+    throw new AppError(400, ERROR_CODE.ORDER_INVALID_ID, "ID đơn hàng không hợp lệ");
   }
 
-  const order = await Order.findById(orderId);
+  const order = await orderRepo.findOrderById(orderId);
   if (!order) {
-    throw new Error("Không tìm thấy đơn hàng trong hệ thống");
+    throw new AppError(404, ERROR_CODE.ORDER_NOT_FOUND, "Không tìm thấy đơn hàng trong hệ thống");
   }
 
-  console.log(`[OrderService] Current order status: "${order.status}"`);
-
-  //  rule đơn giản (có thể nâng cấp thành state machine)
-  if (order.status === "đã giao" || order.status === "đã hủy") {
-    throw new Error("Không thể cập nhật đơn hàng đã ở trạng thái hoàn tất");
+  // State Machine Logic
+  const currentStatus = order.status;
+  
+  if (currentStatus === "đã giao" || currentStatus === "đã hủy") {
+    throw new AppError(400, ERROR_CODE.ORDER_INVALID_TRANSITION, "Không thể cập nhật đơn hàng đã ở trạng thái hoàn tất");
   }
 
-  await Order.updateOne(
-    { _id: orderId },
-    { $set: { status: trimmedStatus } }
-  );
+  // Validate forward transition
+  const validTransitions = {
+    "chờ xác nhận": ["đã xác nhận", "đang giao", "đã hủy"],
+    "đã xác nhận": ["đang giao", "đã hủy"],
+    "đang giao": ["đã giao", "đã hủy"]
+  };
 
-  console.log(`[OrderService] Order ${orderId} updated successfully to "${trimmedStatus}"`);
+  if (!validTransitions[currentStatus]?.includes(trimmedStatus)) {
+    throw new AppError(400, ERROR_CODE.ORDER_INVALID_TRANSITION, `Không thể chuyển trạng thái từ "${currentStatus}" sang "${trimmedStatus}"`);
+  }
+
+  await orderRepo.updateOrder(orderId, { status: trimmedStatus });
   return true;
 };
 
 const deleteOrder = async (id) => {
-    const result = await Order.updateOne(
-        {
-            _id: id,
-            deleted: false
-        },
-        {
-            deleted: true,
-            deletedAt: new Date()
-        }
-    );
+    const result = await orderRepo.softDeleteOrder(id);
 
     if (result.matchedCount === 0) {
         throw new Error("ORDER_NOT_FOUND");
@@ -146,8 +96,6 @@ const deleteOrder = async (id) => {
 
     return true;
 };
-
-
 
 const suggestOrders = async (keyword) => {
   return SearchHelper.suggest({
@@ -162,13 +110,15 @@ const suggestOrders = async (keyword) => {
 };
 
 const getOrderDetail = async (orderId) => {
-  const order = await Order.findOne({
-    _id: orderId,
-    deleted: false,
-  }).lean();
+  const mongoose = require("mongoose");
+  if (!mongoose.Types.ObjectId.isValid(orderId)) {
+    throw new AppError(400, ERROR_CODE.ORDER_INVALID_ID, "ID đơn hàng không hợp lệ");
+  }
+
+  const order = await orderRepo.findOneOrder({ _id: orderId, deleted: false }, true);
 
   if (!order) {
-    return null;
+    throw new AppError(404, ERROR_CODE.ORDER_NOT_FOUND, "Không tìm thấy đơn hàng trong hệ thống");
   }
 
   const productIds = order.products
@@ -178,11 +128,7 @@ const getOrderDetail = async (orderId) => {
   let productMap = {};
 
   if (productIds.length > 0) {
-    const productsInfo = await Product.find({
-      _id: { $in: productIds },
-    })
-      .select("title price discount")
-      .lean();
+    const productsInfo = await productRepo.findProductsByIds(productIds, "title price discount");
 
     productMap = Object.fromEntries(
       productsInfo.map(p => [p._id.toString(), p])
