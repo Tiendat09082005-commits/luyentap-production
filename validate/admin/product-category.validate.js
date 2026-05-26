@@ -68,4 +68,32 @@ async function validateCategoryPayload({ id = "", title, parentId }) {
   };
 }
 
-module.exports = { validateCategoryPayload };
+const mongoose = require("mongoose");
+
+const validateCreateCategoryRequest = (body) => {
+  const errors = [];
+  if (!body.title) {
+    errors.push("Tiêu đề không được để trống");
+  }
+  return errors;
+};
+
+const validateEditCategoryRequest = (params, body) => {
+  const errors = [];
+  if (!params.id) {
+    errors.push("Thiếu ID danh mục");
+  } else if (!mongoose.Types.ObjectId.isValid(params.id)) {
+    errors.push("ID danh mục không hợp lệ");
+  }
+
+  if (!body.title) {
+    errors.push("Tiêu đề không được để trống");
+  }
+  return errors;
+};
+
+module.exports = { 
+  validateCategoryPayload,
+  validateCreateCategoryRequest,
+  validateEditCategoryRequest
+};
