@@ -1,49 +1,10 @@
-const Product = require("../../models/products.model");
-const ProductVariant = require("../../models/productVariant.model");
-const ProductCategory = require("../../models/products-category.model");
+const homeRepo = require("../../repositories/client/home.reponsitory");
 const { priceNew } = require("../../helpers/priceNew");
 const { normalizeCategoryIcon } = require("../../config/category-icons");
 
 // 🔥 FLASH SALE (1 query, không N+1)
 const getFlashSaleProducts = async () => {
-  const data = await ProductVariant.aggregate([
-    {
-      $match: {
-        deleted: false,
-        status: "active",
-        discount: { $gt: 0 },
-      },
-    },
-    { $sort: { discount: -1 } },
-    {
-      $group: {
-        _id: "$product_id",
-        discount: { $first: "$discount" },
-        price: { $first: "$price" },
-        thumbnail: { $first: "$thumbnail" },
-      },
-    },
-    { $sort: { discount: -1 } },
-    { $limit: 4 },
-
-    //  JOIN luôn product
-    {
-      $lookup: {
-        from: "products",
-        localField: "_id",
-        foreignField: "_id",
-        as: "product",
-      },
-    },
-    { $unwind: "$product" },
-
-    {
-      $match: {
-        "product.deleted": false,
-        "product.status": "active",
-      },
-    },
-  ]);
+  const data = await homeRepo.getFlashSaleVariants();
 
   return data.map((item) => ({
     ...item.product,
@@ -56,25 +17,7 @@ const getFlashSaleProducts = async () => {
 
 //  FEATURED (giải quyết N+1 bằng lookup)
 const getFeaturedProducts = async () => {
-  const products = await Product.aggregate([
-    {
-      $match: {
-        deleted: false,
-        status: "active",
-      },
-    },
-    { $sort: { createdAt: -1 } },
-    { $limit: 10 },
-
-    {
-      $lookup: {
-        from: "product_variants",
-        localField: "_id",
-        foreignField: "product_id",
-        as: "variants",
-      },
-    },
-  ]);
+  const products = await homeRepo.getFeaturedProducts();
 
   return products.map((product) => {
     if (!product.variants.length) {
@@ -114,30 +57,8 @@ const getFeaturedProducts = async () => {
 //  CATEGORY
 const getHomeCategories = async () => {
   const [categories, counts] = await Promise.all([
-    ProductCategory.find({
-      deleted: false,
-      status: "active",
-      parent_id: null,
-    })
-      .sort({ position: 1, createdAt: 1 })
-      .limit(6)
-      .lean(),
-
-    Product.aggregate([
-      {
-        $match: {
-          deleted: false,
-          status: "active",
-          category_id: { $ne: null },
-        },
-      },
-      {
-        $group: {
-          _id: "$category_id",
-          total: { $sum: 1 },
-        },
-      },
-    ]),
+    homeRepo.getHomeCategories(),
+    homeRepo.getCategoryProductCounts(),
   ]);
 
   const countMap = counts.reduce((acc, item) => {
