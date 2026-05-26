@@ -1,4 +1,4 @@
-const Order = require("../../models/order.model");
+const orderRepo = require("../../repositories/client/order.reponsitory");
 const orderHelper = require("../../helpers/order.helper");
 const paymentService = require("../../services/payment.service");
 
@@ -9,13 +9,7 @@ class OrderService {
    * @param {string} userId 
    */
   async getOrderDetail(orderId, userId) {
-    const order = await Order.findOne({
-      _id: orderId,
-      user_id: userId,
-      deleted: false
-    })
-    .select("-deleted -__v")
-    .lean();
+    const order = await orderRepo.findByIdAndUserIdActive(orderId, userId);
 
     if (!order) {
       throw new Error("Không tìm thấy đơn hàng hoặc bạn không có quyền truy cập");
@@ -33,6 +27,5 @@ class OrderService {
     };
   }
 }
-
 
 module.exports = new OrderService();

@@ -1,4 +1,5 @@
 const orderService = require("../../services/client/order.service");
+const flash = require("../../helpers/flash.helper");
 
 // [GET] /orders/:id
 module.exports.detail = async (req, res) => {
@@ -15,7 +16,7 @@ module.exports.detail = async (req, res) => {
   } catch (error) {
     console.error(`[OrderController] Error fetching order ${orderId} for user ${userId}:`, error.message);
     
-    req.flash("error", error.message || "Đã có lỗi xảy ra khi lấy chi tiết đơn hàng.");
+    flash.flashError(req, error.message || "Đã có lỗi xảy ra khi lấy chi tiết đơn hàng.");
     res.redirect(`/user/detail/${userId}`);
   }
 };
