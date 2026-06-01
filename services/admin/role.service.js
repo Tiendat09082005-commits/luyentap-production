@@ -2,7 +2,7 @@ const {
   normalizePermissions,
   normalizeRoleData,
 } = require("../../helpers/role.helper");
-const RoleReponsitory = require("../../repositories/admin/role.reponsitory");
+const Rolerepository = require("../../repositories/admin/role.repository");
 const stringStripHtmlHelper = require("../../helpers/string-strip-html");
 const paginationHelper = require("../../helpers/pagination");
 const AppError = require("../../utils/AppError");
@@ -12,7 +12,7 @@ const getTitleRole = async () => {
   const find = {
     deleted: false,
   };
-  const roles = await RoleReponsitory.find(find, "title");
+  const roles = await Rolerepository.find(find, "title");
   return roles;
 };
 
@@ -20,13 +20,13 @@ const getRoles = async (query) => {
   const find = { deleted: false };
 
   // total record
-  const total = await RoleReponsitory.countDocuments(find);
+  const total = await Rolerepository.countDocuments(find);
 
   // dùng pagination cũ
   const pagination = paginationHelper(query, total);
 
   // query data
-  const records = await RoleReponsitory.findPaginated(
+  const records = await Rolerepository.findPaginated(
     find,
     pagination,
     "title description permissions createdAt"
@@ -48,7 +48,7 @@ const getRoles = async (query) => {
 };
 
 const getRolesPermission = async () => {
-  const records = await RoleReponsitory.find(
+  const records = await Rolerepository.find(
     { deleted: false },
     "title permissions"
   );
@@ -65,7 +65,7 @@ const getRolesPermission = async () => {
 const createRole = async (data) => {
   try {
     const roleData = normalizeRoleData(data);
-    const record = await RoleReponsitory.create(roleData);
+    const record = await Rolerepository.create(roleData);
     return record;
   } catch (error) {
     if (error.code === 11000) {
@@ -91,13 +91,13 @@ const updatePermissions = async (rawPermissions) => {
     },
   }));
 
-  const result = await RoleReponsitory.bulkWrite(operations);
+  const result = await Rolerepository.bulkWrite(operations);
 
   return result;
 };
 
 const getRoleDetail = async (id) => {
-  const record = await RoleReponsitory.findOne(
+  const record = await Rolerepository.findOne(
     {
       _id: id,
       deleted: false,
@@ -113,7 +113,7 @@ const getRoleDetail = async (id) => {
 };
 
 const getRoleForEdit = async (id) => {
-  const record = await RoleReponsitory.findOne(
+  const record = await Rolerepository.findOne(
     {
       _id: id,
       deleted: false,
@@ -132,7 +132,7 @@ const updateRole = async (id, data) => {
   try {
     const updateData = normalizeRoleData(data);
 
-    const result = await RoleReponsitory.update({ _id: id }, updateData);
+    const result = await Rolerepository.update({ _id: id }, updateData);
 
     if (!result) {
       throw new AppError(404, ERROR_CODE.ROLE_NOT_FOUND);
@@ -149,7 +149,7 @@ const updateRole = async (id, data) => {
 };
 
 const deleteRole = async (id) => {
-  const result = await RoleReponsitory.softDelete({ _id: id });
+  const result = await Rolerepository.softDelete({ _id: id });
 
   if (result.matchedCount === 0) {
     throw new AppError(404, ERROR_CODE.ROLE_NOT_FOUND_OR_DELETED);

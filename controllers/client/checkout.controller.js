@@ -7,7 +7,7 @@ const Order = require("../../models/order.model");
 const vnpay = require("../../helpers/vnpay");
 const paymentService = require("../../services/payment.service");
 const paymentController = require("./payment.controller");
-
+const checkoutClientService = require("../../services/client/checkout.service");
 
 // [POST] /checkout/buy-now
 module.exports.buyNow = async (req, res) => {
@@ -60,86 +60,21 @@ module.exports.buyNow = async (req, res) => {
 // [GET] /checkout/payment-info
 module.exports.paymentInfo = async (req, res) => {
   try {
-    const id = req.user.id;
-    const user = await User.findOne({
-      _id: id,
-      deleted: false,
-    }).select("-password -tokenUser");
+    const userId = req.user ? (req.user.id || req.user._id) : null;
+    const cartId = req.cookies.cartId;
+    const cartItemIds = req.cartItemIds; // from validation middleware
 
-    const cart = await Cart.findOne({
-      user_id: user._id,
-    });
-
-    if (!cart || !cart.products || cart.products.length === 0) {
-      return res.redirect("/cart");
-    }
-
-    // Capture selected items from body (for selection feature)
-    const selectedItemIds = Array.isArray(req.body.cartItemIds)
-      ? req.body.cartItemIds
-      : (req.body.cartItemIds ? [req.body.cartItemIds] : []);
-    const isSelectionMode = selectedItemIds.length > 0;
-
-    let products = [];
-    let totalPrice = 0;
-
-    for (let item of cart.products) {
-      // If we're in selection mode, skip items not in the selected list
-      if (isSelectionMode) {
-        const itemKey =
-          item.product_id.toString() +
-          (item.variant_id ? `_${item.variant_id}` : "");
-        if (!selectedItemIds.includes(itemKey)) continue;
-      }
-      const productInfo = await Product.findOne({
-        _id: item.product_id,
-        deleted: false,
-      }).lean();
-
-      if (productInfo) {
-        let price = 0;
-        let discount = 0;
-        let variantInfo = null;
-
-        if (item.variant_id) {
-          variantInfo = await ProductVariant.findOne({
-            _id: item.variant_id,
-            deleted: false,
-          }).lean();
-
-          if (variantInfo) {
-            price = variantInfo.price;
-            discount = variantInfo.discount;
-            productInfo.thumbnail =
-              variantInfo.thumbnail || productInfo.thumbnail;
-            productInfo.variantAttributes = variantInfo.attributes;
-          }
-        }
-
-        // Fallback for price if no variant or variant not found
-        if (!price && !discount) {
-          price = productInfo.price || 0;
-          discount = productInfo.discount || 0;
-        }
-
-        productInfo.price = price;
-        productInfo.discount = discount;
-        productInfo.priceNew = priceNewHelper.priceNew(price, discount);
-        productInfo.quantity = item.quantity;
-        productInfo.variant_id = item.variant_id; // QUAN TRỌNG: Gửi variant_id ra view
-        productInfo.totalPrice = productInfo.priceNew * item.quantity;
-
-        totalPrice += productInfo.totalPrice;
-        products.push(productInfo);
-      }
-    }
+    const data = await checkoutClientService.getPaymentInfoData(userId, cartId, cartItemIds);
 
     res.render("client/pages/checkout/payment-info.pug", {
-      user: user,
-      products: products,
-      totalPrice: totalPrice,
+      user: data.user,
+      products: data.products,
+      totalPrice: data.totalPrice,
     });
   } catch (error) {
+    if (error.message === "CART_EMPTY") {
+      return res.redirect("/cart");
+    }
     console.error(error);
     res.redirect("/cart");
   }

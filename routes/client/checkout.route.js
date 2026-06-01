@@ -1,10 +1,11 @@
 const express = require("express"); // gọi express vào
 const router = express.Router(); // dùng phương thức tạo router trong express
 const controller = require("../../controllers/client/checkout.controller");
+const checkoutValidate = require("../../validate/client/checkout.validate");
 
 
-router.get("/payment-info", controller.paymentInfo);
-router.post("/payment-info", controller.paymentInfo);
+router.get("/payment-info", checkoutValidate.validatePaymentInfo, controller.paymentInfo);
+router.post("/payment-info", checkoutValidate.validatePaymentInfo, controller.paymentInfo);
 router.post("/buy-now", controller.buyNow);
 router.post("/payment", controller.payment);
 router.post("/order", controller.order);

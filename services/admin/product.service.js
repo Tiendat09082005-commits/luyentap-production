@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const cacheService = require("../../services/cache.service");
-const productRepo = require("../../repositories/admin/product.reponsitory");
-const variantRepo = require("../../repositories/admin/product-variant.reponsitory");
-const productCategoryRepo = require("../../repositories/admin/product-category.reponsitory");
-const attributeRepo = require("../../repositories/admin/attribute.reponsitory");
+const productRepo = require("../../repositories/admin/product.repository");
+const variantRepo = require("../../repositories/admin/product-variant.repository");
+const productCategoryRepo = require("../../repositories/admin/product-category.repository");
+const attributeRepo = require("../../repositories/admin/attribute.repository");
 
 const { normalizeProductPayload } = require("../../helpers/product.helper");
 const {

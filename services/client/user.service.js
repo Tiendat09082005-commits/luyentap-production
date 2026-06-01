@@ -1,5 +1,5 @@
-const userRepo = require("../../repositories/client/user.reponsitory");
-const orderRepo = require("../../repositories/client/order.reponsitory");
+const userRepo = require("../../repositories/client/user.repository");
+const orderRepo = require("../../repositories/client/order.repository");
 const bcrypt = require("bcrypt");
 
 class UserService {

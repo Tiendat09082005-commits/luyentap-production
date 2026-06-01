@@ -1,4 +1,4 @@
-const homeRepo = require("../../repositories/client/home.reponsitory");
+const homeRepo = require("../../repositories/client/home.repository");
 const { priceNew } = require("../../helpers/priceNew");
 const { normalizeCategoryIcon } = require("../../config/category-icons");
 

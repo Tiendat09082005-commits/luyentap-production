@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const paginationHelper = require("../../helpers/pagination");
-const AccountReponsitory = require("../../repositories/admin/account.reponsitory");
-const UserReponsitory = require("../../repositories/admin/user.reponsitory");
-const RoleReponsitory = require("../../repositories/admin/role.reponsitory");
+const Accountrepository = require("../../repositories/admin/account.repository");
+const Userrepository = require("../../repositories/admin/user.repository");
+const Rolerepository = require("../../repositories/admin/role.repository");
 const { normalizeAccountData } = require("../../helpers/account.helper");
 const searchHelper = require("../../helpers/search");
 const AppError = require("../../utils/AppError");
@@ -11,10 +11,10 @@ const ERROR_CODE = require("../../constants/error-code");
 const getAccounts = async (query) => {
     const find = { deleted: false };
 
-    const total = await AccountReponsitory.countDocuments(find);
+    const total = await Accountrepository.countDocuments(find);
     const pagination = paginationHelper(query, total);
 
-    const records = await AccountReponsitory.findPaginated(find, pagination, "-password -token");
+    const records = await Accountrepository.findPaginated(find, pagination, "-password -token");
 
     return {
         records,
@@ -25,7 +25,7 @@ const getAccounts = async (query) => {
 const createAccount = async (data) => {
     try {
         const accountData = await normalizeAccountData(data);
-        const record = await AccountReponsitory.create(accountData);
+        const record = await Accountrepository.create(accountData);
         return record;
     } catch (error) {
         if (error.code === 11000) {
@@ -38,12 +38,12 @@ const createAccount = async (data) => {
 
 const getAccountEditData = async (id) => {
     const [record, roles] = await Promise.all([
-        AccountReponsitory.findOne({
+        Accountrepository.findOne({
             _id: id,
             deleted: false
         }, "-password -token"),
 
-        RoleReponsitory.find({ deleted: false }, "title")
+        Rolerepository.find({ deleted: false }, "title")
     ]);
 
     if (!record) {
@@ -60,7 +60,7 @@ const updateAccount = async (id, data) => {
     try {
         const updateData = await normalizeAccountData(data);
 
-        const result = await AccountReponsitory.updateOne(
+        const result = await Accountrepository.updateOne(
             { _id: id, deleted: false },
             updateData
         );
@@ -85,7 +85,7 @@ const getAccountDetail = async (id) => {
         throw new AppError(400, ERROR_CODE.ACCOUNT_INVALID_ID);
     }
 
-    const record = await AccountReponsitory.findOne({
+    const record = await Accountrepository.findOne({
         _id: id,
         deleted: false
     }, "-token -password");
@@ -95,7 +95,7 @@ const getAccountDetail = async (id) => {
     }
 
     if (record.role_id) {
-        const role = await RoleReponsitory.findOne({ _id: record.role_id, deleted: false }, "title");
+        const role = await Rolerepository.findOne({ _id: record.role_id, deleted: false }, "title");
         record.role_id = role || null;
     }
 
@@ -124,10 +124,10 @@ const getAccountUsers = async (query) => {
         ];
     }
 
-    const total = await UserReponsitory.countDocuments(find);
+    const total = await Userrepository.countDocuments(find);
     const pagination = paginationHelper(query, total);
 
-    const listUser = await UserReponsitory.findPaginated(
+    const listUser = await Userrepository.findPaginated(
         find,
         pagination,
         "fullName email status avatar phone tokenUser createdAt deleted"
@@ -142,7 +142,7 @@ const getAccountUsers = async (query) => {
 };
 
 const changeStatusUser = async (id, status) => {
-    const result = await UserReponsitory.updateOne(
+    const result = await Userrepository.updateOne(
         { _id: id, deleted: false },
         { status }
     );
@@ -155,7 +155,7 @@ const changeStatusUser = async (id, status) => {
 };
 
 const deleteUser = async (id) => {
-    const result = await UserReponsitory.updateOne(
+    const result = await Userrepository.updateOne(
         { _id: id, deleted: false },
         {
             deleted: true,
@@ -171,7 +171,7 @@ const deleteUser = async (id) => {
 };
 
 const restoreUser = async (id) => {
-    const result = await UserReponsitory.updateOne(
+    const result = await Userrepository.updateOne(
         { _id: id, deleted: true }, 
         {
             deleted: false,

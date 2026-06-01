@@ -1,4 +1,4 @@
-const productCategoryRepository = require("../repositories/admin/product-category.reponsitory");
+const productCategoryRepository = require("../repositories/admin/product-category.repository");
 const { normalizeCategoryIcon } = require("../config/category-icons");
 
 async function buildCategoryMeta() {

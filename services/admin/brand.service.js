@@ -2,7 +2,7 @@ const {
   escapeRegex,
   normalizeBrandData,
 } = require("../../helpers/brand.helper");
-const BrandReponsitory = require("../../repositories/admin/brand.reponsitory");
+const Brandrepository = require("../../repositories/admin/brand.repository");
 const AppError = require("../../utils/AppError");
 const ERROR_CODE = require("../../constants/error-code");
 
@@ -30,7 +30,7 @@ const getBrands = async (query) => {
     ];
   }
 
-  const brands = await BrandReponsitory.find(find);
+  const brands = await Brandrepository.find(find);
 
   return {
     brands,
@@ -47,7 +47,7 @@ const createBrand = async (data) => {
       brandData.status = "active";
     }
 
-    const record = await BrandReponsitory.create(brandData);
+    const record = await Brandrepository.create(brandData);
 
     return record;
   } catch (error) {
@@ -60,7 +60,7 @@ const createBrand = async (data) => {
 };
 
 const getBrandDetail = async (id) => {
-  const brand = await BrandReponsitory.findOne({ _id: id, deleted: false });
+  const brand = await Brandrepository.findOne({ _id: id, deleted: false });
   
 
   if (!brand) {
@@ -71,7 +71,7 @@ const getBrandDetail = async (id) => {
 };
 
 const changeStatusBrand = async (id, status) => {
-  const result = await BrandReponsitory.updateStatus(id, status);
+  const result = await Brandrepository.updateStatus(id, status);
 
   if (result.matchedCount === 0) {
     throw new AppError(404, ERROR_CODE.BRAND_NOT_FOUND);
@@ -84,7 +84,7 @@ const updateBrand = async (id, data) => {
   try {
     const updateData = normalizeBrandData(data);
 
-    const brand = await BrandReponsitory.update(id, updateData);
+    const brand = await Brandrepository.update(id, updateData);
 
     if (!brand) {
       throw new AppError(404, ERROR_CODE.BRAND_NOT_FOUND);
@@ -101,7 +101,7 @@ const updateBrand = async (id, data) => {
 };
 
 const deleteBrand = async (id) => {
-  const result = await BrandReponsitory.softDelete(id);
+  const result = await Brandrepository.softDelete(id);
 
   if (result.matchedCount === 0) {
     throw new AppError(404, ERROR_CODE.BRAND_NOT_FOUND_OR_DELETED);

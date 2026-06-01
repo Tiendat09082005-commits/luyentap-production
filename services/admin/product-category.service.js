@@ -1,4 +1,4 @@
-const productCategoryRepository = require("../../repositories/admin/product-category.reponsitory");
+const productCategoryRepository = require("../../repositories/admin/product-category.repository");
 const { buildCategoryMeta } = require("../../helpers/product-category.meta");
 const { buildLevelResolver } = require("../../helpers/product-category.level");
 const {

@@ -1,5 +1,5 @@
-const orderRepo = require("../../repositories/admin/order.reponsitory");
-const productRepo = require("../../repositories/admin/product.reponsitory");
+const orderRepo = require("../../repositories/admin/order.repository");
+const productRepo = require("../../repositories/admin/product.repository");
 const { SearchHelper } = require("../../helpers/searchHelper");
 const searchConfigs = require("../../config/search.config");
 const { priceNew } = require("../../helpers/priceNew");

@@ -2,7 +2,7 @@ const {
   escapeRegex,
   normalizeAttributeData,
 } = require("../../helpers/attribute.helper");
-const AttributeReponsitory = require("../../repositories/admin/attribute.reponsitory");
+const Attributerepository = require("../../repositories/admin/attribute.repository");
 const AppError = require("../../utils/AppError");
 const ERROR_CODE = require("../../constants/error-code");
 
@@ -30,7 +30,7 @@ const getAttributes = async (query) => {
     ];
   }
 
-  const attributes = await AttributeReponsitory.find(find);
+  const attributes = await Attributerepository.find(find);
 
   return attributes;
 };
@@ -43,7 +43,7 @@ const createAttribute = async (data) => {
       attributeData.status = "active";
     }
 
-    const record = await AttributeReponsitory.create(attributeData);
+    const record = await Attributerepository.create(attributeData);
 
     return record;
   } catch (error) {
@@ -61,7 +61,7 @@ const createAttribute = async (data) => {
 };
 
 const deleteAttribute = async (slug) => {
-  const result = await AttributeReponsitory.softDelete({ slug });
+  const result = await Attributerepository.softDelete({ slug });
 
   if (result.matchedCount === 0) {
     throw new AppError(404, ERROR_CODE.ATTRIBUTE_NOT_FOUND_OR_DELETED);
@@ -74,7 +74,7 @@ const updateAttribute = async (slug, data) => {
   try {
     const updateData = normalizeAttributeData(data);
 
-    const updated = await AttributeReponsitory.update({ slug }, updateData);
+    const updated = await Attributerepository.update({ slug }, updateData);
 
     if (!updated) {
       throw new AppError(404, ERROR_CODE.ATTRIBUTE_NOT_FOUND);

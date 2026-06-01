@@ -1,4 +1,4 @@
-const orderRepo = require("../../repositories/client/order.reponsitory");
+const orderRepo = require("../../repositories/client/order.repository");
 const orderHelper = require("../../helpers/order.helper");
 const paymentService = require("../../services/payment.service");
 
