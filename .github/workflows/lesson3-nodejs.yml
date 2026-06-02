@@ -1,0 +1,20 @@
+name: lesson3-Nodejs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  lesson3-nodejs:
+    runs-on : ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v6
+
+      - name: setup node
+        uses : actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name : instal dependencies
+        run : npm ci
