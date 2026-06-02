@@ -1,0 +1,46 @@
+if user
+  .client-chat-widget#clientChatWidget(data-user-id=(user._id || user.id))
+    button.client-chat-fab#clientChatFab(type="button" aria-label="Mở chat hỗ trợ")
+      i.fas.fa-comments
+      span.client-chat-fab-dot
+
+    .client-chat-overlay#clientChatOverlay(hidden)
+      .client-chat-panel#clientChatPanel(role="dialog" aria-modal="true" aria-labelledby="clientChatTitle")
+        header.client-chat-header
+          .client-chat-brand
+            .client-chat-avatar T
+            .client-chat-heading
+              h2#clientChatTitle Tida hỗ trợ
+              p
+                span.client-chat-online-dot
+                | Đang online
+          button.client-chat-close#clientChatClose(type="button" aria-label="Đóng chat")
+            i.fas.fa-times
+
+        .client-chat-quick
+          button(type="button" data-quick-reply="Tôi muốn hỏi về đơn hàng") Tôi muốn hỏi về đơn hàng
+          button(type="button" data-quick-reply="Chính sách đổi trả như thế nào?") Chính sách đổi trả
+          button(type="button" data-quick-reply="Tôi cần tư vấn sản phẩm") Tư vấn sản phẩm
+          button(type="button" data-quick-reply="Tôi muốn kiểm tra bảo hành") Kiểm tra bảo hành
+
+        .client-chat-messages#clientChatMessages
+          .client-chat-sentinel#clientChatSentinel
+          .client-chat-empty#clientChatEmpty
+            strong Xin chào, Tida có thể hỗ trợ gì cho bạn?
+            span Chọn câu hỏi nhanh hoặc nhập tin nhắn bên dưới.
+          .client-chat-typing#clientChatTyping(hidden)
+            span Admin đang nhập
+            i
+            i
+            i
+
+        form.client-chat-composer#clientChatForm
+          input#clientChatFile(type="file" accept="image/jpeg,image/png,image/gif,image/webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/zip" hidden)
+          button.client-chat-tool#clientChatEmoji(type="button" aria-label="Chèn emoji") 😊
+          button.client-chat-tool#clientChatUpload(type="button" aria-label="Tải ảnh hoặc file")
+            i.fas.fa-paperclip
+          input#clientChatInput(type="text" autocomplete="off" maxlength="2000" placeholder="Nhập tin nhắn...")
+          button.client-chat-send(type="submit" aria-label="Gửi tin nhắn")
+            i.fas.fa-paper-plane
+
+    audio#clientChatSound(preload="auto" src="/client/audio/chat-notification.mp3")

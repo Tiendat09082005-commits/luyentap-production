@@ -1,0 +1,88 @@
+extends ../../layouts/default.pug
+
+block css
+  link(rel="stylesheet", href="/admin/css/messages.css")
+
+block main
+  .admin-chat#adminMessagesApp(
+    data-admin-id=adminChatBootstrap.adminId
+    data-initial-conversation-id=adminChatBootstrap.conversationId
+  )
+    aside.admin-chat__sidebar
+      .admin-chat__sidebar-top
+        .admin-chat__eyebrow Tin nhắn hỗ trợ
+        h1.admin-chat__title Messenger nội bộ
+        p.admin-chat__subtitle Theo dõi khách hàng đang cần hỗ trợ và phản hồi theo thời gian thực.
+
+      .admin-chat__search
+        i.fas.fa-search
+        input#adminChatSearch(
+          type="search"
+          placeholder="Tìm theo tên, số điện thoại hoặc email"
+          autocomplete="off"
+        )
+
+      .admin-chat__list#adminChatConversationList
+        .admin-chat__list-empty#adminChatListEmpty
+          strong Chưa có hội thoại nào
+          span Khi khách hàng nhắn tin, cuộc trò chuyện sẽ xuất hiện tại đây.
+
+    section.admin-chat__panel
+      .admin-chat__placeholder#adminChatPlaceholder
+        .admin-chat__placeholder-mark
+          i.fas.fa-comments
+        h2 Chọn một hội thoại để bắt đầu
+        p Danh sách bên trái luôn ưu tiên cuộc trò chuyện mới nhất và hiển thị số tin chưa đọc.
+
+      .admin-chat__workspace#adminChatWorkspace(hidden)
+        header.admin-chat__header
+          .admin-chat__header-main
+            .admin-chat__header-avatar#adminChatHeaderAvatar KH
+            .admin-chat__header-copy
+              .admin-chat__header-line
+                h2#adminChatHeaderName Khách hàng
+                span.admin-chat__status#adminChatHeaderStatus Đang mở
+              p#adminChatHeaderPhone Chưa cập nhật số điện thoại
+              a#adminChatHeaderProfile(href="/admin/accounts/user" target="_blank" rel="noopener") Mở hồ sơ khách hàng
+
+          .admin-chat__header-actions
+            button.admin-chat__header-btn#adminChatCloseConversation(type="button")
+              i.fas.fa-lock
+              span Đóng hội thoại
+            button.admin-chat__header-btn.admin-chat__header-btn--danger#adminChatDeleteConversation(type="button")
+              i.fas.fa-trash
+              span Xóa đoạn chat
+
+        .admin-chat__messages#adminChatMessages
+          .admin-chat__top-sentinel#adminChatTopSentinel
+          .admin-chat__day-stream#adminChatMessageStream
+          .admin-chat__typing#adminChatTyping(hidden)
+            span Khách hàng đang nhập
+            i
+            i
+            i
+          .admin-chat__feed-empty#adminChatFeedEmpty(hidden)
+            strong Chưa có tin nhắn nào
+            span Hãy bắt đầu bằng một lời chào ngắn gọn để khách hàng biết bạn đang sẵn sàng hỗ trợ.
+
+        form.admin-chat__composer#adminChatForm
+          input#adminChatFile(
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/zip"
+            hidden
+          )
+          button.admin-chat__tool#adminChatEmoji(type="button" aria-label="Chèn emoji") 🙂
+          button.admin-chat__tool#adminChatUpload(type="button" aria-label="Tải ảnh hoặc file")
+            i.fas.fa-paperclip
+          input#adminChatInput(
+            type="text"
+            autocomplete="off"
+            maxlength="2000"
+            placeholder="Nhập phản hồi cho khách hàng..."
+          )
+          button.admin-chat__send#adminChatSend(type="submit" aria-label="Gửi tin nhắn")
+            i.fas.fa-paper-plane
+
+block script
+  script(src="/socket.io/socket.io.js" defer)
+  script(src="/admin/js/messages.js" defer)

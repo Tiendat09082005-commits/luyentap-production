@@ -83,37 +83,24 @@ module.exports.paymentInfo = async (req, res) => {
 // [POST] /checkout/payment
 module.exports.payment = async (req, res) => {
   try {
-    const products = req.body.products || [];
-    const totalPrice = parseInt(req.body.totalPrice) || 0;
-    const userInfo = req.body.userInfo || {};
-    const note = req.body.note || "";
-    const checkoutToken = paymentService.createCheckoutToken();
-    const idempotencyKey = paymentService.createCheckoutToken();
-    const timeoutMinutes = await paymentService.getCheckoutTimeoutMinutes();
-    const expiresAt = new Date(Date.now() + timeoutMinutes * 60 * 1000);
+    const { products, totalPrice, userInfo, note } = req.body;
 
-    req.session.checkoutDraft = {
-      token: checkoutToken,
-      idempotencyKey,
-      products: Array.isArray(products) ? products.map((item) => ({
-        product_id: item.product_id,
-        variant_id: item.variant_id || null,
-        quantity: parseInt(item.quantity, 10) || 1
-      })) : [],
+    const draft = await checkoutClientService.prepareCheckoutDraft(
+      products,
       totalPrice,
       userInfo,
-      note,
-      createdAt: new Date().toISOString(),
-      expiresAt: expiresAt.toISOString()
-    };
+      note
+    );
+
+    req.session.checkoutDraft = draft;
 
     res.render("client/pages/checkout/payment.pug", {
       user: req.user,
       userInfo: userInfo,
       products: products,
-      totalPrice: totalPrice,
+      totalPrice: parseInt(totalPrice) || 0,
       shippingFee: 0,
-      checkoutToken
+      checkoutToken: draft.token
     });
   } catch (error) {
     console.error(error);
@@ -196,9 +183,9 @@ module.exports.success = async (req, res) => {
 
     if (orderId) {
       find._id = orderId;
-      find.user_id = req.user.id; // Bắt buộc phải khớp user_id để tránh ID-scrolling
+      find.user_id = req.user.id || req.user._id; // Bắt buộc phải khớp user_id để tránh ID-scrolling
     } else {
-      find.user_id = req.user.id;
+      find.user_id = req.user.id || req.user._id;
     }
 
     const order = await Order.findOne(find).sort({
@@ -225,7 +212,7 @@ module.exports.pending = async (req, res) => {
 
     const order = await Order.findOne({
       _id: orderId,
-      user_id: req.user.id,
+      user_id: req.user.id || req.user._id,
       deleted: false
     }).lean();
 
@@ -253,10 +240,10 @@ module.exports.pending = async (req, res) => {
 module.exports.fail = async (req, res) => {
   const orderId = req.query.orderId;
   let order = null;
-  if (orderId && req.user?.id) {
+  if (orderId && (req.user?.id || req.user?._id)) {
     order = await Order.findOne({
       _id: orderId,
-      user_id: req.user.id,
+      user_id: req.user.id || req.user._id,
       deleted: false
     }).lean();
   }

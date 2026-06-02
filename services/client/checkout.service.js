@@ -3,6 +3,7 @@ const cartRepository = require("../../repositories/client/cart.repository");
 const productRepository = require("../../repositories/client/product.repository");
 const productVariantRepository = require("../../repositories/client/productVariant.repository");
 const priceNewHelper = require("../../helpers/priceNew");
+const paymentService = require("../payment.service");
 
 class CheckoutService {
   async getPaymentInfoData(userId, cartId, cartItemIds) {
@@ -74,6 +75,32 @@ class CheckoutService {
       user,
       products,
       totalPrice
+    };
+  }
+
+  async prepareCheckoutDraft(products, totalPrice, userInfo, note) {
+    const checkoutToken = paymentService.createCheckoutToken();
+    const idempotencyKey = paymentService.createCheckoutToken();
+    const timeoutMinutes = await paymentService.getCheckoutTimeoutMinutes();
+    const expiresAt = new Date(Date.now() + timeoutMinutes * 60 * 1000);
+
+    const formattedProducts = Array.isArray(products)
+      ? products.map((item) => ({
+          product_id: item.product_id,
+          variant_id: item.variant_id || null,
+          quantity: parseInt(item.quantity, 10) || 1,
+        }))
+      : [];
+
+    return {
+      token: checkoutToken,
+      idempotencyKey,
+      products: formattedProducts,
+      totalPrice: parseInt(totalPrice) || 0,
+      userInfo,
+      note: note || "",
+      createdAt: new Date().toISOString(),
+      expiresAt: expiresAt.toISOString(),
     };
   }
 }

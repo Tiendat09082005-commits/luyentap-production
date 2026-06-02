@@ -63,6 +63,14 @@ module.exports.vnpayReturn = async (req, res) => {
       return res.redirect("/checkout/fail?code=INVALID_SIGNATURE&message=Phản hồi thanh toán không hợp lệ.");
     }
 
+    if (String(verify.vnp_ResponseCode || "") === "00") {
+      await paymentService.applyWebhookResult({
+        orderCode: verify.vnp_TxnRef,
+        payload: verify,
+        source: "return"
+      });
+    }
+
     const order = await paymentService.storeReturnObservation(verify.vnp_TxnRef, verify);
     if (!order) {
       return res.redirect("/checkout/fail?code=ORDER_NOT_FOUND&message=Không tìm thấy đơn hàng.");

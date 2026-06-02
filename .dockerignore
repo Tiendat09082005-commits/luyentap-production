@@ -1,0 +1,13 @@
+node_modules
+.env
+.env.*
+Dockerfile
+README.md
+PRODUT.md
+skill-lock.json
+TIDAADMIN_STYLE_SKILL.md
+dist
+build
+.gitignore
+docker-compose.yml
+

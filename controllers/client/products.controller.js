@@ -66,7 +66,7 @@ module.exports.productFavorite = async (req, res) => {
         }
 
         const productId = req.params.productId;
-        const userId = req.user.id;
+        const userId = req.user._id || req.user.id;
 
         const result = await productService.toggleFavorite(productId, userId);
 

@@ -84,20 +84,32 @@ function getPaymentStatusLabel(status) {
 async function removePurchasedItemsFromCart({ userId, products, session }) {
   if (!userId || !Array.isArray(products) || products.length === 0) return;
 
-  for (const item of products) {
-    const pullCondition = { product_id: String(item.product_id) };
-    if (item.variant_id) {
-      pullCondition.variant_id = String(item.variant_id);
-    } else {
-      pullCondition.$or = [{ variant_id: null }, { variant_id: "" }, { variant_id: { $exists: false } }];
-    }
+  const cart = await Cart.findOne({ user_id: String(userId) }).session(session);
+  if (!cart || !Array.isArray(cart.products)) return;
 
-    await Cart.updateOne(
-      { user_id: String(userId) },
-      { $pull: { products: pullCondition } },
-      { session }
-    );
-  }
+  // Lọc bỏ những sản phẩm đã được mua
+  cart.products = cart.products.filter(cartItem => {
+    const isPurchased = products.some(purchasedItem => {
+      const matchProduct = String(cartItem.product_id) === String(purchasedItem.product_id);
+      
+      const cartHasVariant = cartItem.variant_id && String(cartItem.variant_id).trim() !== "";
+      const purchasedHasVariant = purchasedItem.variant_id && String(purchasedItem.variant_id).trim() !== "";
+      
+      if (cartHasVariant !== purchasedHasVariant) {
+        return false;
+      }
+      
+      if (cartHasVariant && purchasedHasVariant) {
+        return String(cartItem.variant_id) === String(purchasedItem.variant_id);
+      }
+      
+      return matchProduct;
+    });
+    
+    return !isPurchased;
+  });
+
+  await cart.save({ session });
 }
 
 async function reserveStockAndBuildProducts(items, session) {

@@ -23,7 +23,7 @@ module.exports.countItemInCart = async (req, res, next) => {
         if (req.user) {
             // console.log(req.user.id);
             cart = await Cart.findOne({
-                user_id: req.user.id,
+                user_id: String(req.user._id || req.user.id),
                 // deleted: false
             });
             // console.log(cart);

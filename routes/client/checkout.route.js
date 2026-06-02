@@ -7,7 +7,7 @@ const checkoutValidate = require("../../validate/client/checkout.validate");
 router.get("/payment-info", checkoutValidate.validatePaymentInfo, controller.paymentInfo);
 router.post("/payment-info", checkoutValidate.validatePaymentInfo, controller.paymentInfo);
 router.post("/buy-now", controller.buyNow);
-router.post("/payment", controller.payment);
+router.post("/payment", checkoutValidate.validatePayment, controller.payment);
 router.post("/order", controller.order);
 router.get("/success", controller.success);
 router.get("/pending", controller.pending);
