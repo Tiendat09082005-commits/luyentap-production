@@ -20,3 +20,20 @@ jobs:
       - run: npm install
 
       - run: docker build -t tida-technology . 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/TidaTecnology
+            git pull
+            docker compose up -d --build
