@@ -34,6 +34,6 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /var/www/TidaTecnology
+            cd ~/luyentap-production
             git pull
             docker compose up -d --build
