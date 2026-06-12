@@ -1,0 +1,52 @@
+.ai-chat-widget#aiChatWidget
+  button.ai-chat-fab#aiChatFab(type="button" aria-label="Mở chat AI")
+    i.fa-solid.fa-robot
+    span.ai-chat-fab-dot
+
+  .ai-chat-overlay#aiChatOverlay(hidden)
+    .ai-chat-panel#aiChatPanel(role="dialog" aria-modal="true" aria-labelledby="aiChatTitle")
+      header.ai-chat-header
+        .ai-chat-brand
+          .ai-chat-avatar-container
+            img.ai-chat-avatar(src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=150&q=80" alt="AI Avatar")
+            span.ai-chat-online-dot
+          .ai-chat-heading
+            h2#aiChatTitle Trợ lý TidaAI
+            p
+              span.ai-chat-typing-dot
+              | Đang trực tuyến
+        button.ai-chat-close#aiChatClose(type="button" aria-label="Đóng chat")
+          i.fa-solid.fa-xmark
+
+      .ai-chat-suggestions#aiChatSuggestions
+        button.ai-suggestion-chip(type="button" data-prompt="Viết một email gửi sếp xin nghỉ phép bằng tiếng Việt chuyên nghiệp.")
+          i.fa-regular.fa-envelope
+          span Viết email xin nghỉ
+        button.ai-suggestion-chip(type="button" data-prompt="Giải thích ngắn gọn khái niệm Trí tuệ nhân tạo (AI) cho học sinh cấp 1.")
+          i.fa-solid.fa-lightbulb
+          span Giải thích AI dễ hiểu
+        button.ai-suggestion-chip(type="button" data-prompt="Lập dàn ý chi tiết cho một bài viết blog về chủ đề Du lịch tự túc.")
+          i.fa-solid.fa-list-check
+          span Dàn ý blog du lịch
+
+      .ai-chat-messages#aiChatMessages
+        .ai-chat-sentinel#aiChatSentinel
+        .ai-chat-message.ai-msg-system
+          .ai-msg-avatar
+            i.fa-solid.fa-robot
+          .ai-msg-content
+            p Xin chào! Tôi là <strong>TidaAI</strong>, trợ lý ảo thông minh của bạn. Hôm nay tôi có thể giúp gì cho bạn? Bạn có thể hỏi tôi bất kỳ câu hỏi nào hoặc chọn một gợi ý phía trên!
+            span.ai-msg-time Vừa xong
+        .ai-chat-typing#aiChatTyping(hidden)
+          span TidaAI đang trả lời
+          i
+          i
+          i
+
+      form.ai-chat-composer#aiChatForm
+        button.ai-chat-tool#aiChatUpload(type="button" aria-label="Tải ảnh hoặc file")
+          i.fa-solid.fa-paperclip
+        textarea#aiChatInput(placeholder="Nhập câu hỏi của bạn..." rows="1" required)
+        button.ai-chat-send#aiChatSend(type="submit" aria-label="Gửi tin nhắn" disabled)
+          i.fa-solid.fa-paper-plane
+      .ai-chat-footer-note Powered by Tida Technology
