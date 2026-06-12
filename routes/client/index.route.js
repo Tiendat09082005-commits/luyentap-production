@@ -14,6 +14,7 @@ const paymentRouter = require("./payment.route");
 const apiSearchRouter = require("./search.route");
 const commentRouter = require("./comment.route");
 const chatRouter = require("./chat.route");
+const chatbotAiRRouter = require("./chatbotAi.route");
 
 
 // IMPORT MIDDLEWARE
@@ -47,7 +48,7 @@ router.use("/payment", paymentRouter);
 router.use("/api/search", apiSearchRouter);
 router.use("/comments", commentRouter);
 router.use("/chat", chatRouter);
-
+router.use("/ai", chatbotAiRRouter);
 
 // ROUTES CẦN AUTH
 router.use("/checkout", authMiddleware.requireAuthCheckOut, checkOutRouter);

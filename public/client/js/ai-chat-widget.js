@@ -136,8 +136,15 @@ document.addEventListener('DOMContentLoaded', () => {
         appendMessage(label, 'user');
         scrollToBottom();
         
-        // Phản hồi của AI theo kịch bản tương ứng
-        simulateResponse(option);
+        // Gửi yêu cầu lên Backend
+        const payload = {
+          type: currentFlow.type,
+          content: label,
+          metadata: {
+            category: option
+          }
+        };
+        sendPayloadToBackend(payload);
       }
     });
   });
@@ -167,31 +174,37 @@ document.addEventListener('DOMContentLoaded', () => {
         { value: "asus-acer", label: "🔥 Asus / Acer" },
         { value: "lenovo-msi", label: "💼 Lenovo / MSI" },
         { value: "any", label: "✨ Không quan trọng" }
-      ]);
+      ], 1);
     } else if (option === 'pc') {
       appendSystemMessage("Bước 1/4: Bạn cần loại máy PC nào?");
       appendWizardChoices([
         { value: "custom", label: "🔧 PC Tự lắp ráp (Custom)" },
         { value: "brand", label: "🏢 PC Nguyên bộ hãng" },
         { value: "all-in-one", label: "🖥️ PC All-in-One (Liền màn)" }
-      ]);
+      ], 1);
     } else if (option === 'phone') {
       appendSystemMessage("Bước 1/4: Bạn muốn tìm Điện thoại thuộc hệ điều hành nào?");
       appendWizardChoices([
         { value: "ios", label: "🍎 iOS (iPhone)" },
         { value: "android", label: "🤖 Android (Samsung/Xiaomi...)" },
         { value: "any", label: "✨ Hệ điều hành nào cũng được" }
-      ]);
+      ], 1);
     }
     scrollToBottom();
   }
 
   // Hàm điều khiển luồng Wizard qua 4 bước liên tiếp
-  function handleWizardChoice(value, label) {
-    // 1. Vô hiệu hóa và đánh dấu nút vừa lựa chọn
-    const activeChoices = aiChatMessages.querySelector('.ai-wizard-choices:last-of-type');
-    if (activeChoices) {
-      activeChoices.querySelectorAll('button').forEach(btn => {
+  function handleWizardChoice(value, label, event) {
+    // Lấy step của nút bấm vừa click
+    const clickedStep = parseInt(event.target.getAttribute('data-step'));
+    
+    // GUARD 1: Nếu bấm vào nút bấm cũ (clickedStep khác với step hiện hành của máy trạng thái) thì bỏ qua
+    if (clickedStep !== currentFlow.wizardStep) return;
+
+    // GUARD 2: Disable toàn bộ nút con trong cụm nút vừa click để chống bấm lại
+    const container = event.target.closest('.ai-wizard-choices');
+    if (container) {
+      container.querySelectorAll('button').forEach(btn => {
         btn.disabled = true;
         if (btn.innerText === label) {
           btn.style.background = 'var(--ai-gradient)';
@@ -221,14 +234,14 @@ document.addEventListener('DOMContentLoaded', () => {
             { value: "graphics", label: "🎨 Thiết kế đồ họa / Làm phim" },
             { value: "gaming", label: "🔥 Gaming giải trí" },
             { value: "coding", label: "💼 Lập trình / Kỹ thuật" }
-          ]);
+          ], 2);
         } else if (option === 'pc') {
           appendSystemMessage("Bước 2/4: Mục tiêu sử dụng PC chính của bạn?");
           appendWizardChoices([
             { value: "esports", label: "🔫 Game Esport nhẹ (Valorant/CS2)" },
             { value: "aaa", label: "🚀 Game AAA đồ họa nặng" },
             { value: "work-play", label: "🏢 Làm việc kết hợp giải trí" }
-          ]);
+          ], 2);
         } else if (option === 'phone') {
           appendSystemMessage("Bước 2/4: Tiêu chí tính năng bạn ưu tiên hàng đầu?");
           appendWizardChoices([
@@ -236,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { value: "gaming", label: "⚡ Cấu hình cao chơi game mượt" },
             { value: "battery", label: "🔋 Pin trâu / Sạc siêu nhanh" },
             { value: "durable", label: "💸 Giá hợp lý / Dùng bền lâu" }
-          ]);
+          ], 2);
         }
         scrollToBottom();
       }, 500);
@@ -253,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { value: "under-15", label: "💵 Dưới 15 Triệu" },
             { value: "15-25", label: "💳 Từ 15 - 25 Triệu" },
             { value: "above-25", label: "💎 Trên 25 Triệu" }
-          ]);
+          ], 3);
         } else if (option === 'pc') {
           appendSystemMessage("Bước 3/4: Ưu tiên nào khác cho cấu hình linh kiện?");
           appendWizardChoices([
@@ -261,13 +274,13 @@ document.addEventListener('DOMContentLoaded', () => {
             { value: "cpu", label: "⚡ Xử lý đa nhân mạnh (CPU)" },
             { value: "led", label: "💡 Thẩm mỹ (Đèn LED RGB lấp lánh)" },
             { value: "balance", label: "⚖️ Cân bằng / Tối ưu hiệu năng" }
-          ]);
+          ], 3);
         } else if (option === 'phone') {
           appendSystemMessage("Bước 3/4: Bạn ưu tiên kích thước màn hình như thế nào?");
           appendWizardChoices([
             { value: "large", label: "📱 Màn hình lớn (>6.5 inch)" },
             { value: "compact", label: "🤏 Nhỏ gọn, dễ bỏ túi" }
-          ]);
+          ], 3);
         }
         scrollToBottom();
       }, 500);
@@ -285,21 +298,21 @@ document.addEventListener('DOMContentLoaded', () => {
             { value: "battery", label: "🔋 Thời lượng pin siêu trâu" },
             { value: "large-screen", label: "🖥️ Màn hình rộng (15.6 inch+)" },
             { value: "none", label: "❌ Không cần ưu tiên thêm" }
-          ]);
+          ], 4);
         } else if (option === 'pc') {
           appendSystemMessage("Bước 4/4: Mức ngân sách tối đa bạn đầu tư cho PC là bao nhiêu?");
           appendWizardChoices([
             { value: "under-15", label: "💵 Dưới 15 Triệu" },
             { value: "15-30", label: "💳 Từ 15 - 30 Triệu" },
             { value: "above-30", label: "💎 Trên 30 Triệu" }
-          ]);
+          ], 4);
         } else if (option === 'phone') {
           appendSystemMessage("Bước 4/4: Phân khúc ngân sách bạn dự kiến cho Điện thoại?");
           appendWizardChoices([
             { value: "under-7", label: "💵 Dưới 7 Triệu (Giá rẻ)" },
             { value: "7-15", label: "💳 Từ 7 - 15 Triệu (Tầm trung)" },
             { value: "above-15", label: "💎 Trên 15 Triệu (Flagship)" }
-          ]);
+          ], 4);
         }
         scrollToBottom();
       }, 500);
@@ -309,59 +322,22 @@ document.addEventListener('DOMContentLoaded', () => {
       currentFlow.wizardStep = 5; // Hoàn thành tất cả các bước
 
       // Đóng gói payload gửi lên Backend
-      setTimeout(() => {
-        aiChatTyping.removeAttribute('hidden');
-        scrollToBottom();
+      const finalPayload = {
+        type: currentFlow.type, // PRODUCT_SEARCH
+        content: `Tư vấn mua sắm ${option} dựa trên lựa chọn khảo sát 4 bước`,
+        metadata: {
+          category: option,
+          criteria: currentFlow.wizardData
+        }
+      };
 
-        const finalPayload = {
-          type: currentFlow.type, // PRODUCT_SEARCH
-          content: `Tư vấn mua sắm ${option} dựa trên lựa chọn khảo sát 4 bước`,
-          metadata: {
-            category: option,
-            criteria: currentFlow.wizardData
-          }
-        };
-
-        // Ghi log ra console của dev để xác minh dữ liệu cấu trúc
-        console.log(">>> [API PAYLOAD 4 BƯỚC GỬI LÊN BACKEND] >>>", finalPayload);
-
-        // Mô phỏng kết quả gợi ý trả về của AI dựa trên lựa chọn
-        setTimeout(() => {
-          aiChatTyping.setAttribute('hidden', '');
-          let queryResult = `Tôi đã ghi nhận các tiêu chí tư vấn ${option.toUpperCase()} của bạn và đã gửi dữ liệu lên máy chủ để tìm kiếm.\n\n`;
-          
-          if (option === 'laptop') {
-            const usage = currentFlow.wizardData.usageOrPriority;
-            const budget = currentFlow.wizardData.budgetOrSpecOrSize;
-            
-            if (usage === 'gaming') {
-              queryResult += "Dành cho nhu cầu **Gaming**: Gợi ý mẫu **Acer Nitro V** (nếu tầm 20tr) hoặc mẫu **ASUS ROG Strix G16** (nếu ngân sách thoải mái) để có trải nghiệm đồ họa tuyệt vời nhất.";
-            } else if (usage === 'graphics') {
-              queryResult += "Dành cho nhu cầu **Đồ họa**: Bạn nên chọn **Macbook Pro M3** hoặc **Dell XPS 15** trang bị màn hình chuẩn màu 100% sRGB / DCI-P3.";
-            } else {
-              queryResult += `Với tiêu chí học tập/văn phòng và tầm giá ${budget === 'under-15' ? 'dưới 15 triệu' : 'từ 15-25 triệu'}, mẫu **HP Pavilion 14** hoặc **Dell Inspiron 14** là những lựa chọn vô cùng bền bỉ, mượt mà.`;
-            }
-          } else if (option === 'pc') {
-            queryResult += `Hệ thống gợi ý cấu hình PC tối ưu cho game ${currentFlow.wizardData.usageOrPriority === 'aaa' ? 'nặng AAA' : 'Esport'} trong tầm giá đầu tư của bạn. Bạn nên chọn cấu hình chip **Intel Core i5-14400F kết hợp Card đồ họa RTX 4060** để có hiệu năng chơi game tốt nhất trong tầm giá trung.`;
-          } else if (option === 'phone') {
-            queryResult += `Gợi ý mẫu điện thoại có tính năng ${currentFlow.wizardData.usageOrPriority === 'camera' ? 'Chụp ảnh chuyên nghiệp' : 'Cấu hình mạnh mẽ'}: Bạn hãy tham khảo **Samsung Galaxy S24 Plus** hoặc **iPhone 15** để nhận được hỗ trợ phần mềm lâu dài cùng khả năng xử lý mượt mà nhất.`;
-          }
-
-          appendSystemMessage(queryResult);
-          scrollToBottom();
-
-          // Kích hoạt ô chat tự do cho người dùng trao đổi tiếp
-          if (window.innerWidth > 560) {
-            aiChatInput.focus();
-          }
-        }, 1200);
-
-      }, 600);
+      // Gửi API fetch lên Backend
+      sendPayloadToBackend(finalPayload);
     }
   }
 
-  // Chèn bộ nút lựa chọn khảo sát phụ
-  function appendWizardChoices(choices) {
+  // Chèn bộ nút lựa chọn khảo sát phụ, gán thêm thuộc tính data-step bảo vệ
+  function appendWizardChoices(choices, step) {
     const choicesDiv = document.createElement('div');
     choicesDiv.className = 'ai-wizard-choices';
 
@@ -370,8 +346,9 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.type = 'button';
       btn.className = 'ai-choice-btn';
       btn.innerText = choice.label;
-      btn.addEventListener('click', () => {
-        handleWizardChoice(choice.value, choice.label);
+      btn.setAttribute('data-step', step); // Gán step bảo vệ
+      btn.addEventListener('click', (e) => {
+        handleWizardChoice(choice.value, choice.label, e);
       });
       choicesDiv.appendChild(btn);
     });
@@ -418,10 +395,51 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
-    console.log(">>> [API TEXT GỬI LÊN BACKEND] >>>", payload);
-
-    simulateResponse(currentFlow.option, text);
+    // Gửi API fetch lên Backend
+    sendPayloadToBackend(payload);
   });
+
+  // Hàm gọi API fetch thực tế gửi dữ liệu lên Backend
+  async function sendPayloadToBackend(payload) {
+    aiChatTyping.removeAttribute('hidden');
+    scrollToBottom();
+
+    console.log(">>> [API CALL] Gửi dữ liệu lên Backend:", payload);
+
+    try {
+      // Trích xuất CSRF Token từ thẻ Meta để vượt qua bảo mật máy chủ
+      const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+      const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+
+      const response = await fetch('/ai/chat-search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server returned HTTP status ${response.status}`);
+      }
+
+      const data = await response.json();
+      aiChatTyping.setAttribute('hidden', '');
+
+      if (data.success && data.reply) {
+        appendSystemMessage(data.reply);
+      } else {
+        // Fallback chạy giả lập khi BE chưa trả về cấu trúc chuẩn hoặc phản hồi lỗi
+        showMockResponseFallback(payload);
+      }
+    } catch (error) {
+      console.warn("Lỗi kết nối hoặc route BE chưa khả dụng. Chuyển sang chế độ mô phỏng:", error);
+      // Graceful Fallback: Chạy mô phỏng cục bộ để đảm bảo giao diện luôn phản hồi mượt mà
+      showMockResponseFallback(payload);
+    }
+    scrollToBottom();
+  }
 
   // Chèn cấu trúc tin nhắn
   function appendMessage(text, sender) {
@@ -459,15 +477,15 @@ document.addEventListener('DOMContentLoaded', () => {
     aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
   }
 
-  // AI response simulation
-  function simulateResponse(option, userText = '') {
-    aiChatTyping.removeAttribute('hidden');
-    scrollToBottom();
+  // Hàm mô phỏng phản hồi (Fallback local simulation)
+  function showMockResponseFallback(payload) {
+    const option = payload.metadata ? payload.metadata.category : 'default';
+    const userText = payload.content || '';
 
     let reply = botReplies[option] || botReplies.default;
 
     // Phân tích văn bản khi người dùng gõ tay
-    if (userText !== '') {
+    if (userText !== '' && option === 'default') {
       const cleanText = userText.toLowerCase();
       if (cleanText.includes('laptop') || cleanText.includes('máy tính xách tay')) {
         reply = botReplies.laptop;
@@ -481,6 +499,21 @@ document.addEventListener('DOMContentLoaded', () => {
         reply = botReplies.order;
       } else if (cleanText.includes('bảo hành') || cleanText.includes('lỗi') || cleanText.includes('hỏng')) {
         reply = botReplies.warranty;
+      }
+    } else if (payload.type === 'PRODUCT_SEARCH' && payload.metadata && payload.metadata.criteria) {
+      const criteria = payload.metadata.criteria;
+      if (option === 'laptop') {
+        if (criteria.usageOrPriority === 'gaming') {
+          reply = "[MÔ PHỎNG] Dành cho nhu cầu **Gaming**: Gợi ý mẫu **Acer Nitro V** (nếu tầm 20tr) hoặc mẫu **ASUS ROG Strix G16** (nếu ngân sách thoải mái) để có trải nghiệm đồ họa tuyệt vời nhất.";
+        } else if (criteria.usageOrPriority === 'graphics') {
+          reply = "[MÔ PHỎNG] Dành cho nhu cầu **Đồ họa**: Bạn nên chọn **Macbook Pro M3** hoặc **Dell XPS 15** trang bị màn hình chuẩn màu 100% sRGB / DCI-P3.";
+        } else {
+          reply = `[MÔ PHỎNG] Với tiêu chí học tập/văn phòng và tầm giá ${criteria.budgetOrSpecOrSize === 'under-15' ? 'dưới 15 triệu' : 'từ 15-25 triệu'}, mẫu **HP Pavilion 14** hoặc **Dell Inspiron 14** là những lựa chọn vô cùng bền bỉ, mượt mà.`;
+        }
+      } else if (option === 'pc') {
+        reply = `[MÔ PHỎNG] Hệ thống gợi ý cấu hình PC tối ưu cho game ${criteria.usageOrPriority === 'aaa' ? 'nặng AAA' : 'Esport'} trong tầm giá đầu tư của bạn. Bạn nên chọn cấu hình chip **Intel Core i5-14400F kết hợp Card đồ họa RTX 4060** để có hiệu năng chơi game tốt nhất trong tầm giá trung.`;
+      } else if (option === 'phone') {
+        reply = `[MÔ PHỎNG] Gợi ý mẫu điện thoại có tính năng ${criteria.usageOrPriority === 'camera' ? 'Chụp ảnh chuyên nghiệp' : 'Cấu hình mạnh mẽ'}: Bạn hãy tham khảo **Samsung Galaxy S24 Plus** hoặc **iPhone 15** để nhận được hỗ trợ phần mềm lâu dài cùng khả năng xử lý mượt mà nhất.`;
       }
     }
 
