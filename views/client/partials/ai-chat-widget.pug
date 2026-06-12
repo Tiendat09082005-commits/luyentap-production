@@ -11,31 +11,54 @@
             img.ai-chat-avatar(src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=150&q=80" alt="AI Avatar")
             span.ai-chat-online-dot
           .ai-chat-heading
-            h2#aiChatTitle Trợ lý TidaAI
+            h2#aiChatTitle Trợ lý mua sắm AI
             p
               span.ai-chat-typing-dot
               | Đang trực tuyến
-        button.ai-chat-close#aiChatClose(type="button" aria-label="Đóng chat")
-          i.fa-solid.fa-xmark
+        .ai-chat-header-actions
+          button.ai-chat-reset#aiChatReset(type="button" aria-label="Cuộc hội thoại mới" title="Cuộc hội thoại mới" hidden)
+            i.fa-solid.fa-plus
+          button.ai-chat-close#aiChatClose(type="button" aria-label="Đóng chat")
+            i.fa-solid.fa-xmark
 
-      .ai-chat-suggestions#aiChatSuggestions
-        button.ai-suggestion-chip(type="button" data-prompt="Viết một email gửi sếp xin nghỉ phép bằng tiếng Việt chuyên nghiệp.")
-          i.fa-regular.fa-envelope
-          span Viết email xin nghỉ
-        button.ai-suggestion-chip(type="button" data-prompt="Giải thích ngắn gọn khái niệm Trí tuệ nhân tạo (AI) cho học sinh cấp 1.")
-          i.fa-solid.fa-lightbulb
-          span Giải thích AI dễ hiểu
-        button.ai-suggestion-chip(type="button" data-prompt="Lập dàn ý chi tiết cho một bài viết blog về chủ đề Du lịch tự túc.")
-          i.fa-solid.fa-list-check
-          span Dàn ý blog du lịch
+      // Màn hình chào mừng của Trợ lý mua sắm
+      .ai-chat-welcome#aiChatWelcome
+        .ai-welcome-info
+          img.ai-welcome-avatar(src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=150&q=80" alt="AI Large Avatar")
+          h3 Trợ lý mua sắm AI
+          p Tôi có thể giúp bạn tìm sản phẩm phù hợp nhanh hơn.
+        
+        .ai-welcome-grid
+          button.ai-welcome-card(type="button" data-option="laptop" data-type="PRODUCT_SEARCH" data-label="Tư vấn Laptop")
+            span.ai-card-icon 💻
+            span.ai-card-text Tư vấn Laptop
+          button.ai-welcome-card(type="button" data-option="pc" data-type="PRODUCT_SEARCH" data-label="Tư vấn PC Gaming")
+            span.ai-card-icon 🖥️
+            span.ai-card-text Tư vấn PC Gaming
+          button.ai-welcome-card(type="button" data-option="phone" data-type="PRODUCT_SEARCH" data-label="Tư vấn Điện thoại")
+            span.ai-card-icon 📱
+            span.ai-card-text Tư vấn Điện thoại
+          button.ai-welcome-card(type="button" data-option="compare" data-type="PRODUCT_COMPARE" data-label="So sánh sản phẩm")
+            span.ai-card-icon 🔍
+            span.ai-card-text So sánh sản phẩm
+          button.ai-welcome-card(type="button" data-option="order" data-type="PRODUCT_SEARCH" data-label="Kiểm tra đơn hàng")
+            span.ai-card-icon 📦
+            span.ai-card-text Kiểm tra đơn hàng
+          button.ai-welcome-card(type="button" data-option="warranty" data-type="STORE_POLICY" data-label="Chính sách bảo hành")
+            span.ai-card-icon 🛡️
+            span.ai-card-text Chính sách bảo hành
+          button.ai-welcome-card.ai-card-full(type="button" data-option="other" data-type="GENERAL_KNOWLEDGE" data-label="Hỏi câu khác")
+            span.ai-card-icon 💬
+            span.ai-card-text Hỏi câu khác
 
-      .ai-chat-messages#aiChatMessages
+      // Khung tin nhắn hội thoại (Mặc định ẩn)
+      .ai-chat-messages#aiChatMessages(hidden)
         .ai-chat-sentinel#aiChatSentinel
         .ai-chat-message.ai-msg-system
           .ai-msg-avatar
             i.fa-solid.fa-robot
           .ai-msg-content
-            p Xin chào! Tôi là <strong>TidaAI</strong>, trợ lý ảo thông minh của bạn. Hôm nay tôi có thể giúp gì cho bạn? Bạn có thể hỏi tôi bất kỳ câu hỏi nào hoặc chọn một gợi ý phía trên!
+            p Xin chào! Tôi là <strong>Trợ lý mua sắm AI</strong>. Hãy chọn chủ đề tư vấn hoặc bắt đầu đặt câu hỏi!
             span.ai-msg-time Vừa xong
         .ai-chat-typing#aiChatTyping(hidden)
           span TidaAI đang trả lời
@@ -43,10 +66,11 @@
           i
           i
 
-      form.ai-chat-composer#aiChatForm
+      // Khung soạn thảo tin nhắn (Mặc định ẩn)
+      form.ai-chat-composer#aiChatForm(hidden)
         button.ai-chat-tool#aiChatUpload(type="button" aria-label="Tải ảnh hoặc file")
           i.fa-solid.fa-paperclip
         textarea#aiChatInput(placeholder="Nhập câu hỏi của bạn..." rows="1" required)
         button.ai-chat-send#aiChatSend(type="submit" aria-label="Gửi tin nhắn" disabled)
           i.fa-solid.fa-paper-plane
-      .ai-chat-footer-note Powered by Tida Technology
+      .ai-chat-footer-note#aiChatFooterNote(hidden) Powered by Tida Technology
