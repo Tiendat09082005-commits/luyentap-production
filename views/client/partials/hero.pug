@@ -1,18 +1,29 @@
 - var ss = siteSettings || {}
+- var slides = ss.heroSlides && ss.heroSlides.length > 0 ? ss.heroSlides : []
 
-section.hero-banner
-  .hero-content
-    .hero-text
-      span.hero-label Khuyến mãi đặc biệt
-      h1.hero-title= ss.heroHeading || 'iPhone 15 Series'
-      h2.hero-discount Giảm đến 20%
-      p.hero-desc= ss.heroSubheading || 'Trải nghiệm công nghệ đỉnh cao với camera 48MP và chip A17 Pro mạnh mẽ nhất.'
-      a.hero-btn(href=ss.heroCtaLink || '/products')
-        | #{ss.heroCtaText || 'Mua ngay'}
-        svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
-          path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7")
-    .hero-image
-      if ss.heroImageUrl
-        img(src=ss.heroImageUrl alt=ss.heroHeading || 'Hero image')
-      else
-        img(src="/assets/images/iphone15-banner.png" alt=ss.heroHeading || 'iPhone 15 Series')
+section.hero-banner#heroBannerSlider(data-interval=(ss.heroTransitionDuration || 5) * 1000)
+  .hero-slides
+    each slide, index in slides
+      .hero-slide(class=(index === 0 ? "active" : ""))
+        .hero-slide-blur-bg(style=`background-image: url('${slide.imageUrl || "/assets/images/iphone15-banner.png"}')`)
+        .hero-content
+          .hero-text
+            span.hero-label= slide.label || 'Khuyến mãi đặc biệt'
+            h1.hero-title= slide.heading || 'iPhone 15 Series'
+            if slide.discount
+              h2.hero-discount= slide.discount
+            p.hero-desc= slide.subheading || 'Trải nghiệm công nghệ đỉnh cao với camera 48MP và chip A17 Pro mạnh mẽ nhất.'
+            a.hero-btn(href=slide.ctaLink || '/products')
+              | #{slide.ctaText || 'Mua ngay'}
+              svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7")
+          .hero-image
+            img(src=(slide.imageUrl || "/assets/images/iphone15-banner.png") alt=slide.heading || 'Hero image')
+
+  if slides.length > 1
+    button.hero-slider-arrow.hero-slider-arrow--prev(type="button" aria-label="Previous Slide")
+      svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+        path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7")
+    button.hero-slider-arrow.hero-slider-arrow--next(type="button" aria-label="Next Slide")
+      svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+        path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7")

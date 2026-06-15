@@ -10,11 +10,7 @@ const upload = multer();
 router.get("/", controller.index);
 router.post(
   "/",
-  upload.fields([
-    { name: "favicon", maxCount: 1 },
-    { name: "logo", maxCount: 1 },
-    { name: "heroImage", maxCount: 1 },
-  ]),
+  upload.any(),
   uploadCloud.upload,
   settingMiddleware.validateUpdateSettingsMiddleware,
   controller.update

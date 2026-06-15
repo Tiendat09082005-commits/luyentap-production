@@ -121,27 +121,30 @@ block main
                   span #{item.rating || 0}
                 span.featured-price #{item.priceNew.toLocaleString()}đ
 
-  script.
-    (function() {
-      var endTime = new Date().getTime() + 8 * 60 * 60 * 1000;
+  if productsFlashSale && productsFlashSale.length > 0
+    script.
+      (function() {
+        var endTime = new Date("!{siteSettings.flashSaleEndTime}").getTime();
 
-      function updateCountdown() {
-        var now = new Date().getTime();
-        var diff = endTime - now;
-        if (diff <= 0) {
-          document.getElementById('fs-hours').textContent = '00';
-          document.getElementById('fs-minutes').textContent = '00';
-          document.getElementById('fs-seconds').textContent = '00';
-          return;
+        function updateCountdown() {
+          var now = new Date().getTime();
+          var diff = endTime - now;
+          if (diff <= 0) {
+            document.getElementById('fs-hours').textContent = '00';
+            document.getElementById('fs-minutes').textContent = '00';
+            document.getElementById('fs-seconds').textContent = '00';
+            var section = document.querySelector('.flash-sale-section');
+            if (section) section.style.display = 'none';
+            return;
+          }
+          var h = Math.floor(diff / 3600000);
+          var m = Math.floor((diff % 3600000) / 60000);
+          var s = Math.floor((diff % 60000) / 1000);
+          document.getElementById('fs-hours').textContent = String(h).padStart(2, '0');
+          document.getElementById('fs-minutes').textContent = String(m).padStart(2, '0');
+          document.getElementById('fs-seconds').textContent = String(s).padStart(2, '0');
         }
-        var h = Math.floor(diff / 3600000);
-        var m = Math.floor((diff % 3600000) / 60000);
-        var s = Math.floor((diff % 60000) / 1000);
-        document.getElementById('fs-hours').textContent = String(h).padStart(2, '0');
-        document.getElementById('fs-minutes').textContent = String(m).padStart(2, '0');
-        document.getElementById('fs-seconds').textContent = String(s).padStart(2, '0');
-      }
 
-      updateCountdown();
-      setInterval(updateCountdown, 1000);
-    })();
+        updateCountdown();
+        var timerId = setInterval(updateCountdown, 1000);
+      })();

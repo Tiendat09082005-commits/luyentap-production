@@ -22,6 +22,24 @@ const settingSchema = new mongoose.Schema(
     heroCtaText: { type: String, trim: true, default: "" },
     heroCtaLink: { type: String, trim: true, default: "" },
     heroImageUrl: { type: String, trim: true, default: "" },
+    heroImages: { type: [String], default: [] },
+    heroSlides: {
+      type: [{
+        imageUrl: { type: String, default: "" },
+        heading: { type: String, default: "" },
+        subheading: { type: String, default: "" },
+        label: { type: String, default: "Khuyến mãi đặc biệt" },
+        discount: { type: String, default: "" },
+        ctaText: { type: String, default: "Mua ngay" },
+        ctaLink: { type: String, default: "/products" }
+      }],
+      default: []
+    },
+    heroTransitionDuration: { type: Number, default: 5 },
+    flashSaleEnabled: { type: Boolean, default: false },
+    flashSaleStartTime: { type: Date },
+    flashSaleEndTime: { type: Date },
+    flashSaleProductIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     address: { type: String, trim: true, default: "" },
     phone: { type: String, trim: true, default: "" },
     email: { type: String, trim: true, default: "" },

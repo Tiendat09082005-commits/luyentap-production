@@ -1,14 +1,19 @@
 const systemConfig = require("../../config/system");
 const settingService = require("../../services/admin/setting.service");
+const Product = require("../../models/products.model");
 
 // [GET] admin/setting
 module.exports.index = async (req, res) => {
   try {
-    const settings = await settingService.getSettings();
+    const [settings, products] = await Promise.all([
+      settingService.getSettings(),
+      Product.find({ deleted: false, status: "active" }).select("title _id").lean(),
+    ]);
 
     res.render("admin/pages/setting/index", {
       pageTitle: "Cai dat he thong",
       settings,
+      products,
     });
   } catch (error) {
     console.error("GET SETTING ERROR:", error);

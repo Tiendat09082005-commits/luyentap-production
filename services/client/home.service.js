@@ -3,8 +3,8 @@ const { priceNew } = require("../../helpers/priceNew");
 const { normalizeCategoryIcon } = require("../../config/category-icons");
 
 // 🔥 FLASH SALE (1 query, không N+1)
-const getFlashSaleProducts = async () => {
-  const data = await homeRepo.getFlashSaleVariants();
+const getFlashSaleProducts = async (productIds) => {
+  const data = await homeRepo.getFlashSaleVariants(productIds);
 
   return data.map((item) => {
     const prod = item.product || {};

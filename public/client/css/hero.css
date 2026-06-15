@@ -6,8 +6,6 @@
   background: radial-gradient(ellipse at 20% 60%, rgba(120, 20, 20, 0.45) 0%, transparent 55%),
               radial-gradient(ellipse at 80% 40%, rgba(40, 40, 40, 0.6) 0%, transparent 60%),
               linear-gradient(135deg, #1a1a1a 0%, #222222 40%, #2a2a2a 100%);
-  display: flex;
-  align-items: center;
   overflow: hidden;
 }
 
@@ -19,13 +17,108 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
   opacity: 0.35;
   pointer-events: none;
+  z-index: 1;
+}
+
+/* Slides wrapper using CSS Grid to overlap slides safely */
+.hero-slides {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto;
+  position: relative;
+  width: 100%;
+}
+
+.hero-slide {
+  grid-area: 1 / 1 / 2 / 2;
+  position: relative;
+  width: 100%;
+  min-height: 420px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-slide.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+}
+
+/* Blurred background for modern glassmorphism aesthetic */
+.hero-slide-blur-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px) brightness(0.35);
+  transform: scale(1.1);
   z-index: 0;
+  pointer-events: none;
+}
+
+/* Subtle dark overlay to unify slides and improve text readability */
+.hero-slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 20% 60%, rgba(0, 0, 0, 0.3) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 40%, rgba(0, 0, 0, 0.45) 0%, transparent 65%),
+              linear-gradient(135deg, rgba(26,26,26,0.5) 0%, rgba(34,34,34,0.6) 40%, rgba(42,42,42,0.7) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Semi-translucent slider arrows */
+.hero-slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 15;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.5;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.hero-slider-arrow:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-50%) scale(1.08);
+  opacity: 0.9;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.hero-slider-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+.hero-slider-arrow--prev {
+  left: 24px;
+}
+
+.hero-slider-arrow--next {
+  right: 24px;
 }
 
 /* Inner layout */
 .hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 60px;
@@ -122,25 +215,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
-              inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  overflow: hidden;
-  backdrop-filter: blur(10px);
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
   transform: perspective(1000px) rotateY(-6deg) rotateX(3deg);
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
-              box-shadow 0.5s ease, 
-              background 0.5s ease, 
-              border-color 0.5s ease;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-image:hover {
   transform: perspective(1000px) rotateY(-2deg) rotateX(1deg) scale(1.02);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .hero-image img {
@@ -180,6 +267,10 @@
 
 @media (max-width: 768px) {
   .hero-banner {
+    min-height: auto;
+  }
+
+  .hero-slide {
     min-height: auto;
   }
 

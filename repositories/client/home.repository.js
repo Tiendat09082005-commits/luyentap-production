@@ -1,13 +1,18 @@
+const mongoose = require("mongoose");
 const Product = require("../../models/products.model");
 const ProductVariant = require("../../models/productVariant.model");
 const ProductCategory = require("../../models/products-category.model");
 
-const getFlashSaleVariants = async () => {
+const getFlashSaleVariants = async (productIds) => {
+  if (!productIds || productIds.length === 0) return [];
+  const objectIds = productIds.map(id => new mongoose.Types.ObjectId(id.toString()));
+
   return ProductVariant.aggregate([
     {
       $match: {
         deleted: false,
         status: "active",
+        product_id: { $in: objectIds },
         discount: { $gt: 0 },
       },
     },

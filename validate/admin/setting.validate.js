@@ -64,6 +64,34 @@ const validateUpdateSettings = (body) => {
     errors.push("Link CTA khong hop le");
   }
 
+  const heroTransitionDuration = Number(body.heroTransitionDuration);
+  if (body.heroTransitionDuration && (isNaN(heroTransitionDuration) || heroTransitionDuration < 1 || heroTransitionDuration > 60)) {
+    errors.push("Thoi gian chuyen anh phai tu 1 den 60 giay");
+  }
+
+  const flashSaleEnabled = body.flashSaleEnabled === "on" || body.flashSaleEnabled === "true" || body.flashSaleEnabled === true;
+  if (flashSaleEnabled) {
+    if (!body.flashSaleStartTime) {
+      errors.push("Thoi gian bat dau Flash Sale la bat buoc");
+    }
+    if (!body.flashSaleEndTime) {
+      errors.push("Thoi gian ket thuc Flash Sale la bat buoc");
+    }
+    if (body.flashSaleStartTime && body.flashSaleEndTime) {
+      const start = new Date(body.flashSaleStartTime);
+      const end = new Date(body.flashSaleEndTime);
+      if (isNaN(start.getTime())) {
+        errors.push("Thoi gian bat dau khong hop le");
+      }
+      if (isNaN(end.getTime())) {
+        errors.push("Thoi gian ket thuc khong hop le");
+      }
+      if (!isNaN(start.getTime()) && !isNaN(end.getTime()) && end <= start) {
+        errors.push("Thoi gian ket thuc phai lon hon thoi gian bat dau");
+      }
+    }
+  }
+
   const googleMapEmbed = (body.googleMapEmbed || "").trim();
   if (googleMapEmbed && !googleMapEmbed.includes("<iframe")) {
     errors.push("Google Maps phai la ma iframe hop le");

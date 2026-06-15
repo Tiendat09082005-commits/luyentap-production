@@ -1,7 +1,7 @@
 // middlewares/uploadCloud.js
 
 const cloudinary   = require("cloudinary").v2;
-        const streamifier  = require("streamifier");
+const streamifier  = require("streamifier");
 const crypto       = require("crypto");
 
 cloudinary.config({
@@ -13,7 +13,7 @@ cloudinary.config({
 /* ─────────────────────────────────────────────
    Helper: upload 1 buffer lên Cloudinary
    Trả về secure_url (string)
-───────────────────────────────────────────── */
+ ───────────────────────────────────────────── */
 function uploadBuffer(buffer, folder) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
@@ -36,7 +36,7 @@ function uploadBuffer(buffer, folder) {
 
 /* ─────────────────────────────────────────────
    Middleware chính – xử lý tất cả req.files
-───────────────────────────────────────────── */
+ ───────────────────────────────────────────── */
 module.exports.upload = async (req, res, next) => {
   // Normalize both req.file (single) and req.files (multiple) into a single array
   let filesToUpload = [];
@@ -47,6 +47,9 @@ module.exports.upload = async (req, res, next) => {
   } else if (req.file) {
     filesToUpload = [req.file];
   }
+
+  // Filter out empty file fields (like empty file inputs from added slides)
+  filesToUpload = filesToUpload.filter(file => file.size > 0 && file.buffer && file.buffer.length > 0);
 
   if (filesToUpload.length === 0) return next();
 
@@ -98,6 +101,20 @@ module.exports.upload = async (req, res, next) => {
 
         if (field === "heroImage") {
           req.body.heroImage = url;
+          return;
+        }
+
+        if (field === "heroImages") {
+          if (!Array.isArray(req.body.heroImages)) req.body.heroImages = [];
+          req.body.heroImages.push(url);
+          return;
+        }
+
+        const slideImgMatch = field.match(/^heroSlides_image_(\d+)$/);
+        if (slideImgMatch) {
+          const idx = parseInt(slideImgMatch[1]);
+          if (!req.body.heroSlidesUploadedImages) req.body.heroSlidesUploadedImages = {};
+          req.body.heroSlidesUploadedImages[idx] = url;
           return;
         }
 
