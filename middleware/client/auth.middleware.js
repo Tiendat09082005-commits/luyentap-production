@@ -155,4 +155,27 @@ module.exports.checkUserLogin = async (req, res, next) => {
   next();
 };
 
+module.exports.requireAuthJSON = async (req, res, next) => {
+  if (!req.cookies.tokenUser) {
+    return res.status(401).json({
+      success: false,
+      message: "Vui lòng đăng nhập"
+    });
+  }
+
+  const user = await findUserByToken(req.cookies.tokenUser);
+
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: "Vui lòng đăng nhập"
+    });
+  }
+
+  req.user = user;
+  res.locals.user = user;
+  syncSessionUser(req, user);
+  next();
+};
+
 module.exports.deleteCachedUserByToken = deleteCachedUserByToken;
