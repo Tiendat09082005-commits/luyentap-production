@@ -71,7 +71,7 @@ class CommentService {
    * Create a new comment/reply
    */
   async createComment(data, userId) {
-    const { productId, parentId, content } = data;
+    const { productId, parentId, content, rating } = data;
 
     // 1. Validate Product
     const productExists = await Product.exists({ _id: productId, deleted: false, status: "active" });
@@ -87,15 +87,33 @@ class CommentService {
     }
 
     // 2. Atomic Create
+    const parsedRating = parentId ? null : (Number(rating) || null);
     const comment = await CommentRepository.create({
       productId,
       userId,
       content,
       parentId: parentId || null,
-      depth
+      depth,
+      rating: parsedRating
     });
 
-    // 3. Invalidate Cache for this product
+    // 3. Recalculate Average Rating if it's a root review
+    if (!parentId && parsedRating) {
+      const CommentModel = require("../../models/comment.model");
+      const reviews = await CommentModel.find({
+        productId,
+        parentId: null,
+        rating: { $ne: null }
+      }).select("rating").lean();
+
+      if (reviews.length > 0) {
+        const totalRating = reviews.reduce((sum, r) => sum + r.rating, 0);
+        const avg = totalRating / reviews.length;
+        await Product.updateOne({ _id: productId }, { rating: Number(avg.toFixed(1)) });
+      }
+    }
+
+    // 4. Invalidate Cache for this product
     this.invalidateProductCache(productId);
 
     return await CommentRepository.findById(comment._id);

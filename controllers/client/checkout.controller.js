@@ -257,44 +257,5 @@ module.exports.fail = async (req, res) => {
   });
 };
 
-module.exports.vnpayReturn = async (req, res) => {
-  try {
-    const verify = vnpay.verifyReturnUrl(req.query);
-    if (!verify.isVerified) {
-      return res.redirect("/checkout/fail?code=INVALID_SIGNATURE&message=Phản hồi thanh toán không hợp lệ.");
-    }
-
-    const order = await paymentService.storeReturnObservation(verify.vnp_TxnRef, verify);
-    if (!order) {
-      return res.redirect("/checkout/fail?code=ORDER_NOT_FOUND&message=Không tìm thấy đơn hàng.");
-    }
-
-    if (order.paymentStatus === "paid") {
-      const io = req.app.get("io");
-      if (io) {
-        io.emit("new_order", {
-          customerName: order.userInfo.fullName,
-          productTitle: order.products[0]?.title,
-          productImage: order.products[0]?.thumbnail
-        });
-      }
-      return res.redirect("/checkout/success?orderId=" + order._id);
-    }
-
-    if (order.paymentStatus === "failed" || order.paymentStatus === "expired") {
-      return res.redirect(`/checkout/fail?orderId=${order._id}&code=${verify.vnp_ResponseCode || "FAILED"}`);
-    }
-
-    if (verify.isSuccess) {
-      return res.redirect("/checkout/pending?orderId=" + order._id);
-    }
-
-    return res.redirect(`/checkout/fail?orderId=${order._id}&code=${verify.vnp_ResponseCode || "FAILED"}&message=${encodeURIComponent(verify.message || "Thanh toán không thành công.")}`);
-
-  } catch (error) {
-    console.error("VNPAY RETURN ERROR:", error);
-    res.redirect("/checkout/fail");
-  }
-};
-
+// VNPay return handler delegated to paymentController
 module.exports.vnpayReturn = paymentController.vnpayReturn;

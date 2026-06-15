@@ -1,4 +1,5 @@
 const productService = require("../../services/client/product.service");
+const authMiddleware = require("../../middleware/client/auth.middleware");
 
 // [GET] /products 
 module.exports.index = async (req, res) => {
@@ -69,6 +70,10 @@ module.exports.productFavorite = async (req, res) => {
         const userId = req.user._id || req.user.id;
 
         const result = await productService.toggleFavorite(productId, userId);
+
+        if (req.cookies.tokenUser) {
+            await authMiddleware.deleteCachedUserByToken(req.cookies.tokenUser);
+        }
 
         return res.status(200).json({
             success: true,

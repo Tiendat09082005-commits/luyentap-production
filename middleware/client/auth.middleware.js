@@ -17,6 +17,7 @@ function serializeCachedUser(user) {
     email: user.email || "",
     avatar: user.avatar || "",
     tokenUser: user.tokenUser || "",
+    products_favorite: user.products_favorite || [],
   };
 }
 
@@ -64,7 +65,7 @@ async function findUserByToken(tokenUser) {
 
   const user = await User
     .findOne(withActiveUserStatus({ tokenUser }))
-    .select("_id fullName email avatar tokenUser")
+    .select("_id fullName email avatar tokenUser products_favorite")
     .lean();
 
   if (user) {

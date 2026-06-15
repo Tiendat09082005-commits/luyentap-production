@@ -124,6 +124,8 @@
       if (formTitle) formTitle.textContent = "Viet binh luan moi";
       if (replyHint) replyHint.textContent = "Khong ho tro HTML. Toi da 1000 ky tu.";
       if (cancelReplyButton) cancelReplyButton.hidden = true;
+      var ratingGroup = document.getElementById("commentFormRatingGroup");
+      if (ratingGroup) ratingGroup.style.display = "flex";
     }
 
     function activateReply(parentId, parentAuthor, depth) {
@@ -136,6 +138,8 @@
       if (formTitle) formTitle.textContent = "Dang tra loi " + (parentAuthor || "Khach");
       if (replyHint) replyHint.textContent = "Binh luan tra loi se duoc gan vao chuoi hien tai.";
       if (cancelReplyButton) cancelReplyButton.hidden = false;
+      var ratingGroup = document.getElementById("commentFormRatingGroup");
+      if (ratingGroup) ratingGroup.style.display = "none";
       if (contentInput) contentInput.focus();
     }
 
@@ -242,10 +246,14 @@
           return;
         }
 
+        var ratingInput = document.getElementById("commentRating");
+        var ratingVal = ratingInput ? ratingInput.value : "5";
+
         var payload = {
           productId: state.productId,
           parentId: parentInput ? parentInput.value : "",
           content: content,
+          rating: parentInput && parentInput.value ? undefined : ratingVal,
         };
 
         if (submitButton) {
@@ -289,6 +297,25 @@
             submitButton.textContent = "Gui binh luan";
           }
         }
+      });
+    }
+
+    // Stars Rating Interactive selection
+    var ratingInput = document.getElementById("commentRating");
+    var ratingStarsGroup = document.getElementById("ratingStarsInput");
+    if (ratingStarsGroup && ratingInput) {
+      ratingStarsGroup.addEventListener("click", function (e) {
+        var star = e.target.closest(".star-input");
+        if (!star) return;
+        var value = star.dataset.value;
+        ratingInput.value = value;
+        // Reset active state for all stars
+        var stars = ratingStarsGroup.querySelectorAll(".star-input");
+        stars.forEach(function (s) {
+          s.classList.remove("active");
+        });
+        // Set active to clicked star
+        star.classList.add("active");
       });
     }
 

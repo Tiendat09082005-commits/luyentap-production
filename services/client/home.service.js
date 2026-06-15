@@ -6,13 +6,17 @@ const { normalizeCategoryIcon } = require("../../config/category-icons");
 const getFlashSaleProducts = async () => {
   const data = await homeRepo.getFlashSaleVariants();
 
-  return data.map((item) => ({
-    ...item.product,
-    discount: item.discount,
-    price: item.price,
-    priceNew: priceNew(item.price, item.discount),
-    thumbnail: item.thumbnail || item.product.thumbnail,
-  }));
+  return data.map((item) => {
+    const prod = item.product || {};
+    return {
+      ...prod,
+      rating: prod.rating || 5,
+      discount: item.discount,
+      price: item.price,
+      priceNew: priceNew(item.price, item.discount),
+      thumbnail: item.thumbnail || prod.thumbnail,
+    };
+  });
 };
 
 //  FEATURED (giải quyết N+1 bằng lookup)
@@ -20,12 +24,14 @@ const getFeaturedProducts = async () => {
   const products = await homeRepo.getFeaturedProducts();
 
   return products.map((product) => {
+    const rating = product.rating || 5;
     if (!product.variants.length) {
       const price = product.price || 0;
       const discount = product.discount || 0;
 
       return {
         ...product,
+        rating,
         price,
         discount,
         priceNew: priceNew(price, discount),
@@ -44,6 +50,7 @@ const getFeaturedProducts = async () => {
 
     return {
       ...product,
+      rating,
       price: minVariant.price,
       discount: minVariant.discount,
       priceNew: minVariant.newPrice,

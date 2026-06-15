@@ -174,28 +174,53 @@ function addHiddenInputToForm(form, name, value) {
 
 // chọn sản phẩm yêu thích
 const btnFavoriteProduct = document.querySelectorAll(".btnFavoriteProduct");
-// console.log(btnFavoriteProduct);
-if(btnFavoriteProduct){
+if (btnFavoriteProduct && btnFavoriteProduct.length > 0) {
   btnFavoriteProduct.forEach(btn => {
-    btn.addEventListener("click" , (e) => {
+    btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      const product_id =  btn.dataset.id;
+      const product_id = btn.dataset.id;
       fetch(`/products/favorite/${product_id}`, {
         method: "PATCH",
         headers: window.withCsrfHeaders({
           "Content-Type": "application/json"
         })
       })
-        .then(res => res.json())
-        .then(data => {
-            if (data.type === "removed") {
-               btn.classList.remove("active");
-            } else {
-               btn.classList.add("active");
-            }
+        .then(res => {
+          if (res.status === 401) {
+            Swal.fire({
+              icon: 'question',
+              title: 'Yêu cầu đăng nhập',
+              text: 'Vui lòng đăng nhập để thêm sản phẩm vào danh sách yêu thích!',
+              showCancelButton: true,
+              confirmButtonText: 'Đăng nhập ngay',
+              cancelButtonText: 'Để sau',
+              confirmButtonColor: '#3B82F6',
+              cancelButtonColor: '#FFFFFF'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = "/user/login";
+              }
+            });
+            throw new Error("Unauthorized");
+          }
+          return res.json();
         })
-    })
-  })
+        .then(data => {
+          if (data && data.success) {
+            if (data.type === "removed") {
+              btn.classList.remove("active");
+            } else {
+              btn.classList.add("active");
+            }
+          }
+        })
+        .catch(err => {
+          if (err.message !== "Unauthorized") {
+            console.error("Lỗi khi cập nhật yêu thích:", err);
+          }
+        });
+    });
+  });
 }
 
 // Clickable product card

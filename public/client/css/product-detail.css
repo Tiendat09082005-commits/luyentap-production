@@ -125,6 +125,15 @@
   color: var(--red);
   background: var(--red-light);
 }
+
+@keyframes heart-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+
+.btn-wishlist.active svg {
+  animation: heart-bounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 .breadcrumb a { color: var(--text-sub); text-decoration: none; transition: color .15s; }
 .breadcrumb a:hover { color: var(--red); }
 .breadcrumb .sep { color: var(--text-muted); }

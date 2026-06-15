@@ -71,7 +71,11 @@ block main
                 .rating
                   i.icon-star ⭐
                   span.rating-value #{product.rating || 5}
-                button.btn-wishlist(data-id=product._id  class="btnFavoriteProduct")
-                  i.icon-heart ♥
+                button.btn-wishlist(
+                  data-id=product._id  
+                  class="btnFavoriteProduct"
+                  class=(product.isFavorite ? 'active' : '')
+                )
+                  i.icon-heart.heart ♥
                   span Yêu thích
   

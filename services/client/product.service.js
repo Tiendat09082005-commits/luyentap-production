@@ -155,6 +155,9 @@ class ProductService {
             const variants = variantMap.get(String(product._id)) || [];
             assignProductPriceFromVariants(product, variants);
 
+            // Default rating to 5 if not set or is 0
+            product.rating = product.rating || 5;
+
             // Add Favorite Flag
             product.isFavorite = user?.products_favorite 
                 ? user.products_favorite.some(id => String(id) === String(product._id))
@@ -214,6 +217,9 @@ class ProductService {
         .lean();
 
         if (!product) return null;
+
+        // Default rating to 5 if not set or is 0
+        product.rating = product.rating || 5;
 
         // 2. Fetch Variants
         const variants = await ProductVariant.find({

@@ -40,7 +40,7 @@ module.exports.create = async (req, res) => {
       flash.flashError(req, "Lỗi server");
     }
 
-    return res.redirect(`${systemConfig.prefixAdmin}/brand/create`);
+    return res.redirect(`${systemConfig.prefixAdmin}/brands`);
   }
 };
 

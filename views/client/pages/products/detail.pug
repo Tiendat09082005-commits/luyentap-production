@@ -4,6 +4,36 @@ include ../../mixins/comment-tree.pug
 
 block css
   link(rel="stylesheet" href="/client/css/product-detail.css")
+  style.
+    .comment-form-rating {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      margin-top: 4px;
+    }
+    .rating-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+    .rating-stars-input {
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 4px;
+    }
+    .star-input {
+      font-size: 24px;
+      color: #ccc;
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+    .star-input:hover,
+    .star-input:hover ~ .star-input,
+    .star-input.active,
+    .star-input.active ~ .star-input {
+      color: #ffb800;
+    }
 
 block main
   +alert-success(3000)
@@ -253,6 +283,15 @@ block main
             .comment-form-top
               strong#commentFormTitle Viet binh luan moi
               button#commentCancelReply.comment-cancel-reply(type="button" hidden) Bo tra loi
+            .comment-form-rating#commentFormRatingGroup
+              span.rating-label Đánh giá của bạn:
+              .rating-stars-input#ratingStarsInput
+                span.star-input.active(data-value="5") ★
+                span.star-input(data-value="4") ★
+                span.star-input(data-value="3") ★
+                span.star-input(data-value="2") ★
+                span.star-input(data-value="1") ★
+              input(type="hidden" name="rating" id="commentRating" value="5")
             textarea#commentContent.comment-textarea(
               name="content"
               rows="4"

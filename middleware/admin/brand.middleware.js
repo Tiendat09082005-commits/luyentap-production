@@ -1,3 +1,4 @@
+const systemConfig = require("../../config/system");
 const { validateGetBrands ,
         validateCreateBrand,
         validateGetBrandDetail ,
@@ -33,7 +34,7 @@ const validateGetBrandDetailMiddleware = (req, res, next) => {
 
     if (errors.length > 0) {
         req.flash("error", errors[0]);
-        return res.redirect(`${conFig.prefixAdmin}/brands`);
+        return res.redirect(`${systemConfig.prefixAdmin}/brands`);
     }
 
     next();
@@ -44,7 +45,7 @@ const validateChangeStatusBrandMiddleware = (req, res, next) => {
 
     if (errors.length > 0) {
         req.flash("thatbai", errors[0]);
-        return res.redirect(`${conFig.prefixAdmin}/brands`);
+        return res.redirect(`${systemConfig.prefixAdmin}/brands`);
     }
 
     next();
