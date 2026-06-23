@@ -116,7 +116,12 @@ app.use(passport.session());
 
 app.use("/tinymce", express.static(path.join(__dirname, "node_modules", "tinymce")));
 
-app.use("/admin", csrfMiddleware, setLocals, adminRoute);
+app.use("/admin", (req, res, next) => {
+  if (req.headers["content-type"] && req.headers["content-type"].includes("multipart/form-data")) {
+    return next();
+  }
+  return csrfMiddleware(req, res, next);
+}, setLocals, adminRoute);
 app.use("/", csrfMiddleware, setLocals, clientRoute);
 
 const server = createServer(app);

@@ -34,10 +34,35 @@ function uploadBuffer(buffer, folder) {
   });
 }
 
+function cleanNumericString(val) {
+  if (val == null) return "";
+  let str = String(val).trim();
+  return str.replace(/\D/g, "");
+}
+
 /* ─────────────────────────────────────────────
    Middleware chính – xử lý tất cả req.files
  ───────────────────────────────────────────── */
 module.exports.upload = async (req, res, next) => {
+  const qs = require("qs");
+  if (req.body) {
+    req.body = qs.parse(qs.stringify(req.body));
+
+    // Sanitize product pricing fields
+    if (req.body.price !== undefined) req.body.price = cleanNumericString(req.body.price);
+    if (req.body.discount !== undefined) req.body.discount = cleanNumericString(req.body.discount);
+    if (req.body.stock !== undefined) req.body.stock = cleanNumericString(req.body.stock);
+
+    // Sanitize variant pricing fields
+    if (Array.isArray(req.body.variants)) {
+      req.body.variants.forEach((v) => {
+        if (v.price !== undefined) v.price = cleanNumericString(v.price);
+        if (v.discount !== undefined) v.discount = cleanNumericString(v.discount);
+        if (v.stock !== undefined) v.stock = cleanNumericString(v.stock);
+      });
+    }
+  }
+
   // Normalize both req.file (single) and req.files (multiple) into a single array
   let filesToUpload = [];
   if (req.files) {

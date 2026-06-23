@@ -23,6 +23,7 @@ function redirectToLogin(req, res) {
 module.exports.requireAuth = async (req, res, next) => {
   try {
     if (!req.session.user?._id) {
+      console.log(`[Auth Debug] Redirecting to login. Path: ${req.originalUrl}. Session User:`, req.session?.user, `Cookies:`, req.cookies);
       return res.redirect(LOGIN_PATH);
     }
 

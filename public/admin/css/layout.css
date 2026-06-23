@@ -60,23 +60,66 @@ body {
   top: 80px;
   right: 20px;
   z-index: 9999;
-  min-width: 250px;
-  max-width: 350px;
-  transition: all 0.5s ease-in-out;
+  min-width: 280px;
+  max-width: 380px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
 }
 
 [show-alert].alert-hidden {
-  right: -500px;
+  transform: translateX(120%);
   opacity: 0;
   visibility: hidden;
 }
 
+/* Alert types */
+[show-alert].alert-success {
+  background-color: #ECFDF5;
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+[show-alert].alert-danger,
+[show-alert].alert-error {
+  background-color: #FEF2F2;
+  color: #EF4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Alert content & elements */
+[show-alert] i {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+[show-alert] span {
+  flex-grow: 1;
+}
+
 [show-alert] [close-alert] {
   cursor: pointer;
-  margin-left: 15px;
-  font-weight: bold;
-  padding: 0 5px;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  opacity: 0.6;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+[show-alert] [close-alert]:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+

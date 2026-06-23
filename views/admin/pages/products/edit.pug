@@ -127,6 +127,52 @@ block main
                                     p.pc-card__desc Mô tả, nội dung và điểm nổi bật
                         .pc-card__body
                             .pc-field
+                                label.pc-label Loại sản phẩm
+                                .pc-product-type-select
+                                    label.pc-radio-label
+                                        input(type="radio" name="productType" value="simple" checked)
+                                        span Sản phẩm đơn giản
+                                    label.pc-radio-label
+                                        input(type="radio" name="productType" value="variants")
+                                        span Sản phẩm có biến thể
+
+                            .pc-simple-fields#simple-product-fields
+                                .pc-grid-2
+                                    .pc-field
+                                        label.pc-label Giá gốc (đ)
+                                        input.pc-input#simple-price(
+                                            type="number"
+                                            name="price"
+                                            placeholder="0"
+                                            min="0"
+                                        )
+                                    .pc-field
+                                        label.pc-label Giảm giá %
+                                        input.pc-input#simple-discount(
+                                            type="number"
+                                            name="discount"
+                                            placeholder="0"
+                                            min="0"
+                                            max="100"
+                                        )
+                                .pc-grid-2
+                                    .pc-field
+                                        label.pc-label Tồn kho
+                                        input.pc-input#simple-stock(
+                                            type="number"
+                                            name="stock"
+                                            placeholder="0"
+                                            min="0"
+                                        )
+                                    .pc-field
+                                        label.pc-label SKU
+                                        input.pc-input#simple-sku(
+                                            type="text"
+                                            name="sku"
+                                            placeholder="Nhập mã SKU..."
+                                        )
+
+                            .pc-field
                                 label.pc-label(for="shortDesc") Mô tả ngắn
                                 input#shortDesc.pc-input(
                                     type="text"

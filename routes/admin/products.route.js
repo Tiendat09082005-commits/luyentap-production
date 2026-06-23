@@ -9,6 +9,7 @@ const uploadCloud = require("../../middleware/admin/uploadImage.middleware");
 const validate = require("../../middleware/admin/validate.middleware");
 const {createProductValidator} = require("../../validate/admin/createProduct.validate");
 const authMiddleware = require("../../middleware/admin/auth.middleware");
+const csrfMiddleware = require("../../middleware/csrf");
 
 router.get("/" , authMiddleware.checkPermission("products_view"), controller.index);
 
@@ -20,11 +21,11 @@ router.delete("/delete/:id" , authMiddleware.checkPermission("products_delete"),
 
 router.get("/create" , authMiddleware.checkPermission("products_create"), controller.create);
 
-router.post("/create", authMiddleware.checkPermission("products_create"), upload.any(), uploadCloud.upload, validate(createProductValidator), controller.createPost);
+router.post("/create", authMiddleware.checkPermission("products_create"), upload.any(), csrfMiddleware, uploadCloud.upload, validate(createProductValidator), controller.createPost);
 
 router.get("/edit/:id" , authMiddleware.checkPermission("products_edit"), controller.edit);
 
-router.patch("/edit/:id", authMiddleware.checkPermission("products_edit"), upload.any(), uploadCloud.upload, validate(createProductValidator), controller.editPatch);
+router.patch("/edit/:id", authMiddleware.checkPermission("products_edit"), upload.any(), csrfMiddleware, uploadCloud.upload, validate(createProductValidator), controller.editPatch);
 
 router.get("/detail/:id" , authMiddleware.checkPermission("products_view"), controller.detail);
 
